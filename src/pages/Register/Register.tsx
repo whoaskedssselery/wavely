@@ -1,8 +1,10 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink,useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { registerSchema, type RegisterForm } from '@/schemas/auth.ts';
+import { supabase } from '@/lib/supabase.ts'
+import { useState } from 'react'
 import './Register.scss';
 
 const Register = () => {
@@ -14,9 +16,40 @@ const Register = () => {
     resolver: zodResolver(registerSchema),
     mode: 'onBlur',
   });
+	
+	const navigate = useNavigate();
+	const [serverError, setServerError] = useState<string | null>(null);
+	const [showPassword, setShowPassword] = useState(false);
+	
+	const handleOAuth = async (provider: 'github' | 'google') => {
+		await supabase.auth.signInWithOAuth({
+			provider,
+			options: {
+				redirectTo: `${window.location.origin}/`,
+			},
+		})
+	}
 
   const onSubmit = async (data: RegisterForm) => {
-    console.log('Отправка данных:', data);
+    const { data: signUpData, error } = await supabase.auth.signUp({
+	    email: data.email,
+	    password: data.password,
+	    options: {
+		    data: { username: data.username },
+	    }
+    })
+	  
+	  if (error) {
+			setServerError(error.message)
+		  return
+	  }
+	  
+	  if (signUpData.user?.identities?.length === 0) {
+		  setServerError('Аккаунт с таким email уже существует')
+		  return
+	  }
+		
+		navigate('/confirm', { state: { email: data.email, from: '/register', type: 'signup' } })
   };
 
   return (
@@ -33,8 +66,14 @@ const Register = () => {
         <h2 className="register__title">Регистрация</h2>
 
         <div className="register__oauth">
-          <button type="button" className="register__oauth-btn">Google</button>
-          <button type="button" className="register__oauth-btn">GitHub</button>
+	        <button className="register__oauth-btn"
+	                type="button"
+	                onClick={() => handleOAuth('google')}
+	        >Google</button>
+	        <button className="register__oauth-btn"
+	                type="button"
+	                onClick={() => handleOAuth('github')}
+	        >GitHub</button>
         </div>
 
         <div className="register__divider">
@@ -66,13 +105,33 @@ const Register = () => {
           </div>
           <div className="register__field">
             <label className="register__label" htmlFor="passwordForm">Пароль</label>
-            <input
-              className="register__input"
-              {...register('password')}
-              type="password"
-              id="passwordForm"
-              autoComplete="new-password"
-            />
+            <div className="register__input-wrapper">
+              <input
+                className="register__input"
+                {...register('password')}
+                type={showPassword ? 'text' : 'password'}
+                id="passwordForm"
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="register__password-toggle"
+                onClick={() => setShowPassword(prev => !prev)}
+              >
+                {showPassword ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                    <line x1="1" y1="1" x2="23" y2="23"/>
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                )}
+              </button>
+            </div>
             {errors.password && <p className="register__error">{errors.password.message}</p>}
           </div>
           <div className="register__field">
@@ -92,6 +151,7 @@ const Register = () => {
             {isSubmitting ? 'Регистрируемся...' : 'Зарегистрироваться'}
           </button>
         </form>
+	      { serverError && <p className="register__error">{serverError}</p> }
 
         <p className="register__footer">
           Уже есть аккаунт? <NavLink to="/login">Войти</NavLink>

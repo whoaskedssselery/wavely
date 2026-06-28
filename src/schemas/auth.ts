@@ -27,7 +27,7 @@ export const registerSchema = z.object({
 export type RegisterForm = z.infer<typeof registerSchema>
 
 export const otpSchema = z.object({
-	otpCode: z.string().length(6).regex(/^\d+$/, 'Код должен состоять только из цифр')
+	otpCode: z.string().length(6).regex(/^\d+$/, 'Код должен состоять из 6 цифр')
 })
 
 export type OtpForm = z.infer<typeof otpSchema>

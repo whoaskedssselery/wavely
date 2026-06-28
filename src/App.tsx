@@ -1,7 +1,10 @@
-import AppRouter from '@/router/AppRouter.tsx'
+import AppRouter from '@/router/AppRouter/AppRouter.tsx'
+import useAuthListener from '@/hooks/useAuthListener.ts'
 
 export default function App() {
-  return (
+	useAuthListener()
+	
+	return (
 			<AppRouter />
   )
 }

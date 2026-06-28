@@ -105,6 +105,33 @@
     }
   }
 
+  &__input-wrapper {
+    position: relative;
+    width: 100%;
+
+    .register__input {
+      padding-right: 44px;
+    }
+  }
+
+  &__password-toggle {
+    position: absolute;
+    right: $spacing-md;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    font-size: $font-size-xs;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color $transition-fast;
+
+    @include hover {
+      color: $color-text-secondary;
+    }
+  }
+
   &__error {
     font-size: $font-size-xs;
     color: #e05252;
