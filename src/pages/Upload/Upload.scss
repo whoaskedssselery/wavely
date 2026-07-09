@@ -1,0 +1,109 @@
+@use '@/styles/helpers' as *;
+
+.upload {
+  @include flex(column, center, center);
+  min-height: 100vh;
+  background-color: $color-bg;
+  padding: $spacing-lg;
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: 700;
+    color: $color-text-primary;
+    text-align: center;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__form {
+    @include flex(column, stretch, flex-start);
+    width: 100%;
+    max-width: 400px;
+    background-color: $color-bg-elevated;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-lg;
+    padding: $spacing-xl;
+    gap: $spacing-md;
+  }
+
+  &__field {
+    @include flex(column, flex-start, flex-start);
+    gap: $spacing-xs;
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    font-weight: 500;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 11px $spacing-md;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-md;
+    color: $color-text-primary;
+    font-size: $font-size-md;
+    transition: border-color $transition-fast;
+
+    &::placeholder {
+      color: $color-text-muted;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $color-accent;
+    }
+
+    &[type='file'] {
+      padding: $spacing-sm $spacing-md;
+      font-size: $font-size-sm;
+      cursor: pointer;
+
+      &::file-selector-button {
+        @include flex(row, center, center);
+        padding: 6px $spacing-sm;
+        margin-right: $spacing-md;
+        background-color: $color-bg;
+        border: 1px solid $color-border;
+        border-radius: $border-radius-sm;
+        color: $color-text-primary;
+        font-size: $font-size-xs;
+        font-weight: 500;
+        cursor: pointer;
+        transition: border-color $transition-fast;
+
+        @include hover {
+          border-color: $color-text-muted;
+        }
+      }
+    }
+  }
+
+  &__error {
+    font-size: $font-size-xs;
+    color: #e05252;
+  }
+
+  &__submit-button {
+    width: 100%;
+    padding: 13px;
+    margin-top: $spacing-sm;
+    background-color: $color-accent;
+    border: none;
+    border-radius: $border-radius-md;
+    font-size: $font-size-md;
+    font-weight: 600;
+    color: #000;
+    transition: opacity $transition-fast;
+
+    @include hover {
+      opacity: 0.85;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
