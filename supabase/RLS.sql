@@ -2,7 +2,6 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tracks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE playlists ENABLE ROW LEVEL SECURITY;
 ALTER TABLE playlist_tracks ENABLE ROW LEVEL SECURITY;
-ALTER TABLE liked_tracks ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Profiles - SELECT" ON profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Profiles - INSERT" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
@@ -50,7 +49,3 @@ USING (
         AND playlists.user_id = auth.uid()
     )
 );
-
-CREATE POLICY "Liked_tracks - SELECT"  ON liked_tracks FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Liked_tracks - INSERT"  ON liked_tracks FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Liked_tracks - DELETE"  ON liked_tracks FOR DELETE USING (auth.uid() = user_id);
