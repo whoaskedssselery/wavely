@@ -85,6 +85,11 @@
     font-weight: 500;
   }
 
+  &__required {
+    color: #e05252;
+    margin-left: 2px;
+  }
+
   &__input {
     width: 100%;
     padding: 11px $spacing-md;

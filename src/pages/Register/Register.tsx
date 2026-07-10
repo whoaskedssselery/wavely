@@ -82,7 +82,9 @@ const Register = () => {
 
         <form className="register__form" onSubmit={handleSubmit(onSubmit)}>
           <div className="register__field">
-            <label className="register__label" htmlFor="usernameForm">Имя</label>
+            <label className="register__label" htmlFor="usernameForm">
+              Имя<span className="register__required">*</span>
+            </label>
             <input
               className="register__input"
               {...register('username')}
@@ -93,7 +95,9 @@ const Register = () => {
             {errors.username && <p className="register__error">{errors.username.message}</p>}
           </div>
           <div className="register__field">
-            <label className="register__label" htmlFor="emailForm">Почта</label>
+            <label className="register__label" htmlFor="emailForm">
+              Почта<span className="register__required">*</span>
+            </label>
             <input
               className="register__input"
               {...register('email')}
@@ -104,7 +108,9 @@ const Register = () => {
             {errors.email && <p className="register__error">{errors.email.message}</p>}
           </div>
           <div className="register__field">
-            <label className="register__label" htmlFor="passwordForm">Пароль</label>
+            <label className="register__label" htmlFor="passwordForm">
+              Пароль<span className="register__required">*</span>
+            </label>
             <div className="register__input-wrapper">
               <input
                 className="register__input"
@@ -135,7 +141,9 @@ const Register = () => {
             {errors.password && <p className="register__error">{errors.password.message}</p>}
           </div>
           <div className="register__field">
-            <label className="register__label" htmlFor="confirmPasswordForm">Подтвердите пароль</label>
+            <label className="register__label" htmlFor="confirmPasswordForm">
+              Подтвердите пароль<span className="register__required">*</span>
+            </label>
             <input
               className="register__input"
               {...register('confirmPassword')}
