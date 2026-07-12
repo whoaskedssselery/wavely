@@ -1,15 +1,10 @@
 @use '@/styles/helpers' as *;
 
 .upload {
-  @include flex(column, center, center);
-  min-height: 100vh;
-  background-color: $color-bg;
-  padding: $spacing-lg;
-
   &__card {
     @include flex(column, stretch, flex-start);
     width: 100%;
-    max-width: 400px;
+    max-width: 385px;
     background-color: $color-bg-elevated;
     border: 1px solid $color-border;
     border-radius: $border-radius-lg;

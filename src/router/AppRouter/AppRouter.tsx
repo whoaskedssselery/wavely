@@ -2,7 +2,6 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import Home from '@/pages/Home'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
-import Upload from '@/pages/Upload'
 import ConfirmOtp from '@/pages/ConfirmOtp'
 import ProtectedRoute from '@/router/ProtectedRoute'
 import { AnimatePresence } from 'framer-motion'
@@ -14,7 +13,6 @@ const AppRouter = () => {
 		<AnimatePresence mode="wait">
 			<Routes location={location} key={location.pathname}>
 				<Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-				<Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
 				<Route path="/confirm" element={<ConfirmOtp/>}></Route>

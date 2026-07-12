@@ -1,3 +1,7 @@
-.home {
+@use '@/styles/helpers' as *;
 
+.home {
+  min-height: 100vh;
+  background-color: $color-bg;
+  padding: $spacing-xl;
 }

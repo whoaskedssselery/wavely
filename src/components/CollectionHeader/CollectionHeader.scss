@@ -1,0 +1,57 @@
+@use '@/styles/helpers' as *;
+
+.collection-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    'title button'
+    'counter button';
+  align-items: center;
+  column-gap: $spacing-md;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: $spacing-lg;
+
+  &__title {
+    grid-area: title;
+    align-self: end;
+    font-size: $font-size-xl;
+    font-weight: 800;
+    color: $color-text-primary;
+  }
+
+  &__counter {
+    grid-area: counter;
+    align-self: start;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+
+  &__add-button {
+    grid-area: button;
+    padding: 10px $spacing-lg;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-md;
+    color: $color-text-primary;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color $transition-fast, background-color $transition-fast;
+
+    @include hover {
+      background-color: $color-bg;
+      border-color: $color-text-muted;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-accent;
+      outline-offset: 2px;
+    }
+  }
+}

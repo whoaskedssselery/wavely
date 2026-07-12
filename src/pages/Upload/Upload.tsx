@@ -1,116 +1,52 @@
-import { motion } from 'framer-motion'
 import { trackSchema, type TrackForm, AUDIO_MIME_TYPES, IMAGE_MIME_TYPES } from '@/schemas/tracks.ts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { useAuthStore } from '@/store/authStore.ts'
-import { useNavigate } from 'react-router-dom'
-import { supabase } from '@/lib/supabase.ts'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { uploadTracks } from '@/api/tracks.ts'
+import type { UploadProps } from '@/types/utils.ts'
 import './Upload.scss'
 
-const Upload = () => {
+const Upload = (props: UploadProps) => {
+	const {
+		onClose,
+	} = props
+	
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 	} = useForm<TrackForm>({
 		mode: 'onBlur',
 		resolver: zodResolver(trackSchema)
 	})
 	
+	const queryClient = useQueryClient()
 	const { user } = useAuthStore()
 	
-	const navigate = useNavigate()
 	const [serverError, setServerError] = useState<string | null>(null)
 	const [audioFileName, setAudioFileName] = useState('')
 	const [coverFileName, setCoverFileName] = useState('')
 	
 	if (!user) return null
 	
-	const getAudioDuration = (file: File): Promise<number> => {
-		return new Promise((resolve,reject) => {
-			const audio = new Audio()
-			const fileUrl = URL.createObjectURL(file)
-			audio.src = fileUrl
-			audio.addEventListener('loadedmetadata', () => {
-				URL.revokeObjectURL(fileUrl)
-				resolve(audio.duration)
-			})
-			audio.addEventListener('error', () => {
-				reject(new Error('Не удалось прочитать метаданные аудиофайла'))
-				URL.revokeObjectURL(fileUrl)
-			})
-		})
-	}
+	const { mutate, isPending } = useMutation({
+		mutationFn: (data: TrackForm) => uploadTracks({ data, userId: user.id }),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['tracks', user.id] })
+			onClose()
+		},
+		onError: error => setServerError(error.message),
+	})
 	
-	const cleanupUploadedFiles = async (audioPath: string, coverPath: string | null) => {
-		const { error: audioCleanupError } = await supabase.storage.from('audio').remove([audioPath])
-		if (audioCleanupError) console.error('Failed to clean up audio file:', audioCleanupError)
-		
-		if (coverPath) {
-			const { error: coverCleanupError } = await supabase.storage.from('covers').remove([coverPath])
-			if (coverCleanupError) console.error('Failed to clean up cover file:', coverCleanupError)
-		}
-	}
-	
-	const onSubmit = async (data: TrackForm) => {
-		const audioFile = data.audioFile[0]
-		let coverPath: string | null = null
-		const audioPath = `${user.id}/${Date.now()}-${audioFile.name}`
-		
-			const { error: uploadError } =  await supabase.storage.from('audio').upload(audioPath, audioFile)
-		
-		if (uploadError) {
-			setServerError(uploadError.message)
-			return
-		}
-		
-		if (data.coverFile && data.coverFile.length > 0) {
-			const coverFile = data.coverFile[0]
-			coverPath = `${user.id}/${Date.now()}-${coverFile.name}`
-			
-			const { error: uploadError } =  await supabase.storage.from('covers').upload(coverPath, coverFile)
-			
-			if (uploadError) {
-				setServerError(uploadError.message)
-				await cleanupUploadedFiles(audioPath, null)
-				return
-			}
-		}
-		
-		try {
-			const duration = Math.round(await getAudioDuration(audioFile))
-			
-			const {error: submitError} = await supabase.from('tracks').insert({
-				user_id: user.id,
-				title: data.title,
-				artist: data.artist,
-				duration,
-				audio_path: audioPath,
-				cover_path: coverPath,
-			})
-			
-			if (submitError) {
-				setServerError(submitError.message)
-				await cleanupUploadedFiles(audioPath, coverPath)
-				return
-			}
-		} catch (err) {
-			setServerError('Не удалось прочитать длительность трека')
-			await cleanupUploadedFiles(audioPath, coverPath)
-			return
-		}
-		
-		navigate('/')
+	const onSubmit = (data: TrackForm) => {
+		mutate(data)
 	}
 	
 	return (
-		<motion.section
+		<section
 			className="upload"
-			initial={{ opacity: 0, y: 10 }}
-			animate={{ opacity: 1, y: 0 }}
-			exit={{ opacity: 0, y: -10 }}
-			transition={{ duration: 0.2 }}
 		>
 			<div className="upload__card">
 				<h2 className="upload__title">Добавить трек</h2>
@@ -196,11 +132,11 @@ const Upload = () => {
 						</label>
 						{errors.coverFile && <p className="upload__error">{errors.coverFile.message}</p>}
 					</div>
-					<button className="upload__submit-button" type="submit" disabled={isSubmitting}>{isSubmitting ? "Загружаем трек" : "Загрузить трек"}</button>
+					<button className="upload__submit-button" type="submit" disabled={isPending}>{isPending ? "Загружаем трек" : "Загрузить трек"}</button>
 				</form>
 				{serverError && <p className="upload__error">{serverError}</p>}
 			</div>
-		</motion.section>
+		</section>
 	)
 }
 

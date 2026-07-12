@@ -1,0 +1,182 @@
+@use '@/styles/helpers' as *;
+
+.tracks-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px $spacing-md;
+  max-width: 800px;
+  margin: 0 auto;
+
+  &--two-col {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-flow: column;
+    grid-template-rows: repeat(4, auto);
+  }
+
+  &__show-all {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin-top: $spacing-sm;
+    padding: $spacing-xs $spacing-lg;
+    background: none;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-full;
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color $transition-fast, color $transition-fast;
+
+    @include hover {
+      border-color: $color-text-muted;
+      color: $color-text-primary;
+    }
+  }
+
+  &__loading,
+  &__warning {
+    grid-column: 1 / -1;
+    color: $color-text-muted;
+    font-size: $font-size-md;
+    text-align: center;
+    padding: $spacing-xl 0;
+  }
+
+  &__error {
+    grid-column: 1 / -1;
+    color: #e05252;
+    font-size: $font-size-md;
+    text-align: center;
+    padding: $spacing-xl 0;
+  }
+
+  &__card {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      'image title meta'
+      'image artist meta';
+    align-items: center;
+    column-gap: $spacing-sm;
+    padding: $spacing-sm;
+    border-radius: $border-radius-md;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+
+    @include hover {
+      background-color: $color-bg-elevated;
+
+      .tracks-list__play {
+        opacity: 1;
+      }
+
+      .tracks-list__duration {
+        opacity: 0;
+      }
+
+      .tracks-list__menu {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__image-wrap {
+    grid-area: image;
+    position: relative;
+    width: 36px;
+    height: 36px;
+  }
+
+  &__image {
+    width: 36px;
+    height: 36px;
+    border-radius: $border-radius-sm;
+    object-fit: cover;
+
+    &--placeholder {
+      color: $color-text-muted;
+      background-color: $color-bg-surface;
+      padding: 5px;
+    }
+  }
+
+  &__play {
+    @include flex(row, center, center);
+    position: absolute;
+    inset: 0;
+    background: none;
+    border: none;
+    border-radius: $border-radius-sm;
+    color: $color-text-primary;
+    opacity: 0;
+    transform: scale(1);
+    transition: opacity $transition-fast, transform $transition-fast;
+    cursor: pointer;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    @include hover {
+      transform: scale(1.15);
+    }
+  }
+
+  &__title {
+    grid-area: title;
+    align-self: end;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-text-primary;
+    @include truncate;
+  }
+
+  &__artist {
+    grid-area: artist;
+    align-self: start;
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
+    @include truncate;
+  }
+
+  &__meta {
+    grid-area: meta;
+    position: relative;
+    @include flex(row, center, flex-end);
+    padding-left: $spacing-xs;
+    min-width: 32px;
+    height: 24px;
+  }
+
+  &__duration {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    font-variant-numeric: tabular-nums;
+    transition: opacity $transition-fast;
+  }
+
+  &__menu {
+    @include flex(row, center, center);
+    position: absolute;
+    inset: 0;
+    background: none;
+    border: none;
+    border-radius: $border-radius-sm;
+    color: $color-text-muted;
+    opacity: 0;
+    transition: opacity $transition-fast, color $transition-fast;
+    cursor: pointer;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    @include hover {
+      color: $color-text-primary;
+    }
+  }
+}
