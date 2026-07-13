@@ -1,0 +1,77 @@
+@use '@/styles/helpers' as *;
+
+.playlists-list {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-top: $spacing-lg;
+
+  &__loading,
+  &__warning {
+    color: $color-text-muted;
+    font-size: $font-size-md;
+    padding: $spacing-lg 0;
+  }
+
+  &__error {
+    color: #e05252;
+    font-size: $font-size-md;
+    padding: $spacing-lg 0;
+  }
+	
+  &__track {
+    display: flex;
+    gap: $spacing-md;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: $spacing-xs $spacing-xs $spacing-sm;
+    margin: -$spacing-xs -$spacing-xs 0;
+
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $color-border;
+      border-radius: $border-radius-full;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  }
+
+  &__card {
+    @include flex(column, flex-start, flex-start, $spacing-xs);
+    flex-shrink: 0;
+    width: 180px;
+    scroll-snap-align: start;
+    cursor: pointer;
+  }
+
+  &__image {
+    width: 180px;
+    height: 180px;
+    border-radius: $border-radius-md;
+    object-fit: cover;
+    background-color: $color-bg-surface;
+    transition: transform $transition-fast;
+
+    &--placeholder {
+      @include flex(row, center, center);
+      padding: $spacing-xl;
+      color: $color-text-muted;
+    }
+  }
+
+  &__card:hover &__image {
+    transform: scale(1.03);
+  }
+
+  &__card-title {
+    width: 100%;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-text-primary;
+    @include truncate;
+  }
+}

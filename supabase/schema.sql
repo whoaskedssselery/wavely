@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS playlists (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
+    description TEXT,
     cover_path TEXT,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );

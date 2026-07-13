@@ -1,5 +1,7 @@
 import * as React from 'react'
 
+export type ActiveModal = 'upload-track' | 'create-playlist' | null
+
 export interface ModalProps {
 	isOpen: boolean
 	onClose: () => void
@@ -12,4 +14,15 @@ export interface UploadProps {
 
 export interface CollectionHeaderProps {
 	onOpenModal: () => void
+}
+
+export interface PlaylistsListProps {
+	onCreatePlaylist: () => void
+}
+
+export interface SectionHeaderProps {
+	title: string
+	counterText: string
+	buttonText: string
+	onButtonClick: () => void
 }

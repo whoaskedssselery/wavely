@@ -1,6 +1,6 @@
 @use '@/styles/helpers' as *;
 
-.collection-header {
+.section-header {
   display: grid;
   grid-template-columns: 1fr auto;
   grid-template-rows: auto auto;
@@ -28,7 +28,7 @@
     color: $color-text-muted;
   }
 
-  &__add-button {
+  &__button {
     grid-area: button;
     padding: 10px $spacing-lg;
     background-color: $color-bg-surface;

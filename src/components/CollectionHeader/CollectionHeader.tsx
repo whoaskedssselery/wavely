@@ -2,13 +2,14 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchTracks } from '@/api/tracks.ts'
 import { useAuthStore } from '@/store/authStore.ts'
 import type { CollectionHeaderProps } from '@/types/utils.ts'
-import './CollectionHeader.scss'
+import SectionHeader from '@/components/SectionHeader'
+import { pluralize } from '@/utils/pluralize.ts'
 
 const CollectionHeader = (props: CollectionHeaderProps) => {
 	const {
 		onOpenModal,
 	} = props
-	
+
 	const { user } = useAuthStore()
 
 	if (!user) {
@@ -19,18 +20,16 @@ const CollectionHeader = (props: CollectionHeaderProps) => {
 		queryKey: ['tracks', user.id],
 		queryFn: () => fetchTracks(user.id),
 	})
-	
+
+	const trackCount = data?.length ?? 0
+
 	return (
-		<section
-			className="collection-header"
-		>
-			<h2 className="collection-header__title">Моя коллекция</h2>
-			<span className="collection-header__counter">{data?.length ?? 0} треков</span>
-			<button className="collection-header__add-button"
-			  onClick={onOpenModal}
-				type="button"
-			>Добавить трек</button>
-		</section>
+		<SectionHeader
+			title="Моя коллекция"
+			counterText={`${trackCount} ${pluralize(trackCount, ['трек', 'трека', 'треков'])}`}
+			buttonText="Добавить трек"
+			onButtonClick={onOpenModal}
+		/>
 	)
 }
 
