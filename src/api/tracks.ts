@@ -1,11 +1,12 @@
 import { supabase } from '@/lib/supabase.ts'
-import type {Track, UploadTracksParams} from '@/types/tracks.ts'
+import type { Track, UploadTrackParams } from '@/types/tracks.ts'
 
 export const fetchTracks = async (userId: string): Promise<Track[]> => {
 	const { data, error: fetchError } = await supabase
 		.from('tracks')
 		.select('*')
 		.eq('user_id', userId)
+		.order('created_at', { ascending: false })
 	
 	if (fetchError) {
 		throw fetchError
@@ -14,7 +15,7 @@ export const fetchTracks = async (userId: string): Promise<Track[]> => {
 	return data
 }
 
-export const uploadTracks = async ({ data, userId } : UploadTracksParams): Promise<void> => {
+export const uploadTrack = async ({ data, userId } : UploadTrackParams): Promise<void> => {
 	const audioFile = data.audioFile[0]
 	let coverPath: string | null = null
 	let duration: number
@@ -78,10 +79,10 @@ const getAudioDuration = (file: File): Promise<number> => {
 
 const cleanupUploadedFiles = async (audioPath: string, coverPath: string | null) => {
 	const { error: audioCleanupError } = await supabase.storage.from('audio').remove([audioPath])
-	if (audioCleanupError) console.error('Failed to clean up audio file:', audioCleanupError)
+	if (audioCleanupError) console.error('Не получилось удалить аудио-файл:', audioCleanupError)
 	
 	if (coverPath) {
 		const { error: coverCleanupError } = await supabase.storage.from('covers').remove([coverPath])
-		if (coverCleanupError) console.error('Failed to clean up cover file:', coverCleanupError)
+		if (coverCleanupError) console.error('Не получилось удалить обложку трека:', coverCleanupError)
 	}
 }

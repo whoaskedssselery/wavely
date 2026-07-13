@@ -4,11 +4,11 @@ import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { useAuthStore } from '@/store/authStore.ts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { uploadTracks } from '@/api/tracks.ts'
+import { uploadTrack } from '@/api/tracks.ts'
 import type { UploadProps } from '@/types/utils.ts'
-import './Upload.scss'
+import './UploadTrack.scss'
 
-const Upload = (props: UploadProps) => {
+const UploadTrack = (props: UploadProps) => {
 	const {
 		onClose,
 	} = props
@@ -32,7 +32,7 @@ const Upload = (props: UploadProps) => {
 	if (!user) return null
 	
 	const { mutate, isPending } = useMutation({
-		mutationFn: (data: TrackForm) => uploadTracks({ data, userId: user.id }),
+		mutationFn: (data: TrackForm) => uploadTrack({ data, userId: user.id }),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['tracks', user.id] })
 			onClose()
@@ -46,58 +46,58 @@ const Upload = (props: UploadProps) => {
 	
 	return (
 		<section
-			className="upload"
+			className="upload-track"
 		>
-			<div className="upload__card">
-				<h2 className="upload__title">Добавить трек</h2>
+			<div className="upload-track__card">
+				<h2 className="upload-track__title">Добавить трек</h2>
 				<form
-					className="upload__form"
+					className="upload-track__form"
 					onSubmit={handleSubmit(onSubmit)}
 				>
-					<div className="upload__field">
-						<label htmlFor="titleInput" className="upload__label">
-							Название трека<span className="upload__required">*</span>
+					<div className="upload-track__field">
+						<label htmlFor="titleInput" className="upload-track__label">
+							Название трека<span className="upload-track__required">*</span>
 						</label>
 						<input
 							type="text"
-							className="upload__input"
+							className="upload-track__input"
 							{...register('title')}
 							id="titleInput"
 							autoComplete="off"
 						/>
-						{errors.title && <p className="upload__error">{errors.title.message}</p>}
+						{errors.title && <p className="upload-track__error">{errors.title.message}</p>}
 					</div>
-					<div className="upload__field">
-						<label htmlFor="artistInput" className="upload__label">
-							Автор<span className="upload__required">*</span>
+					<div className="upload-track__field">
+						<label htmlFor="artistInput" className="upload-track__label">
+							Автор<span className="upload-track__required">*</span>
 						</label>
 						<input
 							type="text"
-							className="upload__input"
+							className="upload-track__input"
 							{...register('artist')}
 							id="artistInput"
 							autoComplete="off"
 						/>
-						{errors.artist && <p className="upload__error">{errors.artist.message}</p>}
+						{errors.artist && <p className="upload-track__error">{errors.artist.message}</p>}
 					</div>
-					<div className="upload__field">
-						<label htmlFor="audioFileInput" className="upload__label">
-							Трек<span className="upload__required">*</span>
+					<div className="upload-track__field">
+						<label htmlFor="audioFileInput" className="upload-track__label">
+							Трек<span className="upload-track__required">*</span>
 						</label>
 						<label
-							className={`upload__dropzone${audioFileName ? ' upload__dropzone--filled' : ''}`}
+							className={`upload-track__dropzone${audioFileName ? ' upload-track__dropzone--filled' : ''}`}
 							htmlFor="audioFileInput"
 						>
-							<svg className="upload__dropzone-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<svg className="upload-track__dropzone-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
 								<path d="M12 16V4M12 4l-4 4M12 4l4 4" strokeLinecap="round" strokeLinejoin="round" />
 								<path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" strokeLinecap="round" strokeLinejoin="round" />
 							</svg>
-							<span className="upload__dropzone-text">
+							<span className="upload-track__dropzone-text">
 								{audioFileName || 'Нажмите, чтобы выбрать аудиофайл'}
 							</span>
 							<input
 								type="file"
-								className="upload__file-input"
+								className="upload-track__file-input"
 								{...register('audioFile', {
 									onChange: (e) => setAudioFileName(e.target.files?.[0]?.name ?? ''),
 								})}
@@ -105,24 +105,24 @@ const Upload = (props: UploadProps) => {
 								accept={AUDIO_MIME_TYPES.join(',')}
 							/>
 						</label>
-						{errors.audioFile && <p className="upload__error">{errors.audioFile.message}</p>}
+						{errors.audioFile && <p className="upload-track__error">{errors.audioFile.message}</p>}
 					</div>
-					<div className="upload__field">
-						<label htmlFor="coverFileInput" className="upload__label">Обложка</label>
+					<div className="upload-track__field">
+						<label htmlFor="coverFileInput" className="upload-track__label">Обложка</label>
 						<label
-							className={`upload__dropzone${coverFileName ? ' upload__dropzone--filled' : ''}`}
+							className={`upload-track__dropzone${coverFileName ? ' upload-track__dropzone--filled' : ''}`}
 							htmlFor="coverFileInput"
 						>
-							<svg className="upload__dropzone-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<svg className="upload-track__dropzone-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
 								<path d="M12 16V4M12 4l-4 4M12 4l4 4" strokeLinecap="round" strokeLinejoin="round" />
 								<path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" strokeLinecap="round" strokeLinejoin="round" />
 							</svg>
-							<span className="upload__dropzone-text">
+							<span className="upload-track__dropzone-text">
 								{coverFileName || 'Нажмите, чтобы выбрать обложку'}
 							</span>
 							<input
 								type="file"
-								className="upload__file-input"
+								className="upload-track__file-input"
 								{...register('coverFile', {
 									onChange: (e) => setCoverFileName(e.target.files?.[0]?.name ?? ''),
 								})}
@@ -130,14 +130,14 @@ const Upload = (props: UploadProps) => {
 								accept={IMAGE_MIME_TYPES.join(',')}
 							/>
 						</label>
-						{errors.coverFile && <p className="upload__error">{errors.coverFile.message}</p>}
+						{errors.coverFile && <p className="upload-track__error">{errors.coverFile.message}</p>}
 					</div>
-					<button className="upload__submit-button" type="submit" disabled={isPending}>{isPending ? "Загружаем трек" : "Загрузить трек"}</button>
+					<button className="upload-track__submit-button" type="submit" disabled={isPending}>{isPending ? "Загружаем трек" : "Загрузить трек"}</button>
 				</form>
-				{serverError && <p className="upload__error">{serverError}</p>}
+				{serverError && <p className="upload-track__error">{serverError}</p>}
 			</div>
 		</section>
 	)
 }
 
-export default Upload
+export default UploadTrack

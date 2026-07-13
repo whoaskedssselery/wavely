@@ -11,7 +11,7 @@ export interface Track {
 	created_at: string
 }
 
-export interface UploadTracksParams {
+export interface UploadTrackParams {
 	data: TrackForm
 	userId: string
 }
