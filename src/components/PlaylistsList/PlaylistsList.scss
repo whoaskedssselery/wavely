@@ -24,7 +24,7 @@
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     padding: $spacing-xs $spacing-xs $spacing-sm;
-    margin: -$spacing-xs -$spacing-xs 0;
+    margin: -$spacing-xs (-$spacing-xs) 0;
 
     &::-webkit-scrollbar {
       height: 6px;
