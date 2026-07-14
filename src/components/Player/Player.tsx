@@ -13,6 +13,7 @@ const Player = () => {
 		progress,
 		setProgress,
 		setVolume,
+		setIsPlaying,
 		togglePlay
 	} = usePlayerStore()
 	
@@ -36,7 +37,7 @@ const Player = () => {
 		if (!audioRef.current) return
 		
 		if (isPlaying) {
-			audioRef.current.play()
+			audioRef.current.play().catch(() => setIsPlaying(false))
 		} else {
 			audioRef.current.pause()
 		}

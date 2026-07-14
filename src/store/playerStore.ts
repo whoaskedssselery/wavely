@@ -11,6 +11,7 @@ interface PlayerStore {
 	togglePlay: () => void
 	setProgress: (progress: number) => void
 	setVolume: (volume: number) => void
+	setIsPlaying: (isPlaying: boolean) => void
 }
 
 export const usePlayerStore = create<PlayerStore>()(
@@ -25,6 +26,7 @@ export const usePlayerStore = create<PlayerStore>()(
 		})),
 		setProgress: (currentProgress: number) => { set({ progress: currentProgress })},
 		setVolume: (volume: number) => { set({ volume: volume })},
+		setIsPlaying: (isPlaying: boolean) => { set({ isPlaying })},
 	}),
 		{
 			name: 'player-store',
