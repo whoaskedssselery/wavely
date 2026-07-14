@@ -86,3 +86,16 @@ const cleanupUploadedFiles = async (audioPath: string, coverPath: string | null)
 		if (coverCleanupError) console.error('Не получилось удалить обложку трека:', coverCleanupError)
 	}
 }
+
+export const getTrackAudioUrl = async (audioPath: string): Promise<string> => {
+	const { data, error: getUrlError } = await supabase
+		.storage
+		.from('audio')
+		.createSignedUrl(audioPath, 3600)
+	
+	if (getUrlError) {
+		throw getUrlError
+	}
+	
+	return data.signedUrl
+}
