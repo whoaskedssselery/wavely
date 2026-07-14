@@ -1,0 +1,316 @@
+@use '@/styles/helpers' as *;
+
+.player {
+  @include flex(column, stretch, flex-start, $spacing-md);
+  position: fixed;
+  left: 50%;
+  bottom: $spacing-lg;
+  transform: translateX(-50%);
+  width: calc(100% - #{$spacing-xl * 2});
+  max-width: 800px;
+  z-index: 50;
+  padding: $spacing-md;
+  background-color: $color-bg-elevated;
+  border-radius: $border-radius-lg;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+
+  &__audio {
+    @include visually-hidden;
+  }
+
+  &__row {
+    @include flex(row, center, space-between, $spacing-lg);
+  }
+
+  &__progress {
+    position: relative;
+    height: 8px;
+  }
+
+  &__seek-input {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    display: block;
+    appearance: none;
+    border-radius: $border-radius-full;
+    background: linear-gradient(
+      to right,
+      $color-accent var(--progress, 0%),
+      $color-border var(--progress, 0%)
+    );
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: $border-radius-full;
+      background-color: $color-text-primary;
+      opacity: 0;
+      transition: opacity $transition-fast;
+    }
+
+    &::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: $border-radius-full;
+      background-color: $color-text-primary;
+      border: none;
+      opacity: 0;
+      transition: opacity $transition-fast;
+    }
+
+    &::-moz-range-track {
+      background: transparent;
+      border-radius: $border-radius-full;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    @include hover {
+      &::-webkit-slider-thumb {
+        opacity: 1;
+      }
+
+      &::-moz-range-thumb {
+        opacity: 1;
+      }
+    }
+
+    &:active,
+    &:focus {
+      &::-webkit-slider-thumb {
+        opacity: 1;
+      }
+
+      &::-moz-range-thumb {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__progress-tooltip {
+    position: absolute;
+    bottom: calc(100% + #{$spacing-sm});
+    transform: translateX(-50%);
+    padding: 2px $spacing-sm;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-xs;
+    color: $color-text-primary;
+    white-space: nowrap;
+    pointer-events: none;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__meta {
+    @include flex(row, center, flex-start, $spacing-md);
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  &__logo {
+    flex-shrink: 0;
+    width: 45px;
+    height: 45px;
+    border-radius: $border-radius-sm;
+    object-fit: cover;
+
+    &--placeholder {
+      color: $color-text-muted;
+      background-color: $color-bg-surface;
+      padding: 5px;
+    }
+  }
+
+  &__info {
+    @include flex(column, start, center, 0);
+    min-width: 0;
+    text-align: center;
+  }
+
+  &__title {
+    font-size: $font-size-md;
+    font-weight: 600;
+    color: $color-text-primary;
+    @include truncate;
+  }
+
+  &__artist {
+    display: block;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    @include truncate;
+  }
+
+  &__controls {
+    @include flex(row, center, center, $spacing-xs);
+    flex: 2 1 0;
+  }
+
+  &__prev-button,
+  &__next-button {
+    @include flex(row, center, center);
+    padding: $spacing-xs;
+    color: $color-text-secondary;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color $transition-fast;
+
+    svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    @include hover {
+      color: $color-text-primary;
+    }
+  }
+
+  &__play-button {
+    @include flex(row, center, center);
+    padding: $spacing-xs;
+    color: $color-text-secondary;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color $transition-fast;
+
+    svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    @include hover {
+      color: $color-text-primary;
+    }
+  }
+
+  &__extra-buttons {
+    @include flex(row, center, flex-end, $spacing-md);
+    flex: 1 1 0;
+  }
+
+  &__shuffle-button,
+  &__repeat-button,
+  &__volume-button {
+    @include flex(row, center, center);
+    color: $color-text-secondary;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color $transition-fast;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    @include hover {
+      color: $color-text-primary;
+    }
+  }
+
+  &__volume {
+    position: relative;
+
+    @include hover {
+      .player__volume-popover {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  &__volume-popover {
+    @include flex(column, center, center);
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: $spacing-sm;
+    padding: $spacing-md $spacing-sm;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-md;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity $transition-fast, transform $transition-fast, visibility $transition-fast;
+  }
+
+  &__volume-track {
+    @include flex(row, center, center);
+    position: relative;
+    height: 90px;
+
+    .player__volume-slider:hover ~ .player__volume-tooltip,
+    .player__volume-slider:active ~ .player__volume-tooltip,
+    .player__volume-slider:focus ~ .player__volume-tooltip {
+      opacity: 1;
+    }
+  }
+
+  &__volume-slider {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 4px;
+    height: 100%;
+    margin: 0;
+    appearance: none;
+    border-radius: $border-radius-full;
+    background: linear-gradient(
+      to top,
+      $color-accent var(--volume, 0%),
+      $color-border var(--volume, 0%)
+    );
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: $border-radius-full;
+      background-color: $color-text-primary;
+    }
+
+    &::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: $border-radius-full;
+      background-color: $color-text-primary;
+      border: none;
+    }
+
+    &::-moz-range-track {
+      background: transparent;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__volume-tooltip {
+    position: absolute;
+    right: calc(100% + #{$spacing-md});
+    bottom: var(--volume, 0%);
+    transform: translateY(50%);
+    padding: 2px $spacing-sm;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-xs;
+    color: $color-text-primary;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity $transition-fast;
+    font-variant-numeric: tabular-nums;
+  }
+}
