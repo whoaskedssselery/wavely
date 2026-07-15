@@ -79,6 +79,10 @@
       .tracks-list__menu {
         opacity: 1;
       }
+
+      .tracks-list__pulse {
+        display: none;
+      }
     }
   }
 
@@ -100,6 +104,18 @@
       background-color: $color-bg-surface;
       padding: 5px;
     }
+  }
+
+  &__pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: $border-radius-full;
+    background-color: rgba(255, 255, 255, 0.85);
+    pointer-events: none;
+    animation: tracks-list-pulse 1s ease-in-out infinite;
   }
 
   &__play {
@@ -178,5 +194,16 @@
     @include hover {
       color: $color-text-primary;
     }
+  }
+}
+
+@keyframes tracks-list-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.3);
   }
 }
