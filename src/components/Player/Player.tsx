@@ -18,14 +18,19 @@ const Player = () => {
 	} = usePlayerStore()
 	
 	const audioRef = useRef<HTMLAudioElement>(null)
+	
 	const [seekHover, setSeekHover] = useState<{ percent: number; time: number } | null>(null)
-
+	const [isTrackReady, setIsTrackReady] = useState(false)
+	
 	useEffect(() => {
 		if (!currentTrack) return
 		
 		const loadTrack = async () => {
 			if (audioRef.current) {
+				setIsTrackReady(false)
 				audioRef.current.src = await getTrackAudioUrl(currentTrack.audio_path)
+				audioRef.current.currentTime = progress
+				setIsTrackReady(true)
 			}
 			return
 		}
@@ -36,12 +41,12 @@ const Player = () => {
 	useEffect(() => {
 		if (!audioRef.current) return
 		
-		if (isPlaying) {
+		if (isPlaying && isTrackReady) {
 			audioRef.current.play().catch(() => setIsPlaying(false))
 		} else {
 			audioRef.current.pause()
 		}
-	}, [isPlaying])
+	}, [isPlaying, isTrackReady])
 	
 	useEffect(() => {
 		if (!audioRef.current) return
