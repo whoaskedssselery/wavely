@@ -160,7 +160,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    transition: color $transition-fast;
+    transition: color $transition-fast, opacity $transition-fast;
 
     svg {
       width: 30px;
@@ -169,6 +169,12 @@
 
     @include hover {
       color: $color-text-primary;
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: default;
+      pointer-events: none;
     }
   }
 
@@ -200,6 +206,7 @@
   &__repeat-button,
   &__volume-button {
     @include flex(row, center, center);
+    position: relative;
     color: $color-text-secondary;
     background: none;
     border: none;
@@ -214,6 +221,30 @@
     @include hover {
       color: $color-text-primary;
     }
+  }
+
+  &__shuffle-button--active,
+  &__repeat-button--active {
+    color: $color-accent;
+
+    @include hover {
+      color: $color-accent-hover;
+    }
+  }
+
+  &__repeat-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 12px;
+    height: 12px;
+    border-radius: $border-radius-full;
+    background-color: $color-accent;
+    color: $color-bg;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 12px;
+    text-align: center;
   }
 
   &__volume {

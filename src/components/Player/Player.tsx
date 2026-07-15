@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState, type ChangeEvent, type CSSProperties, type MouseEvent } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { usePlayerStore } from '@/store/playerStore.ts'
 import { getTrackAudioUrl } from '@/api/tracks.ts'
-import { formatDuration } from '@/utils/formatDuration.ts'
+import { supabase } from '@/lib/supabase.ts'
+import PlayerSeekBar from './PlayerSeekBar.tsx'
 import './Player.scss'
-import {supabase} from '@/lib/supabase.ts'
 
 const Player = () => {
 	const {
@@ -11,20 +11,27 @@ const Player = () => {
 		isPlaying,
 		volume,
 		progress,
+		repeatMode,
+		shuffle,
+		shuffleHistoryIndex,
+		queueIndex,
 		setProgress,
 		setVolume,
 		setIsPlaying,
-		togglePlay
+		togglePlay,
+		playNext,
+		playPrev,
+		toggleShuffle,
+		cycleRepeatMode
 	} = usePlayerStore()
 	
 	const audioRef = useRef<HTMLAudioElement>(null)
-	
-	const [seekHover, setSeekHover] = useState<{ percent: number; time: number } | null>(null)
+
 	const [isTrackReady, setIsTrackReady] = useState(false)
-	
+
 	useEffect(() => {
 		if (!currentTrack) return
-		
+
 		const loadTrack = async () => {
 			if (audioRef.current) {
 				setIsTrackReady(false)
@@ -34,7 +41,7 @@ const Player = () => {
 			}
 			return
 		}
-		
+
 		loadTrack()
 	}, [currentTrack])
 	
@@ -52,29 +59,26 @@ const Player = () => {
 		if (!audioRef.current) return
 		audioRef.current.volume = volume
 	}, [volume])
+
+	useEffect(() => {
+		if (!isPlaying) return
+
+		const intervalId = setInterval(() => {
+			if (audioRef.current) {
+				setProgress(audioRef.current.currentTime)
+			}
+		}, 1000)
+
+		return () => clearInterval(intervalId)
+	}, [isPlaying])
 	
 	if (!currentTrack) return null
-
-	const handleSeek = (e: ChangeEvent<HTMLInputElement>) => {
-		const time = Number(e.target.value)
-		if (audioRef.current) {
-			audioRef.current.currentTime = time
-		}
-		setProgress(time)
-	}
 
 	const handleVolumeChange = (nextVolume: number) => {
 		setVolume(Math.min(1, Math.max(0, nextVolume)))
 	}
 
-	const handleSeekHover = (e: MouseEvent<HTMLInputElement>) => {
-		const rect = e.currentTarget.getBoundingClientRect()
-		const percent = Math.min(100, Math.max(0, ((e.clientX - rect.left) / rect.width) * 100))
-		const time = currentTrack.duration ? (percent / 100) * currentTrack.duration : 0
-		setSeekHover({ percent, time })
-	}
-
-	const progressPercent = currentTrack.duration ? (progress / currentTrack.duration) * 100 : 0
+	const canGoPrev = shuffle ? shuffleHistoryIndex > 0 : (repeatMode !== 'off' || queueIndex > 0)
 
 	return (
 		<section
@@ -83,9 +87,14 @@ const Player = () => {
 			<audio
 				className="player__audio"
 				ref={audioRef}
-				onTimeUpdate={() => {
+				onEnded={() => {
 					if (audioRef.current) {
-						setProgress(audioRef.current.currentTime)
+						if (repeatMode === 'one') {
+							audioRef.current.currentTime = 0
+							audioRef.current.play().catch(() => setIsPlaying(false))
+						} else {
+							playNext()
+						}
 					}
 				}}
 			/>
@@ -113,8 +122,9 @@ const Player = () => {
 				<button
 					type="button"
 					className="player__prev-button"
-					onClick={() => console.log("Нужен метод для пред трека")}
+					onClick={playPrev}
 					aria-label="Предыдущий трек"
+					disabled={!canGoPrev}
 				>
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
 						<path d="M6 6h2v12H6zM20 6L9 12l11 6z" />
@@ -139,7 +149,7 @@ const Player = () => {
 				<button
 					type="button"
 					className="player__next-button"
-					onClick={() => console.log("Нужен метод для некст трека")}
+					onClick={() => playNext(true)}
 					aria-label="Следующий трек"
 				>
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -148,15 +158,26 @@ const Player = () => {
 				</button>
 			</div>
 			<div className="player__extra-buttons">
-				<button type="button" className="player__shuffle-button" aria-label="Перемешать">
+				<button
+					type="button"
+					className={`player__shuffle-button ${shuffle ? 'player__shuffle-button--active' : ''}`}
+					aria-label="Перемешать"
+					onClick={toggleShuffle}
+				>
 					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
 						<path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
 					</svg>
 				</button>
-				<button type="button" className="player__repeat-button" aria-label="Повтор">
+				<button
+					type="button"
+					className={`player__repeat-button ${repeatMode !== 'off' ? 'player__repeat-button--active' : ''}`}
+					aria-label="Повтор"
+					onClick={cycleRepeatMode}
+				>
 					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
 						<path d="M17 2l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3" />
 					</svg>
+					{repeatMode === 'one' && <span className="player__repeat-badge">1</span>}
 				</button>
 				<div className="player__volume">
 					<button type="button" className="player__volume-button" aria-label="Громкость">
@@ -185,28 +206,14 @@ const Player = () => {
 				</div>
 			</div>
 			</div>
-			<div className="player__progress">
-				<input
-					type="range"
-					className="player__seek-input"
-					min={0}
-					max={currentTrack.duration ?? 0}
-					step={1}
-					value={progress}
-					onChange={handleSeek}
-					onMouseMove={handleSeekHover}
-					onMouseLeave={() => setSeekHover(null)}
-					style={{ '--progress': `${progressPercent}%` } as CSSProperties}
-				/>
-				{seekHover && (
-					<span
-						className="player__progress-tooltip"
-						style={{ left: `${seekHover.percent}%` }}
-					>
-						{formatDuration(Math.round(seekHover.time))}
-					</span>
-				)}
-			</div>
+			<PlayerSeekBar
+				audioRef={audioRef}
+				isPlaying={isPlaying}
+				duration={currentTrack.duration}
+				initialProgress={progress}
+				trackId={currentTrack.id}
+				onSeek={setProgress}
+			/>
 		</section>
 	)
 }
