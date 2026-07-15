@@ -20,7 +20,7 @@ export const usePlayerStore = create<PlayerStore>()(
 		isPlaying: false,
 		progress: 0,
 		volume: 1,
-		playTrack: (track: Track) => { set({ currentTrack: track, isPlaying: true })},
+		playTrack: (track: Track) => { set({ currentTrack: track, isPlaying: true, progress: 0 })},
 		togglePlay: () => set((state) => ({
 			isPlaying: !state.isPlaying,
 		})),
