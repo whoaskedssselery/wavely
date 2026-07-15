@@ -5,7 +5,7 @@ import { formatDuration } from '@/utils/formatDuration.ts'
 import { useAuthStore } from '@/store/authStore.ts'
 import { usePlayerStore } from '@/store/playerStore.ts'
 import type { Track } from '@/types/tracks.ts'
-import type { MouseEvent } from 'react'
+import { useEffect, useRef, type MouseEvent } from 'react'
 import './TracksList.scss'
 
 const TracksList = () => {
@@ -14,12 +14,17 @@ const TracksList = () => {
 		currentTrack,
 		isPlaying,
 		playTrack,
+		syncQueue,
 		togglePlay,
 	} = usePlayerStore()
+	const hasSyncedQueue = useRef(false)
 	
 	const onTrackClick = (track: Track) => {
 		if (currentTrack === null || currentTrack !== track) {
-			playTrack(track)
+			if (dataToView) {
+				const index = dataToView.findIndex(t => t.id === track.id)
+				playTrack(track, dataToView, index)
+			}
 		} else {
 			togglePlay()
 		}
@@ -35,7 +40,18 @@ const TracksList = () => {
 	})
 	
 	const dataToView = data?.slice(0, 8)
-	
+
+	useEffect(() => {
+		if (hasSyncedQueue.current) return
+		if (!dataToView || !currentTrack) return
+
+		const index = dataToView.findIndex(t => t.id === currentTrack.id)
+		if (index !== -1) {
+			syncQueue(dataToView, index)
+			hasSyncedQueue.current = true
+		}
+	}, [dataToView, currentTrack, syncQueue])
+
 	return (
 		<section
 			className={`tracks-list ${(dataToView?.length ?? 0) > 4 ? 'tracks-list--two-col' : ''}`}
