@@ -1,15 +1,28 @@
 import { useState } from 'react'
-import type {ActiveModal} from '@/types/utils.ts'
+import { useQuery } from '@tanstack/react-query'
+import { useAuthStore } from '@/store/authStore.ts'
+import { fetchTracks } from '@/api/tracks.ts'
 import Modal from '@/components/Modal'
 import TracksList from '@/components/TracksList'
 import CollectionHeader from '@/components/CollectionHeader'
 import UploadTrack from '@/components/UploadTrack'
 import CreatePlaylist from '@/components/CreatePlaylist'
 import PlaylistsList from '@/components/PlaylistsList'
+import type { ActiveModal } from '@/types/utils.ts'
 import './Home.scss'
 
 const Home = () => {
 	const [activeModal, setActiveModal] = useState<ActiveModal>(null)
+	
+	const { user } = useAuthStore()
+	
+	const { data, isLoading, error } = useQuery({
+		queryKey: ['tracks', user?.id],
+		queryFn: () => fetchTracks(user!.id),
+		enabled: !!user,
+	})
+	
+	const collectionData = data?.slice(0, 8)
 	
 	return (
 		<div
@@ -22,7 +35,7 @@ const Home = () => {
 				<CreatePlaylist onClose={() => setActiveModal(null)} />
 			</Modal>
 			<CollectionHeader onOpenModal={() => setActiveModal('upload-track')} />
-			<TracksList />
+			<TracksList tracks={collectionData ?? []} isLoading={isLoading} error={error} variant="collection" />
 			<PlaylistsList onCreatePlaylist={() => setActiveModal('create-playlist')} />
 		</div>
 	)

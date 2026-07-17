@@ -1,15 +1,18 @@
-import { useQuery } from '@tanstack/react-query'
-import { fetchTracks } from '@/api/tracks.ts'
-import { supabase } from '@/lib/supabase.ts'
-import { formatDuration } from '@/utils/formatDuration.ts'
-import { useAuthStore } from '@/store/authStore.ts'
-import { usePlayerStore } from '@/store/playerStore.ts'
-import type { Track } from '@/types/tracks.ts'
 import { useEffect, useRef, type MouseEvent } from 'react'
+import { usePlayerStore } from '@/store/playerStore.ts'
+import { formatDuration } from '@/utils/formatDuration.ts'
+import { supabase } from '@/lib/supabase.ts'
+import type {TracksListProps} from '@/types/utils.ts'
+import type { Track } from '@/types/tracks.ts'
 import './TracksList.scss'
 
-const TracksList = () => {
-	const { user } = useAuthStore()
+const TracksList = (props: TracksListProps) => {
+	const {
+		tracks,
+		isLoading,
+		error,
+	} = props
+	
 	const {
 		currentTrack,
 		isPlaying,
@@ -21,45 +24,34 @@ const TracksList = () => {
 	
 	const onTrackClick = (track: Track) => {
 		if (currentTrack === null || currentTrack !== track) {
-			if (dataToView) {
-				const index = dataToView.findIndex(t => t.id === track.id)
-				playTrack(track, dataToView, index)
+			if (tracks) {
+				const index = tracks.findIndex(t => t.id === track.id)
+				playTrack(track, tracks, index)
 			}
 		} else {
 			togglePlay()
 		}
 	}
-
-	if (!user) {
-		return null
-	}
-
-	const { data, isLoading, error } = useQuery({
-		queryKey: ['tracks', user.id],
-		queryFn: () => fetchTracks(user.id),
-	})
 	
-	const dataToView = data?.slice(0, 8)
-
 	useEffect(() => {
 		if (hasSyncedQueue.current) return
-		if (!dataToView || !currentTrack) return
-
-		const index = dataToView.findIndex(t => t.id === currentTrack.id)
+		if (!tracks || !currentTrack) return
+		
+		const index = tracks.findIndex(t => t.id === currentTrack.id)
 		if (index !== -1) {
-			syncQueue(dataToView, index)
+			syncQueue(tracks, index)
 			hasSyncedQueue.current = true
 		}
-	}, [dataToView, currentTrack, syncQueue])
+	}, [tracks, currentTrack, syncQueue])
 
 	return (
 		<section
-			className={`tracks-list ${(dataToView?.length ?? 0) > 4 ? 'tracks-list--two-col' : ''}`}
+			className={`tracks-list ${(tracks?.length ?? 0) > 4 ? 'tracks-list--two-col' : ''}`}
 		>
 			{isLoading && <p className="tracks-list__loading">Загружаем треки</p>}
 			{error && <p className="tracks-list__error">Не удалось загрузить данные</p>}
-			{dataToView && dataToView.length === 0 && <p className="tracks-list__warning">Вы не добавили еще ни одного трека</p>}
-			{dataToView && dataToView.map((track) => {
+			{tracks && tracks.length === 0 && <p className="tracks-list__warning">Вы не добавили еще ни одного трека</p>}
+			{tracks && tracks.map((track) => {
 				const isActive = currentTrack?.id === track.id && isPlaying
 
 				return (

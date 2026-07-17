@@ -11,17 +11,18 @@ const CollectionHeader = (props: CollectionHeaderProps) => {
 	} = props
 
 	const { user } = useAuthStore()
-
+	
+	const { data } = useQuery({
+		queryKey: ['tracks', user?.id],
+		queryFn: () => fetchTracks(user!.id),
+		enabled: !!user
+	})
+	
+	const trackCount = data?.length ?? 0
+	
 	if (!user) {
 		return null
 	}
-
-	const { data } = useQuery({
-		queryKey: ['tracks', user.id],
-		queryFn: () => fetchTracks(user.id),
-	})
-
-	const trackCount = data?.length ?? 0
 
 	return (
 		<SectionHeader
