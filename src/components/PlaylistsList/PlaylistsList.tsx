@@ -4,22 +4,24 @@ import { useAuthStore } from '@/store/authStore.ts'
 import { supabase } from '@/lib/supabase.ts'
 import type { PlaylistsListProps } from '@/types/utils.ts'
 import SectionHeader from '@/components/SectionHeader'
+import { Link } from 'react-router-dom'
 import { pluralize } from '@/utils/pluralize.ts'
 import './PlaylistsList.scss'
 
 const PlaylistsList = ({ onCreatePlaylist }: PlaylistsListProps) => {
 	const { user } = useAuthStore()
-
+	
+	const { data, isLoading, error } = useQuery({
+		queryKey: ['playlists', user?.id],
+		queryFn: () => fetchPlaylists(user!.id),
+		enabled: !!user,
+	})
+	
+	const playlistCount = data?.length ?? 0
+	
 	if (!user) {
 		return null
 	}
-
-	const { data, isLoading, error } = useQuery({
-		queryKey: ['playlists', user.id],
-		queryFn: () => fetchPlaylists(user.id),
-	})
-
-	const playlistCount = data?.length ?? 0
 
 	return (
 		<section className="playlists-list">
@@ -39,7 +41,7 @@ const PlaylistsList = ({ onCreatePlaylist }: PlaylistsListProps) => {
 			{data && data.length > 0 && (
 				<div className="playlists-list__track">
 					{data.map((playlist) => (
-						<div className="playlists-list__card" key={playlist.id}>
+						<Link className="playlists-list__card" to={`/playlists/${playlist.id}`} key={playlist.id}>
 							{playlist.cover_path ? (
 								<img
 									className="playlists-list__image"
@@ -58,7 +60,7 @@ const PlaylistsList = ({ onCreatePlaylist }: PlaylistsListProps) => {
 								</svg>
 							)}
 							<span className="playlists-list__card-title">{playlist.title}</span>
-						</div>
+						</Link>
 					))}
 				</div>
 			)}
