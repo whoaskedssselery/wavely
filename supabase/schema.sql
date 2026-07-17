@@ -28,7 +28,11 @@ CREATE TABLE IF NOT EXISTS playlists (
 CREATE TABLE IF NOT EXISTS playlist_tracks (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     playlist_id UUID NOT NULL REFERENCES playlists(id) ON DELETE CASCADE,
-    track_id UUID REFERENCES tracks(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    artist TEXT,
+    duration INTEGER,
+    audio_path TEXT NOT NULL,
+    cover_path TEXT,
     position INTEGER NOT NULL,
     added_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );

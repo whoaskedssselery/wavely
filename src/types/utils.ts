@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type {Track} from '@/types/tracks.ts'
+import type { PlayableTrack } from '@/types/tracks.ts'
 
 export type ActiveModal = 'upload-track' | 'create-playlist' | null
 
@@ -29,7 +29,7 @@ export interface SectionHeaderProps {
 }
 
 export interface TracksListProps {
-	tracks: Track[]
+	tracks: PlayableTrack[]
 	isLoading: boolean
 	error: Error | null
 	variant: 'collection' | 'playlist'

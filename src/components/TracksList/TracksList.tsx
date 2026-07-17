@@ -2,8 +2,8 @@ import { useEffect, useRef, type MouseEvent } from 'react'
 import { usePlayerStore } from '@/store/playerStore.ts'
 import { formatDuration } from '@/utils/formatDuration.ts'
 import { supabase } from '@/lib/supabase.ts'
-import type {TracksListProps} from '@/types/utils.ts'
-import type { Track } from '@/types/tracks.ts'
+import type { TracksListProps } from '@/types/utils.ts'
+import type { PlayableTrack } from '@/types/tracks.ts'
 import './TracksList.scss'
 
 const TracksList = (props: TracksListProps) => {
@@ -22,7 +22,7 @@ const TracksList = (props: TracksListProps) => {
 	} = usePlayerStore()
 	const hasSyncedQueue = useRef(false)
 	
-	const onTrackClick = (track: Track) => {
+	const onTrackClick = (track: PlayableTrack) => {
 		if (currentTrack === null || currentTrack !== track) {
 			if (tracks) {
 				const index = tracks.findIndex(t => t.id === track.id)

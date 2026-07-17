@@ -1,20 +1,20 @@
 import { create } from 'zustand/react'
 import { persist } from 'zustand/middleware'
-import type { Track } from '@/types/tracks.ts'
+import type { PlayableTrack } from '@/types/tracks.ts'
 
 interface PlayerStore {
-	currentTrack: Track | null
+	currentTrack: PlayableTrack | null
 	isPlaying: boolean
 	progress: number
 	volume: number,
-	queue: Track[],
+	queue: PlayableTrack[],
 	queueIndex: number,
 	shuffle: boolean,
-	shuffleHistory: Track[],
+	shuffleHistory: PlayableTrack[],
 	shuffleHistoryIndex: number,
 	repeatMode: 'off' | 'all' | 'one',
-	playTrack: (track: Track, queue: Track[], queueIndex: number) => void
-	syncQueue: (queue: Track[], queueIndex: number) => void
+	playTrack: (track: PlayableTrack, queue: PlayableTrack[], queueIndex: number) => void
+	syncQueue: (queue: PlayableTrack[], queueIndex: number) => void
 	togglePlay: () => void
 	setProgress: (progress: number) => void
 	setVolume: (volume: number) => void
@@ -37,10 +37,10 @@ export const usePlayerStore = create<PlayerStore>()(
 		shuffleHistory: [],
 		shuffleHistoryIndex: 0,
 		repeatMode: 'off',
-		playTrack: (track: Track, queue: Track[], queueIndex: number) => {
+		playTrack: (track: PlayableTrack, queue: PlayableTrack[], queueIndex: number) => {
 			set({ currentTrack: track, isPlaying: true, progress: 0, queue, queueIndex })
 		},
-		syncQueue: (queue: Track[], queueIndex: number) => { set({ queue, queueIndex })},
+		syncQueue: (queue: PlayableTrack[], queueIndex: number) => { set({ queue, queueIndex })},
 		togglePlay: () => set((state) => ({
 			isPlaying: !state.isPlaying,
 		})),

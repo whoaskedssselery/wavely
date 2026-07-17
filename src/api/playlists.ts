@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase.ts'
-import { type Playlist, type UploadPlaylistParams } from '@/types/playlists.ts'
+import { type Playlist, type UploadPlaylistParams, type PlaylistTrack } from '@/types/playlists.ts'
 
 export const fetchPlaylists = async ( userId: string ): Promise<Playlist[]> => {
 	const { data: fetchData, error: fetchError } = await supabase
@@ -7,6 +7,33 @@ export const fetchPlaylists = async ( userId: string ): Promise<Playlist[]> => {
 		.select('*')
 		.eq('user_id', userId)
 		.order('created_at', { ascending: false })
+	
+	if (fetchError) {
+		throw fetchError
+	}
+	
+	return fetchData
+}
+
+export const fetchPlaylist = async (playlistId: string): Promise<Playlist> => {
+	const { data: fetchData, error: fetchError } = await supabase
+	.from('playlists')
+	.select('*')
+	.eq('id', playlistId)
+	
+	if (fetchError) {
+		throw fetchError
+	}
+	
+	return fetchData[0]
+}
+
+export const fetchPlaylistTracks = async (playlistId: string): Promise<PlaylistTrack[]> => {
+	const { data: fetchData, error: fetchError } = await supabase
+		.from('playlist_tracks')
+		.select('*')
+		.eq('playlist_id', playlistId )
+		.order('position', { ascending: false })
 	
 	if (fetchError) {
 		throw fetchError
