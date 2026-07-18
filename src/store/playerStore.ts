@@ -15,6 +15,7 @@ interface PlayerStore {
 	repeatMode: 'off' | 'all' | 'one',
 	playTrack: (track: PlayableTrack, queue: PlayableTrack[], queueIndex: number) => void
 	syncQueue: (queue: PlayableTrack[], queueIndex: number) => void
+	resyncShuffleHistory: () => void
 	togglePlay: () => void
 	setProgress: (progress: number) => void
 	setVolume: (volume: number) => void
@@ -41,6 +42,10 @@ export const usePlayerStore = create<PlayerStore>()(
 			set({ currentTrack: track, isPlaying: true, progress: 0, queue, queueIndex })
 		},
 		syncQueue: (queue: PlayableTrack[], queueIndex: number) => { set({ queue, queueIndex })},
+		resyncShuffleHistory: () => set((state) => {
+			if (!state.shuffle || !state.currentTrack) return {}
+			return { shuffleHistory: [state.currentTrack], shuffleHistoryIndex: 0 }
+		}),
 		togglePlay: () => set((state) => ({
 			isPlaying: !state.isPlaying,
 		})),
@@ -141,6 +146,8 @@ export const usePlayerStore = create<PlayerStore>()(
 				currentTrack: state.currentTrack,
 				progress: state.progress,
 				volume: state.volume,
+				shuffle: state.shuffle,
+				repeatMode: state.repeatMode
 			})
 		}
 		)
