@@ -1,12 +1,13 @@
 import { type MouseEvent } from 'react'
 import type { PlayableTrack } from '@/types/tracks.ts'
+import type { ReactNode } from 'react'
 
 export type ActiveModal = 'upload-track' | 'create-playlist' | null
 
 export interface ModalProps {
 	isOpen: boolean
 	onClose: () => void
-	children: React.ReactNode
+	children: ReactNode
 }
 
 export interface UploadProps {
