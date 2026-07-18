@@ -84,6 +84,31 @@
         display: none;
       }
     }
+
+    &--menu-open {
+      background-color: $color-bg-elevated;
+
+      .tracks-list__duration {
+        opacity: 0;
+      }
+
+      .tracks-list__menu {
+        opacity: 1;
+      }
+
+      .tracks-list__pulse {
+        display: none;
+      }
+    }
+  }
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 15;
+    background: none;
+    border: none;
+    cursor: default;
   }
 
   &__image-wrap {

@@ -1,16 +1,22 @@
-import { useEffect, useRef, type MouseEvent } from 'react'
+import {useEffect, useRef, type MouseEvent, useState } from 'react'
 import { usePlayerStore } from '@/store/playerStore.ts'
 import { formatDuration } from '@/utils/formatDuration.ts'
 import { supabase } from '@/lib/supabase.ts'
-import type { TracksListProps } from '@/types/utils.ts'
+import type { ActiveTrackModal, TracksListProps} from '@/types/utils.ts'
 import type { PlayableTrack } from '@/types/tracks.ts'
 import './TracksList.scss'
+import TrackMenu from '@/components/TrackMenu'
+import Modal from '@/components/Modal'
+import DeleteTrack from '@/components/DeleteTrack'
+import AddToPlaylist from '@/components/AddToPlaylist'
 
 const TracksList = (props: TracksListProps) => {
 	const {
 		tracks,
 		isLoading,
 		error,
+		variant,
+		playlistId
 	} = props
 	
 	const {
@@ -18,8 +24,13 @@ const TracksList = (props: TracksListProps) => {
 		isPlaying,
 		playTrack,
 		syncQueue,
+		resyncShuffleHistory,
 		togglePlay,
 	} = usePlayerStore()
+	
+	const [openMenuTrackId, setOpenMenuTrackId] = useState<string>()
+	const [activeTrackModal, setActiveTrackModal] = useState<ActiveTrackModal>()
+	
 	const hasSyncedQueue = useRef(false)
 	
 	const onTrackClick = (track: PlayableTrack) => {
@@ -33,6 +44,37 @@ const TracksList = (props: TracksListProps) => {
 		}
 	}
 	
+	const onDeleted = () => {
+		setOpenMenuTrackId(undefined)
+		setActiveTrackModal(undefined)
+	}
+
+	const onAdded = () => {
+		setOpenMenuTrackId(undefined)
+		setActiveTrackModal(undefined)
+	}
+	
+	const handleMenu = (event: MouseEvent, trackId: string) => {
+		event.stopPropagation()
+		
+		if (trackId === openMenuTrackId) {
+			setOpenMenuTrackId(undefined)
+		} else {
+			setOpenMenuTrackId(trackId)
+		}
+	}
+	
+	const handleEscape = (event: KeyboardEvent) => {
+		if (event.key === 'Escape') {
+			setOpenMenuTrackId(undefined)
+		}
+	}
+	
+	const onMenuClick = (event: MouseEvent, type: 'delete' | 'add-to-playlist', track: PlayableTrack) => {
+		event.stopPropagation()
+		setActiveTrackModal({type, track})
+	}
+	
 	useEffect(() => {
 		if (hasSyncedQueue.current) return
 		if (!tracks || !currentTrack) return
@@ -41,13 +83,26 @@ const TracksList = (props: TracksListProps) => {
 		if (index !== -1) {
 			syncQueue(tracks, index)
 			hasSyncedQueue.current = true
+			resyncShuffleHistory()
 		}
-	}, [tracks, currentTrack, syncQueue])
+	}, [tracks, currentTrack, syncQueue, resyncShuffleHistory])
+	
+	useEffect(() => {
+		if (!openMenuTrackId) return
+		
+		document.addEventListener('keydown', handleEscape)
+		
+		return () => document.removeEventListener('keydown', handleEscape)
+	}, [openMenuTrackId])
 
 	return (
+		<>
 		<section
 			className={`tracks-list ${(tracks?.length ?? 0) > 4 ? 'tracks-list--two-col' : ''}`}
 		>
+			{openMenuTrackId && (
+				<div className="tracks-list__overlay" onClick={() => setOpenMenuTrackId(undefined)} />
+			)}
 			{isLoading && <p className="tracks-list__loading">Загружаем треки</p>}
 			{error && <p className="tracks-list__error">Не удалось загрузить данные</p>}
 			{tracks && tracks.length === 0 && <p className="tracks-list__warning">Вы не добавили еще ни одного трека</p>}
@@ -55,7 +110,7 @@ const TracksList = (props: TracksListProps) => {
 				const isActive = currentTrack?.id === track.id && isPlaying
 
 				return (
-				<div className="tracks-list__card"
+				<div className={`tracks-list__card ${openMenuTrackId === track.id ? 'tracks-list__card--menu-open' : ''}`}
 				     key={track.id}
 				     onClick={() => onTrackClick(track)
 				     }>
@@ -98,18 +153,51 @@ const TracksList = (props: TracksListProps) => {
 					<span className="tracks-list__artist">{track.artist}</span>
 					<div className="tracks-list__meta">
 						<span className="tracks-list__duration">{formatDuration(track.duration)}</span>
-						<button type="button" className="tracks-list__menu" aria-label="Меню трека">
+						<button
+							type="button"
+							className="tracks-list__menu"
+							aria-label="Меню трека"
+							onClick={(event) => handleMenu(event, track.id)}
+						>
 							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
 								<circle cx="3" cy="12" r="2.6" />
 								<circle cx="12" cy="12" r="2.6" />
 								<circle cx="21" cy="12" r="2.6" />
 							</svg>
 						</button>
+						{openMenuTrackId === track.id && (
+							<TrackMenu
+								variant={variant}
+								onDelete={(event) => onMenuClick(event, 'delete', track)}
+								onAddToPlaylist={(event) => onMenuClick(event, 'add-to-playlist', track)}
+							/>
+						)}
 					</div>
 				</div>
 				)
 			})}
 		</section>
+		<Modal isOpen={activeTrackModal?.type === 'delete'} onClose={() => setActiveTrackModal(undefined)}>
+			{activeTrackModal && (
+				<DeleteTrack
+					track={activeTrackModal.track}
+					variant={variant}
+					playlistId={playlistId}
+					onClose={() => setActiveTrackModal(undefined)}
+					onDeleted={onDeleted}
+				/>
+			)}
+		</Modal>
+		<Modal isOpen={activeTrackModal?.type === 'add-to-playlist'} onClose={() => setActiveTrackModal(undefined)}>
+			{activeTrackModal && (
+				<AddToPlaylist
+					track={activeTrackModal.track}
+					onClose={() => setActiveTrackModal(undefined)}
+					onAdded={onAdded}
+				/>
+			)}
+		</Modal>
+		</>
 	)
 }
 

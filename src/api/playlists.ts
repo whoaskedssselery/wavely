@@ -1,5 +1,7 @@
 import { supabase } from '@/lib/supabase.ts'
 import { type Playlist, type UploadPlaylistParams, type PlaylistTrack } from '@/types/playlists.ts'
+import type { PlayableTrack } from '@/types/tracks.ts'
+import {removeFileIfUnused} from '@/api/storage.ts'
 
 export const fetchPlaylists = async ( userId: string ): Promise<Playlist[]> => {
 	const { data: fetchData, error: fetchError } = await supabase
@@ -73,6 +75,63 @@ export const uploadPlaylist = async ({ data, userId }: UploadPlaylistParams ): P
 		await cleanupUploadedFiles(coverPath)
 		throw submitError
 	}
+}
+
+export const addTrackToPlaylist = async (data: PlayableTrack, playlistId: string): Promise<void> => {
+	const { data: maxData, error: maxDataError } = await supabase
+		.from('playlist_tracks')
+		.select('position')
+		.eq('playlist_id', playlistId)
+		.order('position', { ascending: false })
+		.limit(1)
+	
+	if (maxDataError) {
+		throw maxDataError
+	}
+	
+	const { error: uploadError } = await supabase
+		.from('playlist_tracks')
+		.insert({
+			playlist_id: playlistId,
+			title: data.title,
+			artist: data.artist,
+			duration: data.duration,
+			audio_path: data.audio_path,
+			cover_path: data.cover_path,
+			position: maxData[0] ? maxData[0].position + 1 : 1
+		})
+	
+	if (uploadError) {
+		throw uploadError
+	}
+}
+
+export const removeTrackFromPlaylist = async (playlistTrackId: string): Promise<void> => {
+	const { data: removeData, error: removeError } = await supabase
+	.from('playlist_tracks')
+	.delete()
+	.eq('id', playlistTrackId)
+	.select()
+	
+	if (removeError) {
+		throw removeError
+	}
+	
+	await removeFileIfUnused('audio', removeData[0].audio_path)
+	await removeFileIfUnused('covers', removeData[0].cover_path)
+}
+
+export const fetchPlaylistIdsWithTrack = async (audioPath: string): Promise<string[]> => {
+	const { data: fetchData, error: fetchError } = await supabase
+		.from('playlist_tracks')
+		.select('playlist_id')
+		.eq('audio_path', audioPath)
+	
+	if (fetchError) {
+		throw fetchError
+	}
+	
+	return fetchData.map(row => row.playlist_id)
 }
 
 const cleanupUploadedFiles = async (coverPath: string | null) => {
