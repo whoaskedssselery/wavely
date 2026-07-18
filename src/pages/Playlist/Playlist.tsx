@@ -2,15 +2,18 @@ import { useQuery } from '@tanstack/react-query'
 import './Playlist.scss'
 import { useAuthStore } from '@/store/authStore.ts'
 import { fetchPlaylist, fetchPlaylistTracks } from '@/api/playlists.ts'
-import { Link, useParams } from 'react-router-dom'
+import {Link, useNavigate, useParams} from 'react-router-dom'
 import TracksList from '@/components/TracksList'
 import { supabase } from '@/lib/supabase.ts'
 import { pluralize } from '@/utils/pluralize.ts'
+import {useEffect} from 'react'
 
 const Playlist = () => {
 	const { user } = useAuthStore()
 
 	const { playlistId } = useParams()
+	
+	const navigate = useNavigate()
 
 	const { data: playlistData, isLoading: isPlaylistLoading, error: playlistError } = useQuery({
 		queryKey: ['playlist', playlistId],
@@ -29,6 +32,18 @@ const Playlist = () => {
 	}
 
 	const trackCount = tracks?.length ?? 0
+	
+	const handleEscape = (event: KeyboardEvent) => {
+		if (event.key === 'Escape') {
+			navigate('/')
+		}
+	}
+	
+	useEffect(() => {
+		window.addEventListener('keydown', handleEscape)
+		
+		return () => { window.removeEventListener('keydown', handleEscape) }
+	}, [navigate])
 
 	return (
 		<section className="playlist">
@@ -95,7 +110,7 @@ const Playlist = () => {
 				/>
 			</div>
 
-			<TracksList tracks={tracks ?? []} isLoading={isTracksLoading} error={tracksError} variant="playlist" />
+			<TracksList tracks={tracks ?? []} isLoading={isTracksLoading} error={tracksError} variant="playlist" playlistId={playlistId} />
 		</section>
 	)
 }
