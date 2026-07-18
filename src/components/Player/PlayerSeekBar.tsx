@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useRef, useState, type ChangeEvent, type MouseEvent, type RefObject } from 'react'
+import {
+	type ChangeEvent,
+	type MouseEvent,
+	type RefObject,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from 'react'
 import { formatDuration } from '@/utils/formatDuration.ts'
 
 interface PlayerSeekBarProps {
@@ -10,21 +18,31 @@ interface PlayerSeekBarProps {
 	onSeek: (time: number) => void
 }
 
-const PlayerSeekBar = ({ audioRef, isPlaying, duration, initialProgress, trackId, onSeek }: PlayerSeekBarProps) => {
+const PlayerSeekBar = ({
+	audioRef,
+	isPlaying,
+	duration,
+	initialProgress,
+	trackId,
+	onSeek,
+}: PlayerSeekBarProps) => {
 	const inputRef = useRef<HTMLInputElement>(null)
 	const isDraggingRef = useRef(false)
 	const [seekHover, setSeekHover] = useState<{ percent: number; time: number } | null>(null)
 
-	const applyVisual = useCallback((time: number) => {
-		const input = inputRef.current
-		if (!input) return
-		input.value = String(time)
-		input.style.setProperty('--progress', `${duration ? (time / duration) * 100 : 0}%`)
-	}, [duration])
+	const applyVisual = useCallback(
+		(time: number) => {
+			const input = inputRef.current
+			if (!input) return
+			input.value = String(time)
+			input.style.setProperty('--progress', `${duration ? (time / duration) * 100 : 0}%`)
+		},
+		[duration],
+	)
 
 	useEffect(() => {
 		applyVisual(initialProgress)
-	}, [trackId])
+	}, [trackId, applyVisual])
 
 	useEffect(() => {
 		if (!isPlaying) return
@@ -41,7 +59,8 @@ const PlayerSeekBar = ({ audioRef, isPlaying, duration, initialProgress, trackId
 					lastSyncAt = performance.now()
 				}
 
-				const canExtrapolate = !audio.paused && audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA
+				const canExtrapolate =
+					!audio.paused && audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA
 				const elapsed = canExtrapolate
 					? ((performance.now() - lastSyncAt) / 1000) * audio.playbackRate
 					: 0
@@ -106,10 +125,7 @@ const PlayerSeekBar = ({ audioRef, isPlaying, duration, initialProgress, trackId
 				onMouseLeave={() => setSeekHover(null)}
 			/>
 			{seekHover && (
-				<span
-					className="player__progress-tooltip"
-					style={{ left: `${seekHover.percent}%` }}
-				>
+				<span className="player__progress-tooltip" style={{ left: `${seekHover.percent}%` }}>
 					{formatDuration(Math.round(seekHover.time))}
 				</span>
 			)}

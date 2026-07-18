@@ -1,59 +1,57 @@
-import { trackSchema, type TrackForm, AUDIO_MIME_TYPES, IMAGE_MIME_TYPES } from '@/schemas/tracks.ts'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { useState } from 'react'
-import { useAuthStore } from '@/store/authStore.ts'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { uploadTrack } from '@/api/tracks.ts'
+import {
+	AUDIO_MIME_TYPES,
+	IMAGE_MIME_TYPES,
+	type TrackForm,
+	trackSchema,
+} from '@/schemas/tracks.ts'
+import { useAuthStore } from '@/store/authStore.ts'
 import type { UploadProps } from '@/types/utils.ts'
 import './UploadTrack.scss'
 
 const UploadTrack = (props: UploadProps) => {
-	const {
-		onClose,
-	} = props
-	
+	const { onClose } = props
+
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
 	} = useForm<TrackForm>({
 		mode: 'onBlur',
-		resolver: zodResolver(trackSchema)
+		resolver: zodResolver(trackSchema),
 	})
-	
+
 	const queryClient = useQueryClient()
 	const { user } = useAuthStore()
-	
+
 	const [serverError, setServerError] = useState<string | null>(null)
 	const [audioFileName, setAudioFileName] = useState('')
 	const [coverFileName, setCoverFileName] = useState('')
-	
-	if (!user) return null
-	
+
 	const { mutate, isPending } = useMutation({
-		mutationFn: (data: TrackForm) => uploadTrack({ data, userId: user.id }),
+		mutationFn: (data: TrackForm) => uploadTrack({ data, userId: user!.id }),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['tracks', user.id] })
+			queryClient.invalidateQueries({ queryKey: ['tracks', user!.id] })
 			onClose()
 		},
-		onError: error => setServerError(error.message),
+		onError: (error) => setServerError(error.message),
 	})
-	
+
+	if (!user) return null
+
 	const onSubmit = (data: TrackForm) => {
 		mutate(data)
 	}
-	
+
 	return (
-		<section
-			className="upload-track"
-		>
+		<section className="upload-track">
 			<div className="upload-track__card">
 				<h2 className="upload-track__title">Добавить трек</h2>
-				<form
-					className="upload-track__form"
-					onSubmit={handleSubmit(onSubmit)}
-				>
+				<form className="upload-track__form" onSubmit={handleSubmit(onSubmit)}>
 					<div className="upload-track__field">
 						<label htmlFor="titleInput" className="upload-track__label">
 							Название трека<span className="upload-track__required">*</span>
@@ -88,9 +86,26 @@ const UploadTrack = (props: UploadProps) => {
 							className={`upload-track__dropzone${audioFileName ? ' upload-track__dropzone--filled' : ''}`}
 							htmlFor="audioFileInput"
 						>
-							<svg className="upload-track__dropzone-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-								<path d="M12 16V4M12 4l-4 4M12 4l4 4" strokeLinecap="round" strokeLinejoin="round" />
-								<path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" strokeLinecap="round" strokeLinejoin="round" />
+							<svg
+								aria-hidden="true"
+								className="upload-track__dropzone-icon"
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+							>
+								<path
+									d="M12 16V4M12 4l-4 4M12 4l4 4"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								/>
+								<path
+									d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								/>
 							</svg>
 							<span className="upload-track__dropzone-text">
 								{audioFileName || 'Нажмите, чтобы выбрать аудиофайл'}
@@ -108,14 +123,33 @@ const UploadTrack = (props: UploadProps) => {
 						{errors.audioFile && <p className="upload-track__error">{errors.audioFile.message}</p>}
 					</div>
 					<div className="upload-track__field">
-						<label htmlFor="coverFileInput" className="upload-track__label">Обложка</label>
+						<label htmlFor="coverFileInput" className="upload-track__label">
+							Обложка
+						</label>
 						<label
 							className={`upload-track__dropzone${coverFileName ? ' upload-track__dropzone--filled' : ''}`}
 							htmlFor="coverFileInput"
 						>
-							<svg className="upload-track__dropzone-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-								<path d="M12 16V4M12 4l-4 4M12 4l4 4" strokeLinecap="round" strokeLinejoin="round" />
-								<path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" strokeLinecap="round" strokeLinejoin="round" />
+							<svg
+								aria-hidden="true"
+								className="upload-track__dropzone-icon"
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+							>
+								<path
+									d="M12 16V4M12 4l-4 4M12 4l4 4"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								/>
+								<path
+									d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								/>
 							</svg>
 							<span className="upload-track__dropzone-text">
 								{coverFileName || 'Нажмите, чтобы выбрать обложку'}
@@ -132,7 +166,9 @@ const UploadTrack = (props: UploadProps) => {
 						</label>
 						{errors.coverFile && <p className="upload-track__error">{errors.coverFile.message}</p>}
 					</div>
-					<button className="upload-track__submit-button" type="submit" disabled={isPending}>{isPending ? "Загружаем трек" : "Загрузить трек"}</button>
+					<button className="upload-track__submit-button" type="submit" disabled={isPending}>
+						{isPending ? 'Загружаем трек' : 'Загрузить трек'}
+					</button>
 				</form>
 				{serverError && <p className="upload-track__error">{serverError}</p>}
 			</div>

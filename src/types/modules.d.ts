@@ -1,1 +1,1 @@
-declare module '@a1rth/css-normalize';
+declare module '@a1rth/css-normalize'

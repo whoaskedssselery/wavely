@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/supabase.ts'
 import { useEffect } from 'react'
+import { supabase } from '@/lib/supabase.ts'
 import { useAuthStore } from '@/store/authStore.ts'
 
 const useAuthListener = () => {
@@ -10,7 +10,9 @@ const useAuthListener = () => {
 			setAuth(data.session?.user ?? null, data.session)
 		})
 
-		const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+		const {
+			data: { subscription },
+		} = supabase.auth.onAuthStateChange((event, session) => {
 			setAuth(session?.user ?? null, session)
 
 			if (event === 'SIGNED_IN' && window.location.href.includes('#')) {

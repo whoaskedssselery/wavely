@@ -6,11 +6,7 @@ const SectionHeader = ({ title, counterText, buttonText, onButtonClick }: Sectio
 		<div className="section-header">
 			<h2 className="section-header__title">{title}</h2>
 			<span className="section-header__counter">{counterText}</span>
-			<button
-				type="button"
-				className="section-header__button"
-				onClick={onButtonClick}
-			>
+			<button type="button" className="section-header__button" onClick={onButtonClick}>
 				{buttonText}
 			</button>
 		</div>

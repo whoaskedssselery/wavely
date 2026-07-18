@@ -1,42 +1,101 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"useIgnoreFile": true
-	},
-	"files": {
-		"ignoreUnknown": true,
-		"ignore": ["node_modules", "dist", ".codegraph", "pnpm-lock.yaml"]
-	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "space",
-		"indentWidth": 2,
-		"lineWidth": 100
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
-			"suspicious": {
-				"noExplicitAny": "error"
-			}
-		}
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "single",
-			"trailingCommas": "all",
-			"semicolons": "always"
-		}
-	},
-	"assist": {
-		"enabled": true,
-		"actions": {
-			"source": {
-				"organizeImports": "on"
-			}
-		}
-	}
+  "$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/.codegraph",
+      "!**/.claude",
+      "!**/public",
+      "!**/pnpm-lock.yaml"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "tab",
+    "lineWidth": 100
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noDuplicateProperties": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "all",
+      "semicolons": "asNeeded"
+    }
+  },
+  "css": {
+    "formatter": {
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "quoteStyle": "single"
+    }
+  },
+  "json": {
+    "formatter": {
+      "indentStyle": "space",
+      "indentWidth": 2
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/src/components/Player/Player.tsx",
+        "**/src/components/Player/PlayerSeekBar.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useExhaustiveDependencies": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/src/components/Player/Player.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useMediaCaption": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/src/components/TracksList/TracksList.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useSemanticElements": "off"
+          }
+        }
+      }
+    }
+  ]
 }

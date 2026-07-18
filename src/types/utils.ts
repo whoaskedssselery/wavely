@@ -1,6 +1,5 @@
-import { type MouseEvent } from 'react'
+import type { MouseEvent, ReactNode } from 'react'
 import type { PlayableTrack } from '@/types/tracks.ts'
-import type { ReactNode } from 'react'
 
 export type ActiveModal = 'upload-track' | 'create-playlist' | null
 
