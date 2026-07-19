@@ -1,14 +1,26 @@
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+	type ChangeEvent,
+	type KeyboardEvent as ReactKeyboardEvent,
+	useEffect,
+	useRef,
+	useState,
+} from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { fetchPlaylist, fetchPlaylistTracks } from '@/api/playlists.ts'
+import {
+	fetchPlaylist,
+	fetchPlaylistTracks,
+	updatePlaylistCover,
+	updatePlaylistDescription,
+	updatePlaylistTitle,
+} from '@/api/playlists.ts'
+import DeletePlaylist from '@/components/DeletePlaylist'
+import Modal from '@/components/Modal'
+import Popover from '@/components/Popover'
 import TracksList from '@/components/TracksList'
 import { supabase } from '@/lib/supabase.ts'
 import { useAuthStore } from '@/store/authStore.ts'
 import { pluralize } from '@/utils/pluralize.ts'
-import Popover from '@/components/Popover'
-import Modal from '@/components/Modal'
-import DeletePlaylist from '@/components/DeletePlaylist'
 import './Playlist.scss'
 
 const Playlist = () => {
@@ -17,6 +29,8 @@ const Playlist = () => {
 	const { playlistId } = useParams()
 
 	const navigate = useNavigate()
+
+	const queryClient = useQueryClient()
 
 	const {
 		data: playlistData,
@@ -41,8 +55,102 @@ const Playlist = () => {
 	const [isMenuOpen, setMenuOpen] = useState<boolean>(false)
 	const [isDeleteModalOpen, setDeleteModalOpen] = useState<boolean>(false)
 
+	const [isEditingTitle, setEditingTitle] = useState(false)
+	const [titleDraft, setTitleDraft] = useState('')
+
+	const [isEditingDescription, setEditingDescription] = useState(false)
+	const [descriptionDraft, setDescriptionDraft] = useState('')
+
 	const toggleMenu = () => {
 		setMenuOpen(!isMenuOpen)
+	}
+
+	const { mutate: mutateTitle } = useMutation({
+		mutationFn: (title: string) => updatePlaylistTitle(playlistId!, title),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['playlist', playlistId] })
+		},
+	})
+
+	const { mutate: mutateDescription } = useMutation({
+		mutationFn: (description: string) => updatePlaylistDescription(playlistId!, description),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['playlist', playlistId] })
+		},
+	})
+
+	const { mutate: mutateCover } = useMutation({
+		mutationFn: (coverFile: File) =>
+			updatePlaylistCover(playlistId!, user!.id, coverFile, playlistData?.cover_path ?? null),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['playlist', playlistId] })
+		},
+	})
+
+	const startEditingTitle = () => {
+		setTitleDraft(playlistData?.title ?? '')
+		setEditingTitle(true)
+	}
+
+	const saveTitle = () => {
+		setEditingTitle(false)
+		if (titleDraft !== (playlistData?.title ?? '')) {
+			mutateTitle(titleDraft)
+		}
+	}
+
+	const startEditingDescription = () => {
+		setDescriptionDraft(playlistData?.description ?? '')
+		setEditingDescription(true)
+	}
+
+	const saveDescription = () => {
+		setEditingDescription(false)
+		if (descriptionDraft !== (playlistData?.description ?? '')) {
+			mutateDescription(descriptionDraft)
+		}
+	}
+
+	const titleInputRef = useRef<HTMLInputElement>(null)
+	const descriptionRef = useRef<HTMLTextAreaElement>(null)
+	const coverInputRef = useRef<HTMLInputElement>(null)
+
+	useEffect(() => {
+		if (isEditingTitle) titleInputRef.current?.focus()
+	}, [isEditingTitle])
+
+	useEffect(() => {
+		if (isEditingDescription) descriptionRef.current?.focus()
+	}, [isEditingDescription])
+
+	const handleTitleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+		if (event.key === 'Escape') {
+			event.stopPropagation()
+			setEditingTitle(false)
+			return
+		}
+		if (event.key === 'Enter' && !event.shiftKey) {
+			event.preventDefault()
+			event.currentTarget.blur()
+		}
+	}
+
+	const handleDescriptionKeyDown = (event: ReactKeyboardEvent<HTMLTextAreaElement>) => {
+		if (event.key === 'Escape') {
+			event.stopPropagation()
+			setEditingDescription(false)
+			return
+		}
+		if (event.key === 'Enter' && !event.shiftKey) {
+			event.preventDefault()
+			event.currentTarget.blur()
+		}
+	}
+
+	const handleCoverChange = (event: ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files?.[0]
+		if (file) mutateCover(file)
+		event.target.value = ''
 	}
 
 	useEffect(() => {
@@ -91,7 +199,12 @@ const Playlist = () => {
 
 				{playlistData && (
 					<>
-						<div className="playlist__cover-wrap">
+						<button
+							type="button"
+							className="playlist__cover-wrap"
+							aria-label="Изменить обложку"
+							onClick={() => coverInputRef.current?.click()}
+						>
 							{playlistData.cover_path ? (
 								<img
 									className="playlist__cover"
@@ -117,10 +230,55 @@ const Playlist = () => {
 									/>
 								</svg>
 							)}
-						</div>
+							<span className="playlist__cover-overlay" aria-hidden="true">
+								<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none">
+									<path
+										d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5Z"
+										stroke="currentColor"
+										strokeWidth="1.5"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+									/>
+								</svg>
+							</span>
+						</button>
+						<input
+							ref={coverInputRef}
+							type="file"
+							accept="image/*"
+							className="playlist__cover-input"
+							hidden
+							onChange={handleCoverChange}
+						/>
 						<div className="playlist__info">
 							<div className="playlist__title-row">
-								<h1 className="playlist__title">{playlistData.title}</h1>
+								{isEditingTitle ? (
+									<div className="playlist__title-edit">
+										<input
+											ref={titleInputRef}
+											type="text"
+											className="playlist__title playlist__title--editing"
+											value={titleDraft}
+											maxLength={64}
+											onChange={(event) => setTitleDraft(event.target.value)}
+											onBlur={saveTitle}
+											onKeyDown={handleTitleKeyDown}
+										/>
+										{titleDraft.length >= 64 && (
+											<span className="playlist__limit-warning">Достигнут лимит в 64 символа</span>
+										)}
+									</div>
+								) : (
+									<h1 className="playlist__title">
+										<button
+											type="button"
+											className="playlist__title-trigger"
+											onClick={startEditingTitle}
+										>
+											{playlistData.title}
+										</button>
+									</h1>
+								)}
 								<button
 									type="button"
 									className={`playlist__menu ${isMenuOpen ? 'playlist__menu--active' : ''}`}
@@ -151,6 +309,30 @@ const Playlist = () => {
 									</Popover>
 								)}
 							</div>
+							{isEditingDescription ? (
+								<div className="playlist__description-edit">
+									<textarea
+										ref={descriptionRef}
+										className="playlist__description playlist__description--editing"
+										value={descriptionDraft}
+										maxLength={64}
+										onChange={(event) => setDescriptionDraft(event.target.value)}
+										onBlur={saveDescription}
+										onKeyDown={handleDescriptionKeyDown}
+									/>
+									{descriptionDraft.length >= 64 && (
+										<span className="playlist__limit-warning">Достигнут лимит в 64 символа</span>
+									)}
+								</div>
+							) : (
+								<button
+									type="button"
+									className={`playlist__description ${playlistData.description ? '' : 'playlist__description--empty'}`}
+									onClick={startEditingDescription}
+								>
+									{playlistData.description || 'Добавить описание'}
+								</button>
+							)}
 							<span className="playlist__count">
 								{trackCount} {pluralize(trackCount, ['трек', 'трека', 'треков'])}
 							</span>

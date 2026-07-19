@@ -133,18 +133,75 @@ export const fetchPlaylistIdsWithTrack = async (audioPath: string): Promise<stri
 	return fetchData.map((row) => row.playlist_id)
 }
 
+export const updatePlaylistDescription = async (
+	playlistId: string,
+	description: string,
+): Promise<void> => {
+	const { error: updateError } = await supabase
+		.from('playlists')
+		.update({ description: description || null })
+		.eq('id', playlistId)
+
+	if (updateError) {
+		throw updateError
+	}
+}
+
 export const deletePlaylist = async (playlistId: string): Promise<void> => {
 	const { data: deleteData, error: deleteError } = await supabase
 		.from('playlists')
 		.delete()
 		.select()
 		.eq('id', playlistId)
-	
+
 	if (deleteError) {
 		throw deleteError
 	}
-	
+
 	await removeFileIfUnused('covers', deleteData[0].cover_path)
+}
+
+export const updatePlaylistTitle = async (playlistId: string, title: string): Promise<void> => {
+	const { error: updateError } = await supabase
+		.from('playlists')
+		.update({ title })
+		.eq('id', playlistId)
+
+	if (updateError) {
+		throw updateError
+	}
+}
+
+export const updatePlaylistCover = async (
+	playlistId: string,
+	userId: string,
+	coverFile: File,
+	oldCoverPath: string | null,
+): Promise<void> => {
+	const coverExtension = coverFile.name.split('.').pop()
+	const newCoverPath = `${userId}/${Date.now()}.${coverExtension}`
+
+	const { error: uploadError } = await supabase.storage
+		.from('covers')
+		.upload(newCoverPath, coverFile)
+
+	if (uploadError) {
+		throw uploadError
+	}
+
+	const { error: updateError } = await supabase
+		.from('playlists')
+		.update({ cover_path: newCoverPath })
+		.eq('id', playlistId)
+
+	if (updateError) {
+		await supabase.storage.from('covers').remove([newCoverPath])
+		throw updateError
+	}
+
+	if (oldCoverPath) {
+		await supabase.storage.from('covers').remove([oldCoverPath])
+	}
 }
 
 const cleanupUploadedFiles = async (coverPath: string | null) => {

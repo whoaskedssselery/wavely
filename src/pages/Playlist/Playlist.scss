@@ -52,10 +52,23 @@
   }
 
   &__cover-wrap {
+    position: relative;
     flex-shrink: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+
+    @include hover {
+      .playlist__cover-overlay {
+        opacity: 1;
+      }
+    }
   }
 
   &__cover {
+    display: block;
     width: 160px;
     height: 160px;
     border-radius: $border-radius-md;
@@ -72,6 +85,19 @@
     }
   }
 
+  &__cover-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: $border-radius-md;
+    color: $color-text-primary;
+    opacity: 0;
+    transition: opacity $transition-fast;
+  }
+
   &__title-row {
     position: relative;
     display: flex;
@@ -84,6 +110,44 @@
     font-size: $font-size-xl;
     font-weight: 800;
     color: $color-text-primary;
+  }
+
+  &__title-trigger {
+    padding: 2px $spacing-xs;
+    margin-left: -$spacing-xs;
+    background: none;
+    border: none;
+    border-radius: $border-radius-sm;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+    cursor: text;
+    transition: background-color $transition-fast;
+
+    @include hover {
+      background-color: $color-bg-surface;
+    }
+  }
+
+  &__title-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__title--editing {
+    display: block;
+    width: 32ch;
+    max-width: 100%;
+    padding: 2px $spacing-xs;
+    margin-left: -$spacing-xs;
+    background: none;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-sm;
+    font-family: $font-primary;
+    outline: none;
+    cursor: text;
   }
 
   &__menu {
@@ -105,6 +169,69 @@
       background-color: $color-bg-surface;
       color: $color-text-primary;
     }
+  }
+
+  &__description {
+    display: block;
+    margin-top: $spacing-xs;
+    padding: 2px $spacing-xs;
+    margin-left: -$spacing-xs;
+    background: none;
+    border: none;
+    border-radius: $border-radius-sm;
+    font-family: $font-primary;
+    font-size: $font-size-sm;
+    text-align: left;
+    color: $color-text-secondary;
+    cursor: text;
+    transition: background-color $transition-fast;
+
+    @include hover {
+      background-color: $color-bg-surface;
+    }
+
+    &--empty {
+      color: $color-text-muted;
+      font-style: italic;
+    }
+
+    &--editing {
+      display: block;
+      width: 64ch;
+      max-width: 100%;
+      height: calc(1.4em * 3 + #{$spacing-xs} * 2);
+      padding: $spacing-xs;
+      margin-left: -$spacing-xs;
+      background-color: $color-bg-elevated;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-sm;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      font-family: $font-primary;
+      font-size: $font-size-sm;
+      line-height: 1.4;
+      color: $color-text-primary;
+      white-space: pre-wrap;
+      overflow: hidden;
+      resize: none;
+      outline: none;
+      cursor: text;
+
+      &:hover {
+        background-color: $color-bg-elevated;
+      }
+    }
+  }
+
+  &__description-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: $spacing-xs;
+  }
+
+  &__limit-warning {
+    font-size: $font-size-xs;
+    color: #e05252;
   }
 
   &__count {
