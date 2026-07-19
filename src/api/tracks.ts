@@ -20,7 +20,8 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 	const audioFile = data.audioFile[0]
 	let coverPath: string | null = null
 	let duration: number
-	const audioPath = `${userId}/${Date.now()}-${audioFile.name}`
+	const audioExtension = audioFile.name.split('.').pop()
+	const audioPath = `${userId}/${Date.now()}.${audioExtension}`
 
 	const { error: uploadError } = await supabase.storage.from('audio').upload(audioPath, audioFile)
 
@@ -30,7 +31,8 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 
 	if (data.coverFile && data.coverFile.length > 0) {
 		const coverFile = data.coverFile[0]
-		coverPath = `${userId}/${Date.now()}-${coverFile.name}`
+		const coverExtension = coverFile.name.split('.').pop()
+		coverPath = `${userId}/${Date.now()}.${coverExtension}`
 
 		const { error: uploadError } = await supabase.storage
 			.from('covers')
