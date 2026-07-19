@@ -27,17 +27,18 @@ const Player = () => {
 
 	const audioRef = useRef<HTMLAudioElement>(null)
 
-	const [isTrackReady, setIsTrackReady] = useState(false)
+	const [readyTrackId, setReadyTrackId] = useState<string | null>(null)
 
 	useEffect(() => {
 		if (!currentTrack) return
 
 		const loadTrack = async () => {
 			if (audioRef.current) {
-				setIsTrackReady(false)
+				setReadyTrackId(null)
 				audioRef.current.src = await getTrackAudioUrl(currentTrack.audio_path)
 				audioRef.current.currentTime = progress
-				setIsTrackReady(true)
+				audioRef.current.volume = volume
+				setReadyTrackId(currentTrack.id)
 			}
 			return
 		}
@@ -48,12 +49,12 @@ const Player = () => {
 	useEffect(() => {
 		if (!audioRef.current) return
 
-		if (isPlaying && isTrackReady) {
+		if (isPlaying && readyTrackId === currentTrack?.id) {
 			audioRef.current.play().catch(() => setIsPlaying(false))
 		} else {
 			audioRef.current.pause()
 		}
-	}, [isPlaying, isTrackReady, setIsPlaying])
+	}, [isPlaying, readyTrackId, setIsPlaying])
 
 	useEffect(() => {
 		if (!audioRef.current) return

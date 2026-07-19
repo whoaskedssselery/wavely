@@ -6,12 +6,15 @@ import { useAuthStore } from '@/store/authStore.ts'
 import type { DeleteTrackProps } from '@/types/utils.ts'
 import { formatDuration } from '@/utils/formatDuration.ts'
 import './DeleteTrack.scss'
+import {usePlayerStore} from '@/store/playerStore.ts'
 
 const DeleteTrack = (props: DeleteTrackProps) => {
 	const { track, variant, playlistId, onClose, onDeleted } = props
 	const queryClient = useQueryClient()
 
 	const { user } = useAuthStore()
+	
+	const { clearTrack } = usePlayerStore()
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: () => {
@@ -26,6 +29,7 @@ const DeleteTrack = (props: DeleteTrackProps) => {
 				queryKey: variant === 'collection' ? ['tracks', user?.id] : ['playlist_tracks', playlistId],
 			})
 			onDeleted()
+			clearTrack(track.id)
 			onClose()
 		},
 	})
