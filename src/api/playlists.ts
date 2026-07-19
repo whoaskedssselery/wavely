@@ -132,6 +132,20 @@ export const fetchPlaylistIdsWithTrack = async (audioPath: string): Promise<stri
 	return fetchData.map((row) => row.playlist_id)
 }
 
+export const deletePlaylist = async (playlistId: string): Promise<void> => {
+	const { data: deleteData, error: deleteError } = await supabase
+		.from('playlists')
+		.delete()
+		.select()
+		.eq('id', playlistId)
+	
+	if (deleteError) {
+		throw deleteError
+	}
+	
+	await removeFileIfUnused('covers', deleteData[0].cover_path)
+}
+
 const cleanupUploadedFiles = async (coverPath: string | null) => {
 	if (coverPath) {
 		const { error: coverCleanupError } = await supabase.storage.from('covers').remove([coverPath])

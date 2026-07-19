@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
-import './Playlist.scss'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { fetchPlaylist, fetchPlaylistTracks } from '@/api/playlists.ts'
 import TracksList from '@/components/TracksList'
 import { supabase } from '@/lib/supabase.ts'
 import { useAuthStore } from '@/store/authStore.ts'
 import { pluralize } from '@/utils/pluralize.ts'
+import Popover from '@/components/Popover'
+import Modal from '@/components/Modal'
+import DeletePlaylist from '@/components/DeletePlaylist'
+import './Playlist.scss'
 
 const Playlist = () => {
 	const { user } = useAuthStore()
@@ -35,11 +38,21 @@ const Playlist = () => {
 		enabled: !!playlistId,
 	})
 
+	const [isMenuOpen, setMenuOpen] = useState<boolean>(false)
+	const [isDeleteModalOpen, setDeleteModalOpen] = useState<boolean>(false)
+
+	const toggleMenu = () => {
+		setMenuOpen(!isMenuOpen)
+	}
+
 	useEffect(() => {
 		const handleEscape = (event: KeyboardEvent) => {
-			if (event.key === 'Escape') {
-				navigate('/')
+			if (event.key !== 'Escape') return
+			if (isMenuOpen) {
+				setMenuOpen(false)
+				return
 			}
+			navigate('/')
 		}
 
 		window.addEventListener('keydown', handleEscape)
@@ -47,7 +60,7 @@ const Playlist = () => {
 		return () => {
 			window.removeEventListener('keydown', handleEscape)
 		}
-	}, [navigate])
+	}, [navigate, isMenuOpen])
 
 	if (!user) {
 		return null
@@ -57,6 +70,9 @@ const Playlist = () => {
 
 	return (
 		<section className="playlist">
+			{isMenuOpen && (
+				<div className="playlist__overlay" aria-hidden="true" onClick={() => setMenuOpen(false)} />
+			)}
 			<div className="playlist__header">
 				<Link to="/" className="playlist__back" aria-label="Назад">
 					<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -105,7 +121,12 @@ const Playlist = () => {
 						<div className="playlist__info">
 							<div className="playlist__title-row">
 								<h1 className="playlist__title">{playlistData.title}</h1>
-								<button type="button" className="playlist__menu" aria-label="Меню плейлиста">
+								<button
+									type="button"
+									className={`playlist__menu ${isMenuOpen ? 'playlist__menu--active' : ''}`}
+									aria-label="Меню плейлиста"
+									onClick={toggleMenu}
+								>
 									<svg
 										aria-hidden="true"
 										width="16"
@@ -118,6 +139,17 @@ const Playlist = () => {
 										<circle cx="19" cy="12" r="2" />
 									</svg>
 								</button>
+								{isMenuOpen && (
+									<Popover placement="right">
+										<button
+											className="popover__item--danger"
+											type="button"
+											onClick={() => setDeleteModalOpen(true)}
+										>
+											Удалить плейлист
+										</button>
+									</Popover>
+								)}
 							</div>
 							<span className="playlist__count">
 								{trackCount} {pluralize(trackCount, ['трек', 'трека', 'треков'])}
@@ -147,6 +179,12 @@ const Playlist = () => {
 				variant="playlist"
 				playlistId={playlistId}
 			/>
+
+			<Modal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
+				{playlistData && (
+					<DeletePlaylist playlist={playlistData} onClose={() => setDeleteModalOpen(false)} />
+				)}
+			</Modal>
 		</section>
 	)
 }

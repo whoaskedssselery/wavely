@@ -4,6 +4,15 @@
   max-width: 800px;
   margin: 0 auto;
 
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 15;
+    background: none;
+    border: none;
+    cursor: default;
+  }
+
   &__header {
     position: relative;
     display: flex;
@@ -64,6 +73,7 @@
   }
 
   &__title-row {
+    position: relative;
     display: flex;
     align-items: center;
     gap: $spacing-sm;
@@ -87,6 +97,11 @@
     transition: background-color $transition-fast, color $transition-fast;
 
     @include hover {
+      background-color: $color-bg-surface;
+      color: $color-text-primary;
+    }
+
+    &--active {
       background-color: $color-bg-surface;
       color: $color-text-primary;
     }
