@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import type { PlayableTrack } from '@/types/tracks.ts'
 import type { Playlist } from '@/types/playlists'
+import type { PlayableTrack } from '@/types/tracks.ts'
 
 export type ActiveModal = 'upload-track' | 'create-playlist' | null
 

@@ -3,9 +3,9 @@ import { removeTrackFromPlaylist } from '@/api/playlists.ts'
 import { deleteTrack } from '@/api/tracks.ts'
 import { supabase } from '@/lib/supabase.ts'
 import { useAuthStore } from '@/store/authStore.ts'
+import { usePlayerStore } from '@/store/playerStore.ts'
 import type { DeleteTrackProps } from '@/types/utils.ts'
 import { formatDuration } from '@/utils/formatDuration.ts'
-import { usePlayerStore } from '@/store/playerStore.ts'
 import './DeleteTrack.scss'
 
 const DeleteTrack = (props: DeleteTrackProps) => {
@@ -13,7 +13,7 @@ const DeleteTrack = (props: DeleteTrackProps) => {
 	const queryClient = useQueryClient()
 
 	const { user } = useAuthStore()
-	
+
 	const { clearTrack } = usePlayerStore()
 
 	const { mutate, isPending } = useMutation({

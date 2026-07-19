@@ -203,17 +203,18 @@ export const usePlayerStore = create<PlayerStore>()(
 
 					return { repeatMode: currentMode }
 				}),
-			clearTrack: (trackId) => set(state => {
-				if (state.currentTrack?.id === trackId) {
-					return {
-						currentTrack: null,
-						isPlaying: false,
-						progress: 0,
+			clearTrack: (trackId) =>
+				set((state) => {
+					if (state.currentTrack?.id === trackId) {
+						return {
+							currentTrack: null,
+							isPlaying: false,
+							progress: 0,
+						}
+					} else {
+						return {}
 					}
-				} else {
-					return {}
-				}
-			})
+				}),
 		}),
 		{
 			name: 'player-store',

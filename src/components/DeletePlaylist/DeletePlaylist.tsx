@@ -1,23 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { deletePlaylist } from '@/api/playlists.ts'
-import type { DeletePlaylistProps } from '@/types/utils.ts'
 import { supabase } from '@/lib/supabase.ts'
+import type { DeletePlaylistProps } from '@/types/utils.ts'
 import './DeletePlaylist.scss'
-import {useAuthStore} from '@/store/authStore.ts'
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/store/authStore.ts'
 
 const DeletePlaylist = (props: DeletePlaylistProps) => {
-	const {
-		playlist,
-		onClose
-	} = props
-	
+	const { playlist, onClose } = props
+
 	const queryClient = useQueryClient()
-	
+
 	const { user } = useAuthStore()
-	
+
 	const navigate = useNavigate()
-	
+
 	const { mutate, isPending } = useMutation({
 		mutationFn: () => {
 			return deletePlaylist(playlist.id)
@@ -30,12 +27,10 @@ const DeletePlaylist = (props: DeletePlaylistProps) => {
 			navigate('/')
 		},
 	})
-	
+
 	return (
 		<div className="delete-playlist">
-			<p className="delete-playlist__text">
-				Удалить плейлист?
-			</p>
+			<p className="delete-playlist__text">Удалить плейлист?</p>
 			<div className="delete-playlist__preview">
 				{playlist.cover_path ? (
 					<img
