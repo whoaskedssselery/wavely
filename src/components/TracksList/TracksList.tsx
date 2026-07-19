@@ -8,7 +8,7 @@ import './TracksList.scss'
 import AddToPlaylist from '@/components/AddToPlaylist'
 import DeleteTrack from '@/components/DeleteTrack'
 import Modal from '@/components/Modal'
-import TrackMenu from '@/components/TrackMenu'
+import Popover from '@/components/Popover'
 
 const TracksList = (props: TracksListProps) => {
 	const { tracks, isLoading, error, variant, playlistId } = props
@@ -199,11 +199,21 @@ const TracksList = (props: TracksListProps) => {
 									</svg>
 								</button>
 								{openMenuTrackId === track.id && (
-									<TrackMenu
-										variant={variant}
-										onDelete={(event) => onMenuClick(event, 'delete', track)}
-										onAddToPlaylist={(event) => onMenuClick(event, 'add-to-playlist', track)}
-									/>
+									<Popover>
+										<button
+											type="button"
+											onClick={(event) => onMenuClick(event, 'add-to-playlist', track)}
+										>
+											Добавить в плейлист
+										</button>
+										<button
+											type="button"
+											className="popover__item--danger"
+											onClick={(event) => onMenuClick(event, 'delete', track)}
+										>
+											{variant === 'collection' ? 'Удалить трек' : 'Убрать из плейлиста'}
+										</button>
+									</Popover>
 								)}
 							</div>
 						</div>

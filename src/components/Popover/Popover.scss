@@ -1,9 +1,7 @@
 @use '@/styles/helpers' as *;
 
-.track-menu {
+.popover {
   position: absolute;
-  top: calc(100% + #{$spacing-xs});
-  right: 0;
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -13,6 +11,22 @@
   border: 1px solid $color-border;
   border-radius: $border-radius-md;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  &--bottom-right {
+    top: calc(100% + #{$spacing-xs});
+    right: 0;
+  }
+
+  &--bottom-left {
+    top: calc(100% + #{$spacing-xs});
+    left: 0;
+  }
+
+  &--right {
+    top: 50%;
+    left: calc(100% + #{$spacing-xs});
+    transform: translateY(-50%);
+  }
 
   button {
     padding: $spacing-sm $spacing-sm;
@@ -30,7 +44,7 @@
     }
   }
 
-  &__delete-button {
+  &__item--danger {
     color: #e05252;
   }
 }

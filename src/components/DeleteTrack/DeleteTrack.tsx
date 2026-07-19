@@ -5,8 +5,8 @@ import { supabase } from '@/lib/supabase.ts'
 import { useAuthStore } from '@/store/authStore.ts'
 import type { DeleteTrackProps } from '@/types/utils.ts'
 import { formatDuration } from '@/utils/formatDuration.ts'
+import { usePlayerStore } from '@/store/playerStore.ts'
 import './DeleteTrack.scss'
-import {usePlayerStore} from '@/store/playerStore.ts'
 
 const DeleteTrack = (props: DeleteTrackProps) => {
 	const { track, variant, playlistId, onClose, onDeleted } = props

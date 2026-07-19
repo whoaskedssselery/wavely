@@ -1,5 +1,6 @@
-import type { MouseEvent, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import type { PlayableTrack } from '@/types/tracks.ts'
+import type { Playlist } from '@/types/playlists'
 
 export type ActiveModal = 'upload-track' | 'create-playlist' | null
 
@@ -28,10 +29,9 @@ export interface SectionHeaderProps {
 	onButtonClick: () => void
 }
 
-export interface TrackMenuProps {
-	variant: 'collection' | 'playlist'
-	onDelete: (event: MouseEvent) => void
-	onAddToPlaylist: (event: MouseEvent) => void
+export interface PopoverProps {
+	children: ReactNode
+	placement?: 'bottom-left' | 'bottom-right' | 'right'
 }
 
 export interface TracksListProps {
@@ -54,6 +54,11 @@ export interface AddToPlaylistProps {
 	track: PlayableTrack
 	onClose: () => void
 	onAdded: () => void
+}
+
+export interface DeletePlaylistProps {
+	playlist: Playlist
+	onClose: () => void
 }
 
 export interface ActiveTrackModal {
