@@ -66,6 +66,7 @@ export const uploadPlaylist = async ({ data, userId }: UploadPlaylistParams): Pr
 		user_id: userId,
 		title: data.title,
 		description: data.description ?? null,
+		author: data.author ?? null,
 		cover_path: coverPath,
 	})
 

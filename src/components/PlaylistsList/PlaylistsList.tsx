@@ -70,7 +70,12 @@ const PlaylistsList = ({ onCreatePlaylist }: PlaylistsListProps) => {
 									/>
 								</svg>
 							)}
-							<span className="playlists-list__card-title">{playlist.title}</span>
+							<div className="playlists-list__card-info">
+								<span className="playlists-list__card-title">{playlist.title}</span>
+								{playlist.author && (
+									<span className="playlists-list__card-author">{playlist.author}</span>
+								)}
+							</div>
 						</Link>
 					))}
 				</div>

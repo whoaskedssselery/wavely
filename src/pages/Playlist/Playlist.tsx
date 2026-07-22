@@ -176,7 +176,7 @@ const Playlist = () => {
 		return null
 	}
 
-	const filteredTasks = tracks?.filter((track) => {
+	const filteredTracks = tracks?.filter((track) => {
 		const query = searchQuery.toLocaleLowerCase()
 		return track.title.toLowerCase().includes(query) || track.artist.toLowerCase().includes(query)
 	})
@@ -342,6 +342,7 @@ const Playlist = () => {
 							)}
 							<span className="playlist__count">
 								{trackCount} {pluralize(trackCount, ['трек', 'трека', 'треков'])}
+								{playlistData.author && ` · ${playlistData.author}`}
 							</span>
 						</div>
 					</>
@@ -369,7 +370,7 @@ const Playlist = () => {
 			</div>
 
 			<TracksList
-				tracks={filteredTasks ?? []}
+				tracks={filteredTracks ?? []}
 				isLoading={isTracksLoading}
 				error={tracksError}
 				variant="playlist"

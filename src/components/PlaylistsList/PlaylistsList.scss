@@ -51,7 +51,7 @@
   &__image {
     width: 180px;
     height: 180px;
-    border-radius: $border-radius-md;
+    border-radius: $border-radius-lg;
     object-fit: cover;
     background-color: $color-bg-surface;
     transition: transform $transition-fast;
@@ -67,11 +67,24 @@
     transform: scale(1.03);
   }
 
+  &__card-info {
+    @include flex(column, flex-start, flex-start, 2px);
+    width: 100%;
+  }
+
   &__card-title {
     width: 100%;
-    font-size: $font-size-sm;
-    font-weight: 600;
+    font-size: $font-size-md;
+    font-weight: 700;
+    line-height: 1.1;
     color: $color-text-primary;
+    @include truncate;
+  }
+
+  &__card-author {
+    width: 100%;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
     @include truncate;
   }
 }

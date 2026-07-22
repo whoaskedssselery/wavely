@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS playlists (
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     description TEXT,
+    author TEXT,
     cover_path TEXT,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );

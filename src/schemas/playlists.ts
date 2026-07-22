@@ -6,6 +6,7 @@ export const IMAGE_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/
 export const playlistSchema = z.object({
 	title: z.string().min(1, 'У плейлиста должно быть название!'),
 	description: z.string().max(64, 'Описание не должно превышать 64 символа!').optional(),
+	author: z.string().max(64, 'Имя автора не должно превышать 64 символа!').optional(),
 	coverFile: z
 		.instanceof(FileList)
 		.refine(

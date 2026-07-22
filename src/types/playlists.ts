@@ -5,6 +5,7 @@ export interface Playlist {
 	user_id: string
 	title: string
 	description: string | null
+	author: string | null
 	cover_path: string | null
 	created_at: string
 }

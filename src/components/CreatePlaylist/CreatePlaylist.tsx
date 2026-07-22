@@ -40,8 +40,11 @@ const CreatePlaylist = (props: UploadProps) => {
 
 	if (!user) return null
 
+	const authorFallback =
+		user.user_metadata?.full_name ?? user.user_metadata?.user_name ?? user.email ?? 'Аноним'
+
 	const onSubmit = (data: PlaylistForm) => {
-		mutate(data)
+		mutate({ ...data, author: data.author?.trim() || authorFallback })
 	}
 
 	return (
@@ -79,6 +82,20 @@ const CreatePlaylist = (props: UploadProps) => {
 						{errors.description && (
 							<p className="create-playlist__error">{errors.description.message}</p>
 						)}
+					</div>
+					<div className="create-playlist__field">
+						<label htmlFor="authorInput" className="create-playlist__label">
+							Автор
+						</label>
+						<input
+							type="text"
+							className="create-playlist__input"
+							{...register('author')}
+							id="authorInput"
+							placeholder={authorFallback}
+							autoComplete="off"
+						/>
+						{errors.author && <p className="create-playlist__error">{errors.author.message}</p>}
 					</div>
 					<div className="create-playlist__field">
 						<label htmlFor="coverFileInput" className="create-playlist__label">
