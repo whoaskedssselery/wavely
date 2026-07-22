@@ -61,6 +61,8 @@ const Playlist = () => {
 	const [isEditingDescription, setEditingDescription] = useState(false)
 	const [descriptionDraft, setDescriptionDraft] = useState('')
 
+	const [searchQuery, setSearchQuery] = useState<string>('')
+
 	const toggleMenu = () => {
 		setMenuOpen(!isMenuOpen)
 	}
@@ -173,6 +175,11 @@ const Playlist = () => {
 	if (!user) {
 		return null
 	}
+
+	const filteredTasks = tracks?.filter((track) => {
+		const query = searchQuery.toLocaleLowerCase()
+		return track.title.toLowerCase().includes(query) || track.artist.toLowerCase().includes(query)
+	})
 
 	const trackCount = tracks?.length ?? 0
 
@@ -351,11 +358,18 @@ const Playlist = () => {
 						strokeLinecap="round"
 					/>
 				</svg>
-				<input type="text" className="playlist__search-input" placeholder="Поиск трека" disabled />
+				<input
+					type="text"
+					className="playlist__search-input"
+					placeholder="Поиск трека"
+					onChange={(event) => {
+						setSearchQuery(event.target.value)
+					}}
+				/>
 			</div>
 
 			<TracksList
-				tracks={tracks ?? []}
+				tracks={filteredTasks ?? []}
 				isLoading={isTracksLoading}
 				error={tracksError}
 				variant="playlist"
