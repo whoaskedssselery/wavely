@@ -4,7 +4,7 @@ export interface Track {
 	id: string
 	user_id: string
 	title: string
-	artist: string | null
+	artist: string
 	duration: number | null
 	audio_path: string
 	cover_path: string | null
@@ -14,7 +14,7 @@ export interface Track {
 export interface PlayableTrack {
 	id: string
 	title: string
-	artist: string | null
+	artist: string
 	duration: number | null
 	audio_path: string
 	cover_path: string | null

@@ -13,7 +13,7 @@ export interface PlaylistTrack {
 	id: string
 	playlist_id: string
 	title: string
-	artist: string | null
+	artist: string
 	duration: number | null
 	audio_path: string
 	cover_path: string | null
