@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { fetchTracks } from '@/api/tracks.ts'
 import SectionHeader from '@/components/SectionHeader'
 import { useAuthStore } from '@/store/authStore.ts'
@@ -9,6 +10,8 @@ const CollectionHeader = (props: CollectionHeaderProps) => {
 	const { onOpenModal } = props
 
 	const { user } = useAuthStore()
+
+	const navigate = useNavigate()
 
 	const { data } = useQuery({
 		queryKey: ['tracks', user?.id],
@@ -28,6 +31,7 @@ const CollectionHeader = (props: CollectionHeaderProps) => {
 			counterText={`${trackCount} ${pluralize(trackCount, ['трек', 'трека', 'треков'])}`}
 			buttonText="Добавить трек"
 			onButtonClick={onOpenModal}
+			onTitleClick={() => navigate('/collection')}
 		/>
 	)
 }

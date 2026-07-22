@@ -1,5 +1,6 @@
 import { AnimatePresence } from 'framer-motion'
 import { Route, Routes, useLocation } from 'react-router-dom'
+import Collection from '@/pages/Collection'
 import ConfirmOtp from '@/pages/ConfirmOtp'
 import Home from '@/pages/Home'
 import Login from '@/pages/Login'
@@ -26,6 +27,14 @@ const AppRouter = () => {
 					element={
 						<ProtectedRoute>
 							<Playlist />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/collection"
+					element={
+						<ProtectedRoute>
+							<Collection />
 						</ProtectedRoute>
 					}
 				/>

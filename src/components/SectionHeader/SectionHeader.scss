@@ -13,12 +13,44 @@
   margin: 0 auto;
   padding-bottom: $spacing-lg;
 
-  &__title {
+  &__title-row {
     grid-area: title;
     align-self: end;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  &__title {
     font-size: $font-size-xl;
     font-weight: 800;
     color: $color-text-primary;
+  }
+
+  &__title-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xs;
+    background: none;
+    border: none;
+    border-radius: $border-radius-full;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: background-color $transition-fast, color $transition-fast;
+
+    @include hover {
+      background-color: $color-bg-surface;
+      color: $color-text-primary;
+
+      svg {
+        transform: translateX(3px);
+      }
+    }
+
+    svg {
+      transition: transform $transition-fast;
+    }
   }
 
   &__counter {

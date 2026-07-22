@@ -1,0 +1,114 @@
+@use '@/styles/helpers' as *;
+
+.collection {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: $spacing-xl;
+
+  &__header {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    align-items: flex-start;
+    gap: $spacing-lg;
+    padding-top: $spacing-xl;
+    padding-bottom: $spacing-lg;
+  }
+
+  &__back {
+    position: absolute;
+    top: $spacing-lg;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: $border-radius-full;
+    color: $color-text-secondary;
+    transition:
+      background-color $transition-fast,
+      color $transition-fast,
+      transform $transition-fast;
+
+    @include hover {
+      background-color: $color-bg-surface;
+      color: $color-text-primary;
+      transform: translateX(-2px);
+    }
+  }
+
+  &__cover-wrap {
+    flex-shrink: 0;
+  }
+
+  &__cover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 160px;
+    height: 160px;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #4f2d70 0%, #7b3fa0 45%, $color-accent 100%);
+    border-radius: $border-radius-md;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  &__cover-icon {
+    width: 64px;
+    height: 64px;
+    color: $color-text-primary;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  }
+
+  &__title {
+    line-height: 1;
+    font-size: $font-size-xl;
+    font-weight: 800;
+    color: $color-text-primary;
+  }
+
+  &__description {
+    margin-top: $spacing-xs;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+
+  &__count {
+    display: block;
+    line-height: 1;
+    margin-top: $spacing-xs;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+
+  &__search {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
+    padding: 10px $spacing-md;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-md;
+    color: $color-text-muted;
+  }
+
+  &__search-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: $font-primary;
+    font-size: $font-size-sm;
+    color: $color-text-primary;
+
+    &::placeholder {
+      color: $color-text-muted;
+    }
+  }
+}
