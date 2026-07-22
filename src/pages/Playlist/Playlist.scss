@@ -1,8 +1,12 @@
 @use '@/styles/helpers' as *;
 
 .playlist {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   max-width: 800px;
   margin: 0 auto;
+  padding-bottom: $spacing-xl;
 
   &__overlay {
     position: fixed;
@@ -16,6 +20,7 @@
   &__header {
     position: relative;
     display: flex;
+    flex-shrink: 0;
     align-items: flex-start;
     gap: $spacing-lg;
     padding-top: $spacing-xl;
@@ -244,6 +249,7 @@
 
   &__search {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     gap: $spacing-sm;
     margin-bottom: $spacing-lg;

@@ -38,6 +38,7 @@ const Home = () => {
 				isLoading={isLoading}
 				error={error}
 				variant="collection"
+				isPreview={true}
 			/>
 			<PlaylistsList onCreatePlaylist={() => setActiveModal('create-playlist')} />
 		</div>

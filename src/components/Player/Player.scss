@@ -2,13 +2,10 @@
 
 .player {
   @include flex(column, stretch, flex-start, $spacing-md);
-  position: fixed;
-  left: 50%;
-  bottom: $spacing-lg;
-  transform: translateX(-50%);
+  flex-shrink: 0;
   width: calc(100% - #{$spacing-xl * 2});
   max-width: 800px;
-  z-index: 50;
+  margin: $spacing-lg auto;
   padding: $spacing-md;
   background-color: $color-bg-elevated;
   border-radius: $border-radius-lg;

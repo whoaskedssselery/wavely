@@ -27,6 +27,7 @@ export interface SectionHeaderProps {
 	counterText: string
 	buttonText: string
 	onButtonClick: () => void
+	onTitleClick?: () => void
 }
 
 export interface PopoverProps {
@@ -40,6 +41,7 @@ export interface TracksListProps {
 	error: Error | null
 	variant: 'collection' | 'playlist'
 	playlistId?: string
+	isPreview?: boolean
 }
 
 export interface DeleteTrackProps {

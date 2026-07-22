@@ -1,4 +1,5 @@
 import { type MouseEvent, useEffect, useRef, useState } from 'react'
+import useScrollbarVisibility from '@/hooks/useScrollbarVisibility.ts'
 import { supabase } from '@/lib/supabase.ts'
 import { usePlayerStore } from '@/store/playerStore.ts'
 import type { PlayableTrack } from '@/types/tracks.ts'
@@ -11,7 +12,7 @@ import Modal from '@/components/Modal'
 import Popover from '@/components/Popover'
 
 const TracksList = (props: TracksListProps) => {
-	const { tracks, isLoading, error, variant, playlistId } = props
+	const { tracks, isLoading, error, variant, playlistId, isPreview } = props
 
 	const { currentTrack, isPlaying, playTrack, syncQueue, resyncShuffleHistory, togglePlay } =
 		usePlayerStore()
@@ -20,6 +21,9 @@ const TracksList = (props: TracksListProps) => {
 	const [activeTrackModal, setActiveTrackModal] = useState<ActiveTrackModal>()
 
 	const hasSyncedQueue = useRef(false)
+	const listRef = useRef<HTMLElement>(null)
+
+	useScrollbarVisibility(listRef)
 
 	const onTrackClick = (track: PlayableTrack) => {
 		if (currentTrack === null || currentTrack !== track) {
@@ -89,7 +93,10 @@ const TracksList = (props: TracksListProps) => {
 
 	return (
 		<>
-			<section className={`tracks-list ${(tracks?.length ?? 0) > 4 ? 'tracks-list--two-col' : ''}`}>
+			<section
+				ref={listRef}
+				className={`tracks-list ${isPreview ? '' : 'tracks-list--bounded'} ${isPreview && (tracks?.length ?? 0) > 4 ? 'tracks-list--two-col' : ''}`}
+			>
 				{openMenuTrackId && (
 					<div
 						className="tracks-list__overlay"

@@ -3,13 +3,58 @@
 .tracks-list {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: repeat(4, minmax(56px, auto));
+  align-content: start;
   gap: 2px $spacing-md;
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
 
+  &--bounded {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+
+    &.is-scrolling {
+      scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+    }
+
+    &::-webkit-scrollbar {
+      width: 16px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-button {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: transparent;
+      background-clip: content-box;
+      border: 4px solid transparent;
+      border-radius: $border-radius-full;
+      transition: background-color $transition-base;
+    }
+
+    &.is-scrolling::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.35);
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+
   &--two-col {
     grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, minmax(56px, auto));
     grid-auto-flow: column;
   }
 
