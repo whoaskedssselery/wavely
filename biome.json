@@ -88,7 +88,7 @@
       }
     },
     {
-      "includes": ["**/src/components/TracksList/TracksList.tsx"],
+      "includes": ["**/src/components/TracksList/ui/SortableTrackCard.tsx"],
       "linter": {
         "rules": {
           "a11y": {

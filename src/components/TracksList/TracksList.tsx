@@ -1,15 +1,17 @@
 import { type MouseEvent, useEffect, useRef, useState } from 'react'
 import useScrollbarVisibility from '@/hooks/useScrollbarVisibility.ts'
-import { supabase } from '@/lib/supabase.ts'
 import { usePlayerStore } from '@/store/playerStore.ts'
 import type { PlayableTrack } from '@/types/tracks.ts'
 import type { ActiveTrackModal, TracksListProps } from '@/types/utils.ts'
-import { formatDuration } from '@/utils/formatDuration.ts'
 import './TracksList.scss'
+import { DndContext, type DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { reorderPlaylistTracks } from '@/api/playlists.ts'
 import AddToPlaylist from '@/components/AddToPlaylist'
 import DeleteTrack from '@/components/DeleteTrack'
 import Modal from '@/components/Modal'
-import Popover from '@/components/Popover'
+import SortableTrackCard from './ui/SortableTrackCard'
 
 const TracksList = (props: TracksListProps) => {
 	const { tracks, isLoading, error, variant, playlistId, isPreview } = props
@@ -24,6 +26,42 @@ const TracksList = (props: TracksListProps) => {
 	const listRef = useRef<HTMLElement>(null)
 
 	useScrollbarVisibility(listRef)
+
+	const queryClient = useQueryClient()
+
+	const onMutate = (variables: PlayableTrack[]) => {
+		const previous = queryClient.getQueryData<PlayableTrack[]>(['playlist_tracks', playlistId])
+		queryClient.setQueryData(['playlist_tracks', playlistId], variables)
+
+		return { previous }
+	}
+
+	const onError = (
+		_err: Error,
+		_variables: PlayableTrack[],
+		context?: { previous: PlayableTrack[] | undefined },
+	) => {
+		if (context) {
+			queryClient.setQueryData(['playlist_tracks', playlistId], context.previous)
+		}
+	}
+
+	const onSettled = () => {
+		queryClient.invalidateQueries({ queryKey: ['playlist_tracks', playlistId] })
+	}
+
+	const { mutate } = useMutation({
+		mutationFn: reorderPlaylistTracks,
+		onMutate,
+		onError,
+		onSettled,
+	})
+
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: { distance: 8 },
+		}),
+	)
 
 	const onTrackClick = (track: PlayableTrack) => {
 		if (currentTrack === null || currentTrack !== track) {
@@ -54,6 +92,19 @@ const TracksList = (props: TracksListProps) => {
 		} else {
 			setOpenMenuTrackId(trackId)
 		}
+	}
+
+	const handleDragEnd = (event: DragEndEvent) => {
+		const { active, over } = event
+
+		if (!over || active.id === over.id) return
+
+		const oldIndex = tracks.findIndex((t) => t.id === active.id)
+		const newIndex = tracks.findIndex((t) => t.id === over.id)
+
+		const newOrder = arrayMove(tracks, oldIndex, newIndex)
+
+		mutate(newOrder)
 	}
 
 	const onMenuClick = (
@@ -92,168 +143,72 @@ const TracksList = (props: TracksListProps) => {
 	}, [openMenuTrackId])
 
 	return (
-		<>
-			<section
-				ref={listRef}
-				className={`tracks-list ${isPreview ? '' : 'tracks-list--bounded'} ${isPreview && (tracks?.length ?? 0) > 4 ? 'tracks-list--two-col' : ''}`}
+		<DndContext sensors={sensors} onDragEnd={variant === 'playlist' ? handleDragEnd : undefined}>
+			<SortableContext
+				items={tracks?.map((t) => t.id) ?? []}
+				strategy={verticalListSortingStrategy}
 			>
-				{openMenuTrackId && (
-					<div
-						className="tracks-list__overlay"
-						aria-hidden="true"
-						onClick={() => setOpenMenuTrackId(undefined)}
-					/>
-				)}
-				{isLoading && <p className="tracks-list__loading">Загружаем треки</p>}
-				{error && <p className="tracks-list__error">Не удалось загрузить данные</p>}
-				{tracks && tracks.length === 0 && (
-					<p className="tracks-list__warning">Вы не добавили еще ни одного трека</p>
-				)}
-				{tracks?.map((track) => {
-					const isActive = currentTrack?.id === track.id && isPlaying
-
-					return (
+				<section
+					ref={listRef}
+					className={`tracks-list ${isPreview ? '' : 'tracks-list--bounded'} ${isPreview && (tracks?.length ?? 0) > 4 ? 'tracks-list--two-col' : ''}`}
+				>
+					{openMenuTrackId && (
 						<div
-							className={`tracks-list__card ${openMenuTrackId === track.id ? 'tracks-list__card--menu-open' : ''}`}
-							key={track.id}
-							role="button"
-							tabIndex={0}
-							onClick={() => onTrackClick(track)}
-							onKeyDown={(event) => {
-								if (event.target !== event.currentTarget) return
-								if (event.key === 'Enter' || event.key === ' ') {
-									event.preventDefault()
-									onTrackClick(track)
-								}
-							}}
-						>
-							<div className="tracks-list__image-wrap">
-								{isActive && <span className="tracks-list__pulse" />}
-								{track.cover_path ? (
-									<img
-										className="tracks-list__image"
-										src={
-											supabase.storage.from('covers').getPublicUrl(track.cover_path).data.publicUrl
-										}
-										alt={track.title}
-									/>
-								) : (
-									<svg
-										aria-hidden="true"
-										className="tracks-list__image tracks-list__image--placeholder"
-										width="44"
-										height="44"
-										viewBox="0 0 24 24"
-										fill="none"
-									>
-										<circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15" />
-										<circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
-										<circle cx="12" cy="12" r="3" fill="currentColor" />
-									</svg>
-								)}
-								<button
-									type="button"
-									className="tracks-list__play"
-									aria-label={isActive ? 'Пауза' : 'Воспроизвести'}
-									onClick={(event: MouseEvent) => {
-										event.stopPropagation()
-										onTrackClick(track)
-									}}
-								>
-									{isActive ? (
-										<svg
-											aria-hidden="true"
-											width="16"
-											height="16"
-											viewBox="0 0 24 24"
-											fill="currentColor"
-										>
-											<path d="M7 5h4v14H7zM13 5h4v14h-4z" />
-										</svg>
-									) : (
-										<svg
-											aria-hidden="true"
-											width="16"
-											height="16"
-											viewBox="0 0 24 24"
-											fill="currentColor"
-										>
-											<path d="M8 5v14l11-7z" />
-										</svg>
-									)}
-								</button>
-							</div>
-							<h3 className="tracks-list__title">{track.title}</h3>
-							<span className="tracks-list__artist">{track.artist}</span>
-							<div className="tracks-list__meta">
-								<span className="tracks-list__duration">{formatDuration(track.duration)}</span>
-								<button
-									type="button"
-									className="tracks-list__menu"
-									aria-label="Меню трека"
-									onClick={(event) => handleMenu(event, track.id)}
-								>
-									<svg
-										aria-hidden="true"
-										width="16"
-										height="16"
-										viewBox="0 0 24 24"
-										fill="currentColor"
-									>
-										<circle cx="3" cy="12" r="2.6" />
-										<circle cx="12" cy="12" r="2.6" />
-										<circle cx="21" cy="12" r="2.6" />
-									</svg>
-								</button>
-								{openMenuTrackId === track.id && (
-									<Popover>
-										<button
-											type="button"
-											onClick={(event) => onMenuClick(event, 'add-to-playlist', track)}
-										>
-											Добавить в плейлист
-										</button>
-										<button
-											type="button"
-											className="popover__item--danger"
-											onClick={(event) => onMenuClick(event, 'delete', track)}
-										>
-											{variant === 'collection' ? 'Удалить трек' : 'Убрать из плейлиста'}
-										</button>
-									</Popover>
-								)}
-							</div>
-						</div>
-					)
-				})}
-			</section>
-			<Modal
-				isOpen={activeTrackModal?.type === 'delete'}
-				onClose={() => setActiveTrackModal(undefined)}
-			>
-				{activeTrackModal && (
-					<DeleteTrack
-						track={activeTrackModal.track}
-						variant={variant}
-						playlistId={playlistId}
-						onClose={() => setActiveTrackModal(undefined)}
-						onDeleted={onDeleted}
-					/>
-				)}
-			</Modal>
-			<Modal
-				isOpen={activeTrackModal?.type === 'add-to-playlist'}
-				onClose={() => setActiveTrackModal(undefined)}
-			>
-				{activeTrackModal && (
-					<AddToPlaylist
-						track={activeTrackModal.track}
-						onClose={() => setActiveTrackModal(undefined)}
-						onAdded={onAdded}
-					/>
-				)}
-			</Modal>
-		</>
+							className="tracks-list__overlay"
+							aria-hidden="true"
+							onClick={() => setOpenMenuTrackId(undefined)}
+						/>
+					)}
+					{isLoading && <p className="tracks-list__loading">Загружаем треки</p>}
+					{error && <p className="tracks-list__error">Не удалось загрузить данные</p>}
+					{tracks && tracks.length === 0 && (
+						<p className="tracks-list__warning">Вы не добавили еще ни одного трека</p>
+					)}
+					{tracks?.map((track) => {
+						const isActive = currentTrack?.id === track.id && isPlaying
+
+						return (
+							<SortableTrackCard
+								key={track.id}
+								track={track}
+								isActive={isActive}
+								variant={variant}
+								openMenuTrackId={openMenuTrackId}
+								onTrackClick={onTrackClick}
+								handleMenu={handleMenu}
+								onMenuClick={onMenuClick}
+							/>
+						)
+					})}
+				</section>
+				<Modal
+					isOpen={activeTrackModal?.type === 'delete'}
+					onClose={() => setActiveTrackModal(undefined)}
+				>
+					{activeTrackModal && (
+						<DeleteTrack
+							track={activeTrackModal.track}
+							variant={variant}
+							playlistId={playlistId}
+							onClose={() => setActiveTrackModal(undefined)}
+							onDeleted={onDeleted}
+						/>
+					)}
+				</Modal>
+				<Modal
+					isOpen={activeTrackModal?.type === 'add-to-playlist'}
+					onClose={() => setActiveTrackModal(undefined)}
+				>
+					{activeTrackModal && (
+						<AddToPlaylist
+							track={activeTrackModal.track}
+							onClose={() => setActiveTrackModal(undefined)}
+							onAdded={onAdded}
+						/>
+					)}
+				</Modal>
+			</SortableContext>
+		</DndContext>
 	)
 }
 
