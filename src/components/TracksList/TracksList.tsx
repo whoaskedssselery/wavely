@@ -150,7 +150,7 @@ const TracksList = (props: TracksListProps) => {
 			>
 				<section
 					ref={listRef}
-					className={`tracks-list ${isPreview ? '' : 'tracks-list--bounded'} ${isPreview && (tracks?.length ?? 0) > 4 ? 'tracks-list--two-col' : ''}`}
+					className={`tracks-list ${isPreview ? 'tracks-list--preview' : 'tracks-list--bounded'} ${isPreview && (tracks?.length ?? 0) > 4 ? 'tracks-list--two-col' : ''}`}
 				>
 					{openMenuTrackId && (
 						<div
