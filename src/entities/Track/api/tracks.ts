@@ -1,5 +1,6 @@
 import { getAudioDuration } from '@/entities/Track/lib/media.ts'
 import type { Track, UploadTrackParams } from '@/entities/Track/model/types.ts'
+import { CACHE_ONE_YEAR } from '@/shared/api/cache.ts'
 import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
 
@@ -24,7 +25,9 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 	const audioExtension = audioFile.name.split('.').pop()
 	const audioPath = `${userId}/${Date.now()}.${audioExtension}`
 
-	const { error: uploadError } = await supabase.storage.from('audio').upload(audioPath, audioFile)
+	const { error: uploadError } = await supabase.storage
+		.from('audio')
+		.upload(audioPath, audioFile, { cacheControl: CACHE_ONE_YEAR })
 
 	if (uploadError) {
 		throw uploadError
@@ -37,7 +40,7 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 
 		const { error: uploadError } = await supabase.storage
 			.from('covers')
-			.upload(coverPath, coverFile)
+			.upload(coverPath, coverFile, { cacheControl: CACHE_ONE_YEAR })
 
 		if (uploadError) {
 			await cleanupFiles({ audioPath })

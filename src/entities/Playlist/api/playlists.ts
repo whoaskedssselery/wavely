@@ -4,6 +4,7 @@ import type {
 	UploadPlaylistParams,
 } from '@/entities/Playlist/model/types.ts'
 import type { PlayableTrack } from '@/entities/Track/model/types.ts'
+import { CACHE_ONE_YEAR } from '@/shared/api/cache.ts'
 import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
 import type { ArrayToUpdate } from '@/shared/types/utils.ts'
@@ -72,7 +73,7 @@ export const uploadPlaylist = async ({ data, userId }: UploadPlaylistParams): Pr
 
 		const { error: uploadError } = await supabase.storage
 			.from('covers')
-			.upload(coverPath, coverFile)
+			.upload(coverPath, coverFile, { cacheControl: CACHE_ONE_YEAR })
 
 		if (uploadError) {
 			await cleanupFiles({ coverPath })
@@ -224,7 +225,7 @@ export const updatePlaylistCover = async (
 
 	const { error: uploadError } = await supabase.storage
 		.from('covers')
-		.upload(newCoverPath, coverFile)
+		.upload(newCoverPath, coverFile, { cacheControl: CACHE_ONE_YEAR })
 
 	if (uploadError) {
 		throw uploadError

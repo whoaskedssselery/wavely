@@ -16,6 +16,8 @@ const CoverImage = (props: CoverImageProps) => {
 				className={className}
 				src={supabase.storage.from('covers').getPublicUrl(coverPath).data.publicUrl}
 				alt={alt}
+				loading="lazy"
+				decoding="async"
 			/>
 		)
 	}
