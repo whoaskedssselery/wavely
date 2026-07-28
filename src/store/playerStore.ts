@@ -41,7 +41,14 @@ export const usePlayerStore = create<PlayerStore>()(
 			shuffleHistoryIndex: 0,
 			repeatMode: 'off',
 			playTrack: (track: PlayableTrack, queue: PlayableTrack[], queueIndex: number) => {
-				set({ currentTrack: track, isPlaying: true, progress: 0, queue, queueIndex })
+				set((state) => ({
+					currentTrack: track,
+					isPlaying: true,
+					progress: 0,
+					queue,
+					queueIndex,
+					...(state.shuffle ? { shuffleHistory: [track], shuffleHistoryIndex: 0 } : {}),
+				}))
 			},
 			syncQueue: (queue: PlayableTrack[], queueIndex: number) => {
 				set({ queue, queueIndex })
@@ -77,7 +84,7 @@ export const usePlayerStore = create<PlayerStore>()(
 							)
 
 							if (remaining.length === 0) {
-								if (!treatAsOff) {
+								if (state.repeatMode !== 'off') {
 									const randomIndex = Math.floor(Math.random() * state.queue.length)
 									const nextTrack = state.queue[randomIndex]
 
@@ -89,7 +96,7 @@ export const usePlayerStore = create<PlayerStore>()(
 										isPlaying: true,
 									}
 								} else {
-									return { shuffleHistory: [], isPlaying: false }
+									return { shuffleHistory: [], shuffleHistoryIndex: -1, isPlaying: false }
 								}
 							} else {
 								const randomIndex = Math.floor(Math.random() * remaining.length)

@@ -118,7 +118,9 @@ const TracksList = (props: TracksListProps) => {
 
 	useEffect(() => {
 		if (hasSyncedQueue.current) return
+		if (isPreview) return
 		if (!tracks || !currentTrack) return
+		if (usePlayerStore.getState().queue.length > 0) return
 
 		const index = tracks.findIndex((t) => t.id === currentTrack.id)
 		if (index !== -1) {
@@ -126,7 +128,7 @@ const TracksList = (props: TracksListProps) => {
 			hasSyncedQueue.current = true
 			resyncShuffleHistory()
 		}
-	}, [tracks, currentTrack, syncQueue, resyncShuffleHistory])
+	}, [tracks, currentTrack, syncQueue, resyncShuffleHistory, isPreview])
 
 	useEffect(() => {
 		if (!openMenuTrackId) return
