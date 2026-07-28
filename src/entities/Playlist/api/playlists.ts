@@ -1,8 +1,12 @@
-import { removeFileIfUnused } from '@/api/storage.ts'
-import { supabase } from '@/lib/supabase.ts'
-import type { Playlist, PlaylistTrack, UploadPlaylistParams } from '@/types/playlists.ts'
-import type { PlayableTrack } from '@/types/tracks.ts'
-import type { ArrayToUpdate } from '@/types/utils.ts'
+import type {
+	Playlist,
+	PlaylistTrack,
+	UploadPlaylistParams,
+} from '@/entities/playlist/model/types.ts'
+import type { PlayableTrack } from '@/entities/track/model/types.ts'
+import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
+import { supabase } from '@/shared/lib/supabase.ts'
+import type { ArrayToUpdate } from '@/shared/types/utils.ts'
 
 export const fetchPlaylists = async (userId: string): Promise<Playlist[]> => {
 	const { data: fetchData, error: fetchError } = await supabase
@@ -18,7 +22,7 @@ export const fetchPlaylists = async (userId: string): Promise<Playlist[]> => {
 	return fetchData
 }
 
-export const fetchPlaylist = async (playlistId: string): Promise<Playlist> => {
+export const fetchPlaylist = async (playlistId: string): Promise<Playlist | null> => {
 	const { data: fetchData, error: fetchError } = await supabase
 		.from('playlists')
 		.select('*')
@@ -28,7 +32,7 @@ export const fetchPlaylist = async (playlistId: string): Promise<Playlist> => {
 		throw fetchError
 	}
 
-	return fetchData[0]
+	return fetchData[0] ?? null
 }
 
 export const fetchPlaylistTracks = async (playlistId: string): Promise<PlaylistTrack[]> => {
@@ -71,7 +75,7 @@ export const uploadPlaylist = async ({ data, userId }: UploadPlaylistParams): Pr
 			.upload(coverPath, coverFile)
 
 		if (uploadError) {
-			await cleanupUploadedFiles(coverPath)
+			await cleanupFiles({ coverPath })
 			throw uploadError
 		}
 	}
@@ -85,7 +89,7 @@ export const uploadPlaylist = async ({ data, userId }: UploadPlaylistParams): Pr
 	})
 
 	if (submitError) {
-		await cleanupUploadedFiles(coverPath)
+		await cleanupFiles({ coverPath })
 		throw submitError
 	}
 }
@@ -131,6 +135,10 @@ export const removeTrackFromPlaylist = async (playlistTrackId: string): Promise<
 		throw removeError
 	}
 
+	if (removeData.length === 0) {
+		throw new Error('Трек уже удалён из плейлиста')
+	}
+
 	await removeFileIfUnused('audio', removeData[0].audio_path)
 	await removeFileIfUnused('covers', removeData[0].cover_path)
 }
@@ -171,6 +179,10 @@ export const deletePlaylist = async (playlistId: string): Promise<void> => {
 
 	if (deleteError) {
 		throw deleteError
+	}
+
+	if (deleteData.length === 0) {
+		throw new Error('Плейлист уже удалён')
 	}
 
 	await removeFileIfUnused('covers', deleteData[0].cover_path)
@@ -235,13 +247,5 @@ export const reorderPlaylistTracks = async (tracks: PlayableTrack[]): Promise<vo
 
 	if (rpcError) {
 		throw rpcError
-	}
-}
-
-const cleanupUploadedFiles = async (coverPath: string | null): Promise<void> => {
-	if (coverPath) {
-		const { error: coverCleanupError } = await supabase.storage.from('covers').remove([coverPath])
-		if (coverCleanupError)
-			console.error('Не получилось удалить обложку плейлиста:', coverCleanupError)
 	}
 }

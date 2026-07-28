@@ -1,7 +1,7 @@
-import { fetchAllPlaylistTracks } from '@/api/playlists.ts'
-import { removeFileIfUnused } from '@/api/storage.ts'
-import { supabase } from '@/lib/supabase.ts'
-import type { PlayableTrack, Track, UploadTrackParams } from '@/types/tracks.ts'
+import { getAudioDuration } from '@/entities/track/lib/media.ts'
+import type { Track, UploadTrackParams } from '@/entities/track/model/types.ts'
+import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
+import { supabase } from '@/shared/lib/supabase.ts'
 
 export const fetchTracks = async (userId: string): Promise<Track[]> => {
 	const { data, error: fetchError } = await supabase
@@ -15,24 +15,6 @@ export const fetchTracks = async (userId: string): Promise<Track[]> => {
 	}
 
 	return data
-}
-
-export const fetchAllTracks = async (userId: string): Promise<PlayableTrack[]> => {
-	const [collectionData, playlistsData] = await Promise.all([
-		fetchTracks(userId),
-		fetchAllPlaylistTracks(userId),
-	])
-
-	const seen = new Set<string>()
-	const allTracks: PlayableTrack[] = []
-
-	for (const track of [...collectionData, ...playlistsData]) {
-		if (seen.has(track.audio_path)) continue
-		seen.add(track.audio_path)
-		allTracks.push(track)
-	}
-
-	return allTracks
 }
 
 export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<void> => {
@@ -58,7 +40,7 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 			.upload(coverPath, coverFile)
 
 		if (uploadError) {
-			await cleanupUploadedFiles(audioPath, null)
+			await cleanupFiles({ audioPath })
 			throw uploadError
 		}
 	}
@@ -66,7 +48,7 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 	try {
 		duration = Math.round(await getAudioDuration(audioFile))
 	} catch {
-		await cleanupUploadedFiles(audioPath, coverPath)
+		await cleanupFiles({ audioPath, coverPath })
 		throw new Error('Не удалось прочитать длительность трека')
 	}
 
@@ -80,25 +62,9 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 	})
 
 	if (submitError) {
-		await cleanupUploadedFiles(audioPath, coverPath)
+		await cleanupFiles({ audioPath, coverPath })
 		throw submitError
 	}
-}
-
-const getAudioDuration = (file: File): Promise<number> => {
-	return new Promise((resolve, reject) => {
-		const audio = new Audio()
-		const fileUrl = URL.createObjectURL(file)
-		audio.src = fileUrl
-		audio.addEventListener('loadedmetadata', () => {
-			URL.revokeObjectURL(fileUrl)
-			resolve(audio.duration)
-		})
-		audio.addEventListener('error', () => {
-			reject(new Error('Не удалось прочитать метаданные аудиофайла'))
-			URL.revokeObjectURL(fileUrl)
-		})
-	})
 }
 
 export const getTrackAudioUrl = async (audioPath: string): Promise<string> => {
@@ -124,16 +90,10 @@ export const deleteTrack = async (trackId: string): Promise<void> => {
 		throw removeError
 	}
 
+	if (removeData.length === 0) {
+		throw new Error('Трек уже удалён')
+	}
+
 	await removeFileIfUnused('audio', removeData[0].audio_path)
 	await removeFileIfUnused('covers', removeData[0].cover_path)
-}
-
-const cleanupUploadedFiles = async (audioPath: string, coverPath: string | null) => {
-	const { error: audioCleanupError } = await supabase.storage.from('audio').remove([audioPath])
-	if (audioCleanupError) console.error('Не получилось удалить аудио-файл:', audioCleanupError)
-
-	if (coverPath) {
-		const { error: coverCleanupError } = await supabase.storage.from('covers').remove([coverPath])
-		if (coverCleanupError) console.error('Не получилось удалить обложку трека:', coverCleanupError)
-	}
 }
