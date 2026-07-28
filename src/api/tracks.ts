@@ -1,6 +1,7 @@
+import { fetchAllPlaylistTracks } from '@/api/playlists.ts'
 import { removeFileIfUnused } from '@/api/storage.ts'
 import { supabase } from '@/lib/supabase.ts'
-import type { Track, UploadTrackParams } from '@/types/tracks.ts'
+import type { PlayableTrack, Track, UploadTrackParams } from '@/types/tracks.ts'
 
 export const fetchTracks = async (userId: string): Promise<Track[]> => {
 	const { data, error: fetchError } = await supabase
@@ -14,6 +15,24 @@ export const fetchTracks = async (userId: string): Promise<Track[]> => {
 	}
 
 	return data
+}
+
+export const fetchAllTracks = async (userId: string): Promise<PlayableTrack[]> => {
+	const [collectionData, playlistsData] = await Promise.all([
+		fetchTracks(userId),
+		fetchAllPlaylistTracks(userId),
+	])
+
+	const seen = new Set<string>()
+	const allTracks: PlayableTrack[] = []
+
+	for (const track of [...collectionData, ...playlistsData]) {
+		if (seen.has(track.audio_path)) continue
+		seen.add(track.audio_path)
+		allTracks.push(track)
+	}
+
+	return allTracks
 }
 
 export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<void> => {

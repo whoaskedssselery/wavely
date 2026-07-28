@@ -45,6 +45,19 @@ export const fetchPlaylistTracks = async (playlistId: string): Promise<PlaylistT
 	return fetchData
 }
 
+export const fetchAllPlaylistTracks = async (userId: string): Promise<PlaylistTrack[]> => {
+	const { data: fetchData, error: fetchError } = await supabase
+		.from('playlist_tracks')
+		.select('*, playlists!inner(user_id)')
+		.eq('playlists.user_id', userId)
+
+	if (fetchError) {
+		throw fetchError
+	}
+
+	return fetchData
+}
+
 export const uploadPlaylist = async ({ data, userId }: UploadPlaylistParams): Promise<void> => {
 	let coverPath: string | null = null
 
