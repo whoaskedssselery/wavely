@@ -5,6 +5,7 @@ const SectionHeader = ({
 	title,
 	counterText,
 	buttonText,
+	children,
 	onButtonClick,
 	onTitleClick,
 }: SectionHeaderProps) => {
@@ -32,6 +33,7 @@ const SectionHeader = ({
 				)}
 			</div>
 			<span className="section-header__counter">{counterText}</span>
+			{children && <div className="section-header__nav">{children}</div>}
 			<button type="button" className="section-header__button" onClick={onButtonClick}>
 				{buttonText}
 			</button>

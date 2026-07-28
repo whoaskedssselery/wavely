@@ -26,6 +26,7 @@ export interface SectionHeaderProps {
 	title: string
 	counterText: string
 	buttonText: string
+	children?: ReactNode
 	onButtonClick: () => void
 	onTitleClick?: () => void
 }

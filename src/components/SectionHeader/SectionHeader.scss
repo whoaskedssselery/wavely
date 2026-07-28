@@ -2,16 +2,23 @@
 
 .section-header {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
   grid-template-rows: auto auto;
   grid-template-areas:
-    'title button'
-    'counter button';
+    'title nav button'
+    'counter nav button';
   align-items: center;
   column-gap: $spacing-md;
   max-width: 800px;
   margin: 0 auto;
   padding-bottom: $spacing-lg;
+
+  &__nav {
+    grid-area: nav;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
 
   &__title-row {
     grid-area: title;
