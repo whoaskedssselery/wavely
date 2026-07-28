@@ -2,6 +2,7 @@ import { removeFileIfUnused } from '@/api/storage.ts'
 import { supabase } from '@/lib/supabase.ts'
 import type { Playlist, PlaylistTrack, UploadPlaylistParams } from '@/types/playlists.ts'
 import type { PlayableTrack } from '@/types/tracks.ts'
+import type { ArrayToUpdate } from '@/types/utils.ts'
 
 export const fetchPlaylists = async (userId: string): Promise<Playlist[]> => {
 	const { data: fetchData, error: fetchError } = await supabase
@@ -205,7 +206,26 @@ export const updatePlaylistCover = async (
 	}
 }
 
-const cleanupUploadedFiles = async (coverPath: string | null) => {
+export const reorderPlaylistTracks = async (tracks: PlayableTrack[]): Promise<void> => {
+	const arrayToUpdate: ArrayToUpdate = []
+
+	tracks.forEach((track, index) => {
+		const newPosition = tracks.length - index
+		if (newPosition !== track.position) {
+			arrayToUpdate.push({ id: track.id, position: newPosition })
+		}
+	})
+
+	const { error: rpcError } = await supabase.rpc('reorder_playlist_tracks', {
+		updates: arrayToUpdate,
+	})
+
+	if (rpcError) {
+		throw rpcError
+	}
+}
+
+const cleanupUploadedFiles = async (coverPath: string | null): Promise<void> => {
 	if (coverPath) {
 		const { error: coverCleanupError } = await supabase.storage.from('covers').remove([coverPath])
 		if (coverCleanupError)

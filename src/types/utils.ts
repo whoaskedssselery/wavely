@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { MouseEvent, ReactNode } from 'react'
 import type { Playlist } from '@/types/playlists'
 import type { PlayableTrack } from '@/types/tracks.ts'
 
@@ -67,3 +67,15 @@ export interface ActiveTrackModal {
 	type: 'delete' | 'add-to-playlist'
 	track: PlayableTrack
 }
+
+export interface SortableTrackCardProps {
+	track: PlayableTrack
+	isActive: boolean
+	variant: 'collection' | 'playlist'
+	openMenuTrackId?: string
+	onTrackClick: (track: PlayableTrack) => void
+	handleMenu: (event: MouseEvent, trackId: string) => void
+	onMenuClick: (event: MouseEvent, type: 'delete' | 'add-to-playlist', track: PlayableTrack) => void
+}
+
+export type ArrayToUpdate = { id: string; position: number }[]

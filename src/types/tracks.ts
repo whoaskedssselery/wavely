@@ -18,6 +18,7 @@ export interface PlayableTrack {
 	duration: number | null
 	audio_path: string
 	cover_path: string | null
+	position?: number
 }
 
 export interface UploadTrackParams {
