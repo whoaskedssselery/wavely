@@ -3,8 +3,9 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import App from './App'
+import App from './app/App'
 import '@a1rth/css-normalize'
+import '@fontsource-variable/inter'
 import './styles/main.scss'
 
 const queryClient = new QueryClient()

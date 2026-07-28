@@ -1,0 +1,103 @@
+@use '@/styles/helpers' as *;
+
+.shuffle-banner {
+  @include flex(row, center, space-between, $spacing-lg);
+  max-width: var(--content-max-width, #{$content-max-width});
+  width: 100%;
+  margin: 0;
+  padding: $spacing-lg $spacing-xl;
+  background-color: $color-accent;
+  border-radius: $border-radius-lg;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  &__info {
+    @include flex(column, flex-start, flex-start, $spacing-xs);
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  &__controls {
+    @include flex(row, center, center, $spacing-md);
+    flex-shrink: 0;
+  }
+
+  &__play {
+    @include flex(row, center, center);
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    background-color: #fff;
+    border: none;
+    border-radius: $border-radius-full;
+    color: $color-accent;
+    cursor: pointer;
+
+    svg {
+      transition: transform $transition-fast;
+    }
+
+    @include hover {
+      background-color: rgba(255, 255, 255, 0.88);
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 4px;
+    }
+  }
+
+  &__nav {
+    @include flex(row, center, center);
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.75);
+    cursor: pointer;
+    transition: color $transition-fast;
+
+    @include hover {
+      color: #fff;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+      border-radius: $border-radius-sm;
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      color: rgba(255, 255, 255, 0.75);
+    }
+  }
+}

@@ -9,7 +9,7 @@
   &__brand {
     font-size: $font-size-xl;
     font-weight: 800;
-    color: $color-accent;
+    color: $color-accent-text;
     letter-spacing: -1px;
     margin-bottom: $spacing-xl;
   }
@@ -70,12 +70,13 @@
     &:focus {
       outline: none;
       border-color: $color-accent;
+      background-color: $color-bg-elevated;
     }
   }
 
   &__error {
     font-size: $font-size-xs;
-    color: #e05252;
+    color: $color-danger;
   }
 
   &__submit-button {
@@ -87,7 +88,7 @@
     border-radius: $border-radius-md;
     font-size: $font-size-md;
     font-weight: 600;
-    color: #000;
+    color: $color-accent-contrast;
     transition: opacity $transition-fast;
 
     @include hover {
@@ -107,7 +108,7 @@
     text-align: center;
 
     a {
-      color: $color-accent;
+      color: $color-accent-text;
       font-weight: 500;
       transition: color $transition-fast;
 

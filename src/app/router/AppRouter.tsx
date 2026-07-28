@@ -1,12 +1,13 @@
 import { AnimatePresence } from 'framer-motion'
 import { Route, Routes, useLocation } from 'react-router-dom'
+import PageTransition from '@/app/router/PageTransition.tsx'
+import ProtectedRoute from '@/app/router/ProtectedRoute.tsx'
 import Collection from '@/pages/Collection'
 import ConfirmOtp from '@/pages/ConfirmOtp'
 import Home from '@/pages/Home'
 import Login from '@/pages/Login'
 import Playlist from '@/pages/Playlist'
 import Register from '@/pages/Register'
-import ProtectedRoute from '@/router/ProtectedRoute'
 
 const AppRouter = () => {
 	const location = useLocation()
@@ -18,7 +19,9 @@ const AppRouter = () => {
 					path="/"
 					element={
 						<ProtectedRoute>
-							<Home />
+							<PageTransition>
+								<Home />
+							</PageTransition>
 						</ProtectedRoute>
 					}
 				/>
@@ -26,7 +29,9 @@ const AppRouter = () => {
 					path="/playlists/:playlistId"
 					element={
 						<ProtectedRoute>
-							<Playlist />
+							<PageTransition>
+								<Playlist />
+							</PageTransition>
 						</ProtectedRoute>
 					}
 				/>
@@ -34,13 +39,36 @@ const AppRouter = () => {
 					path="/collection"
 					element={
 						<ProtectedRoute>
-							<Collection />
+							<PageTransition>
+								<Collection />
+							</PageTransition>
 						</ProtectedRoute>
 					}
 				/>
-				<Route path="/login" element={<Login />} />
-				<Route path="/register" element={<Register />} />
-				<Route path="/confirm" element={<ConfirmOtp />}></Route>
+				<Route
+					path="/login"
+					element={
+						<PageTransition>
+							<Login />
+						</PageTransition>
+					}
+				/>
+				<Route
+					path="/register"
+					element={
+						<PageTransition>
+							<Register />
+						</PageTransition>
+					}
+				/>
+				<Route
+					path="/confirm"
+					element={
+						<PageTransition>
+							<ConfirmOtp />
+						</PageTransition>
+					}
+				/>
 			</Routes>
 		</AnimatePresence>
 	)

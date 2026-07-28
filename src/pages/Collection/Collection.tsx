@@ -1,50 +1,17 @@
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { fetchTracks } from '@/api/tracks.ts'
-import TracksList from '@/components/TracksList'
-import { useAuthStore } from '@/store/authStore.ts'
-import { pluralize } from '@/utils/pluralize.ts'
+import { Link } from 'react-router-dom'
+import useTracks from '@/entities/Track/model/useTracks.ts'
+import { pluralize } from '@/shared/lib/pluralize.ts'
+import useEscapeToNavigate from '@/shared/lib/useEscapeToNavigate.ts'
+import useTrackSearch from '@/shared/lib/useTrackSearch.ts'
+import TracksList from '@/widgets/TracksList'
 import './Collection.scss'
 
 const Collection = () => {
-	const { user } = useAuthStore()
+	const { data: tracks, isLoading: isTracksLoading, error: tracksError } = useTracks()
 
-	const navigate = useNavigate()
+	const { setSearchQuery, filteredTracks } = useTrackSearch(tracks)
 
-	const [searchQuery, setSearchQuery] = useState<string>('')
-
-	const {
-		data: tracks,
-		isLoading: isTracksLoading,
-		error: tracksError,
-	} = useQuery({
-		queryKey: ['tracks', user?.id],
-		queryFn: () => fetchTracks(user!.id),
-		enabled: !!user,
-	})
-
-	useEffect(() => {
-		const handleEscape = (event: KeyboardEvent) => {
-			if (event.key !== 'Escape') return
-			navigate('/')
-		}
-
-		window.addEventListener('keydown', handleEscape)
-
-		return () => {
-			window.removeEventListener('keydown', handleEscape)
-		}
-	}, [navigate])
-
-	if (!user) {
-		return null
-	}
-
-	const filteredTracks = tracks?.filter((track) => {
-		const query = searchQuery.toLocaleLowerCase()
-		return track.title.toLowerCase().includes(query) || track.artist.toLowerCase().includes(query)
-	})
+	useEscapeToNavigate('/')
 
 	const trackCount = tracks?.length ?? 0
 
@@ -84,7 +51,7 @@ const Collection = () => {
 				</div>
 			</div>
 
-			<div className="collection__search">
+			<label className="collection__search">
 				<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none">
 					<circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
 					<path
@@ -97,10 +64,11 @@ const Collection = () => {
 				<input
 					type="text"
 					className="collection__search-input"
+					aria-label="Поиск трека"
 					placeholder="Поиск трека"
 					onChange={(event) => setSearchQuery(event.target.value)}
 				/>
-			</div>
+			</label>
 
 			<TracksList
 				tracks={filteredTracks ?? []}

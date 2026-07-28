@@ -2,10 +2,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { type LoginForm, loginSchema } from '@/schemas/auth.ts'
+import { type LoginForm, loginSchema } from '@/features/Auth/model/schema.ts'
 import './Login.scss'
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase.ts'
+import { supabase } from '@/shared/lib/supabase.ts'
 
 const Login = () => {
 	const {

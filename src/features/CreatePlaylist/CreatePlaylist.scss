@@ -1,0 +1,160 @@
+@use '@/styles/helpers' as *;
+
+.create-playlist {
+  &__card {
+    @include flex(column, stretch, flex-start);
+    width: 100%;
+    max-width: 420px;
+    background-color: $color-bg-elevated;
+    border-radius: $border-radius-lg;
+    box-shadow: #{$shadow-modal};
+    padding: $spacing-lg;
+    gap: $spacing-md;
+  }
+
+  &__title {
+    padding-right: $spacing-xl;
+    font-size: $font-size-lg;
+    font-weight: 700;
+    line-height: 1.3;
+    color: $color-text-primary;
+  }
+
+  &__form {
+    @include flex(column, stretch, flex-start);
+    width: 100%;
+    gap: $spacing-md;
+  }
+
+  &__field {
+    @include flex(column, flex-start, flex-start);
+    gap: $spacing-xs;
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    font-weight: 500;
+  }
+
+  &__required {
+    color: $color-danger;
+    margin-left: 2px;
+  }
+
+  &__input,
+  &__textarea {
+    width: 100%;
+    padding: $spacing-md $spacing-lg;
+    background-color: $color-bg-surface;
+    border: 1.5px solid $color-border;
+    border-radius: $border-radius-md;
+    color: $color-text-primary;
+    font-size: $font-size-md;
+    font-family: $font-primary;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+
+    &::placeholder {
+      color: $color-text-muted;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $color-accent;
+      background-color: $color-bg-elevated;
+    }
+  }
+
+  &__textarea {
+    resize: none;
+  }
+
+  &__dropzone {
+    @include flex(column, center, center, $spacing-sm);
+    width: 100%;
+    padding: $spacing-lg;
+    background-color: $color-bg-surface;
+    border: 1.5px dashed $color-border;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: border-color $transition-fast, background-color $transition-fast;
+
+    @include hover {
+      border-color: $color-accent;
+      background-color: #{$color-accent-soft};
+    }
+
+    &:focus-within {
+      border-color: $color-accent;
+      background-color: $color-bg-elevated;
+    }
+
+    &--filled {
+      border-style: solid;
+      border-color: $color-accent;
+      background-color: #{$color-accent-soft};
+    }
+  }
+
+  &__dropzone-icon {
+    @include flex(row, center, center);
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background-color: $color-bg-elevated;
+    border-radius: $border-radius-full;
+    color: $color-text-muted;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  &__dropzone--filled &__dropzone-icon {
+    color: $color-accent-text;
+  }
+
+  &__dropzone-text {
+    @include truncate;
+    max-width: 100%;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+
+  &__dropzone--filled &__dropzone-text {
+    color: $color-text-primary;
+    font-weight: 600;
+  }
+
+  &__file-input {
+    @include visually-hidden;
+  }
+
+  &__error {
+    font-size: $font-size-xs;
+    color: $color-danger;
+  }
+
+  &__submit-button {
+    width: 100%;
+    padding: $spacing-md;
+    margin-top: $spacing-sm;
+    background-color: $color-accent;
+    border: none;
+    border-radius: $border-radius-md;
+    font-size: $font-size-md;
+    font-weight: 700;
+    color: $color-accent-contrast;
+    transition: background-color $transition-fast;
+
+    @include hover {
+      background-color: $color-accent-hover;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

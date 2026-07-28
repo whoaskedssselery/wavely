@@ -3,8 +3,8 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { supabase } from '@/lib/supabase.ts'
-import { type RegisterForm, registerSchema } from '@/schemas/auth.ts'
+import { type RegisterForm, registerSchema } from '@/features/Auth/model/schema.ts'
+import { supabase } from '@/shared/lib/supabase.ts'
 import './Register.scss'
 
 const Register = () => {

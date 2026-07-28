@@ -1,0 +1,56 @@
+@use '@/styles/helpers' as *;
+
+.popover {
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: $spacing-xs;
+  background-color: $color-bg-elevated;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-lg;
+  box-shadow: #{$shadow-popover};
+
+  &--bottom-right {
+    top: calc(100% + #{$spacing-xs});
+    right: 0;
+
+    &.popover--flip-up {
+      top: auto;
+      bottom: calc(100% + #{$spacing-xs});
+    }
+  }
+
+  &--right {
+    top: 50%;
+    left: calc(100% + #{$spacing-xs});
+    transform: translateY(-50%);
+  }
+
+  button {
+    padding: 10px $spacing-md;
+    background: none;
+    border: none;
+    border-radius: $border-radius-md;
+    color: $color-text-primary;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color $transition-fast, color $transition-fast;
+
+    @include hover {
+      background-color: $color-bg-surface;
+    }
+  }
+
+  &__item--danger {
+    color: $color-danger-text;
+
+    @include hover {
+      background-color: $color-accent-soft;
+    }
+  }
+}

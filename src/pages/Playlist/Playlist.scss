@@ -4,9 +4,10 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding-bottom: $spacing-xl;
+  max-width: var(--content-max-width, #{$content-max-width});
+  margin: 0;
+  padding: $spacing-xl;
+  padding-top: 0;
 
   &__overlay {
     position: fixed;
@@ -22,9 +23,9 @@
     display: flex;
     flex-shrink: 0;
     align-items: flex-start;
-    gap: $spacing-lg;
+    gap: $spacing-xl;
     padding-top: $spacing-xl;
-    padding-bottom: $spacing-lg;
+    padding-bottom: $spacing-xl;
   }
 
   &__back {
@@ -34,8 +35,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
+    background-color: $color-bg-surface;
     border-radius: $border-radius-full;
     color: $color-text-secondary;
     transition:
@@ -44,7 +46,7 @@
       transform $transition-fast;
 
     @include hover {
-      background-color: $color-bg-surface;
+      background-color: $color-border;
       color: $color-text-primary;
       transform: translateX(-2px);
     }
@@ -62,7 +64,8 @@
     padding: 0;
     background: none;
     border: none;
-    border-radius: $border-radius-md;
+    border-radius: $border-radius-lg;
+    box-shadow: #{$shadow-cover};
     cursor: pointer;
 
     @include hover {
@@ -74,9 +77,9 @@
 
   &__cover {
     display: block;
-    width: 160px;
-    height: 160px;
-    border-radius: $border-radius-md;
+    width: 220px;
+    height: 220px;
+    border-radius: $border-radius-lg;
     object-fit: cover;
 
     &--placeholder {
@@ -97,8 +100,8 @@
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.5);
-    border-radius: $border-radius-md;
-    color: $color-text-primary;
+    border-radius: $border-radius-lg;
+    color: #fff;
     opacity: 0;
     transition: opacity $transition-fast;
   }
@@ -112,7 +115,7 @@
 
   &__title {
     line-height: 1;
-    font-size: $font-size-xl;
+    font-size: $font-size-2xl;
     font-weight: 800;
     color: $color-text-primary;
   }
@@ -159,8 +162,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: $border-radius-full;
     color: $color-text-secondary;
     transition: background-color $transition-fast, color $transition-fast;
@@ -236,7 +239,7 @@
 
   &__limit-warning {
     font-size: $font-size-xs;
-    color: #e05252;
+    color: $color-danger;
   }
 
   &__count {
@@ -251,22 +254,35 @@
     display: flex;
     flex-shrink: 0;
     align-items: center;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-lg;
-    padding: 10px $spacing-md;
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+    padding: $spacing-md $spacing-lg;
     background-color: $color-bg-surface;
     border: 1px solid $color-border;
     border-radius: $border-radius-md;
     color: $color-text-muted;
+    transition: border-color $transition-fast, background-color $transition-fast;
+
+    &:focus-within {
+      background-color: $color-bg-elevated;
+      border-color: $color-accent;
+    }
+
+    svg {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+    }
   }
 
   &__search-input {
     flex: 1;
+    min-width: 0;
     background: none;
     border: none;
     outline: none;
     font-family: $font-primary;
-    font-size: $font-size-sm;
+    font-size: $font-size-md;
     color: $color-text-primary;
 
     &::placeholder {

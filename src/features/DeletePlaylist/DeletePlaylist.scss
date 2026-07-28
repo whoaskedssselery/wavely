@@ -1,0 +1,48 @@
+@use '@/styles/helpers' as *;
+
+.delete-playlist {
+  &__preview {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    width: 100%;
+    padding: $spacing-md;
+    background-color: $color-bg-surface;
+    border-radius: $border-radius-md;
+  }
+
+  &__image {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: $border-radius-sm;
+    object-fit: cover;
+
+    &--placeholder {
+      color: $color-text-muted;
+      background-color: $color-bg;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: $font-size-md;
+    font-weight: 600;
+    color: $color-text-primary;
+    @include truncate;
+  }
+
+  &__description {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    @include truncate;
+  }
+}

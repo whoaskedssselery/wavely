@@ -1,0 +1,153 @@
+@use '@/styles/helpers' as *;
+
+.add-to-playlist {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  width: 100%;
+  max-width: 560px;
+  padding: $spacing-lg;
+  background-color: $color-bg-elevated;
+  border-radius: $border-radius-lg;
+  box-shadow: #{$shadow-modal};
+
+  &__text {
+    padding-right: $spacing-xl;
+    font-size: $font-size-lg;
+    font-weight: 700;
+    line-height: 1.3;
+    color: $color-text-primary;
+  }
+
+  &__search {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-md $spacing-lg;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-md;
+    color: $color-text-muted;
+    transition: border-color $transition-fast, background-color $transition-fast;
+
+    &:focus-within {
+      background-color: $color-bg-elevated;
+      border-color: $color-accent;
+    }
+
+    svg {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__search-input {
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: $font-primary;
+    font-size: $font-size-md;
+    color: $color-text-primary;
+
+    &::placeholder {
+      color: $color-text-muted;
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    min-height: 120px;
+    max-height: 420px;
+    overflow-y: auto;
+    @include custom-scrollbar;
+  }
+
+  &__empty {
+    padding: $spacing-lg 0;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    text-align: center;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    width: 100%;
+    padding: $spacing-sm;
+    background: none;
+    border: none;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+
+    @include hover {
+      background-color: $color-bg-surface;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+
+      @include hover {
+        background-color: transparent;
+      }
+    }
+  }
+
+  &__image {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: $border-radius-md;
+    object-fit: cover;
+
+    &--placeholder {
+      color: $color-text-muted;
+      background-color: $color-bg;
+      padding: $spacing-sm;
+      box-sizing: border-box;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__title {
+    min-width: 0;
+    font-size: $font-size-md;
+    font-weight: 600;
+    color: $color-text-primary;
+    text-align: left;
+    @include truncate;
+  }
+
+  &__author {
+    min-width: 0;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    text-align: left;
+    @include truncate;
+  }
+
+  &__badge {
+    @include flex(row, center, center);
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: $border-radius-full;
+    background-color: $color-accent;
+    color: $color-accent-contrast;
+  }
+}

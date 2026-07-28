@@ -1,3 +1,3 @@
-import CoverImage from '@/shared/ui/cover-image/CoverImage.tsx'
+import CoverImage from './CoverImage'
 
 export default CoverImage

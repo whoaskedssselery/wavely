@@ -1,21 +1,38 @@
 // Colors
-$color-bg: #0f0f0f;
-$color-bg-elevated: #1a1a1a;
-$color-bg-surface: #242424;
-$color-accent: #1db954;
-$color-accent-hover: #1ed760;
-$color-text-primary: #ffffff;
-$color-text-secondary: #a3a3a3;
-$color-text-muted: #6b6b6b;
-$color-border: #2a2a2a;
+$color-bg: var(--color-bg);
+$color-bg-elevated: var(--color-bg-elevated);
+$color-bg-surface: var(--color-bg-surface);
+$color-accent: var(--color-accent);
+$color-accent-hover: var(--color-accent-hover);
+$color-accent-contrast: var(--color-accent-contrast);
+$color-accent-text: var(--color-accent-text);
+$color-accent-soft: var(--color-accent-soft);
+$color-accent-soft-strong: var(--color-accent-soft-strong);
+$color-accent-ring: var(--color-accent-ring);
+$color-text-primary: var(--color-text-primary);
+$color-text-secondary: var(--color-text-secondary);
+$color-text-muted: var(--color-text-muted);
+$color-border: var(--color-border);
+$color-border-strong: var(--color-border-strong);
+$color-danger: var(--color-danger);
+$color-danger-hover: var(--color-danger-hover);
+$color-danger-text: var(--color-danger-text);
+$color-scrollbar-thumb: var(--color-scrollbar-thumb);
+$color-scrollbar-thumb-hover: var(--color-scrollbar-thumb-hover);
+
+// Shadows
+$shadow-modal: var(--shadow-modal);
+$shadow-popover: var(--shadow-popover);
+$shadow-cover: var(--shadow-cover);
 
 // Typography
-$font-primary: 'Inter', sans-serif;
-$font-size-xs: 11px;
-$font-size-sm: 13px;
-$font-size-md: 15px;
-$font-size-lg: 18px;
+$font-primary: 'Inter Variable', 'Inter', system-ui, sans-serif;
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-md: 16px;
+$font-size-lg: 20px;
 $font-size-xl: 24px;
+$font-size-2xl: 32px;
 
 // Spacing
 $spacing-xs: 4px;
@@ -26,7 +43,10 @@ $spacing-xl: 32px;
 $spacing-2xl: 48px;
 
 // Layout
-$sidebar-width: 280px;
+$track-row-height: 89px; // padding 2×16 + title 20×1.5 + gap 2 + artist 16×1.5 + border 1
+$sidebar-width: 400px;
+$content-max-width: 1200px;
+$content-max-width-wide: 1600px;
 $border-radius-sm: 4px;
 $border-radius-md: 8px;
 $border-radius-lg: 12px;

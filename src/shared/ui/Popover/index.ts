@@ -1,3 +1,3 @@
-import Popover from '@/shared/ui/Popover/Popover'
+import Popover from './Popover'
 
 export default Popover

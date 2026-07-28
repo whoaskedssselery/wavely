@@ -1,4 +1,4 @@
-import type { PlaylistForm } from '@/features/create-playlist/model/schema.ts'
+import type { PlaylistForm } from '@/features/CreatePlaylist/model/schema.ts'
 
 export interface Playlist {
 	id: string

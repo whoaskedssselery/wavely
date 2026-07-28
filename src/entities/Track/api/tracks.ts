@@ -1,5 +1,5 @@
-import { getAudioDuration } from '@/entities/track/lib/media.ts'
-import type { Track, UploadTrackParams } from '@/entities/track/model/types.ts'
+import { getAudioDuration } from '@/entities/Track/lib/media.ts'
+import type { Track, UploadTrackParams } from '@/entities/Track/model/types.ts'
 import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
 

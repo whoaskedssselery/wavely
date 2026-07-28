@@ -1,3 +1,3 @@
-import SectionHeader from '@/shared/ui/section-header/SectionHeader.tsx'
+import SectionHeader from './SectionHeader'
 
 export default SectionHeader

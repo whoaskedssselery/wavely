@@ -1,4 +1,4 @@
-import type { TrackForm } from '@/features/upload-track/model/schema.ts'
+import type { TrackForm } from '@/features/UploadTrack/model/schema.ts'
 
 export interface Track {
 	id: string

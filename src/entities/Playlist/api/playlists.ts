@@ -2,8 +2,8 @@ import type {
 	Playlist,
 	PlaylistTrack,
 	UploadPlaylistParams,
-} from '@/entities/playlist/model/types.ts'
-import type { PlayableTrack } from '@/entities/track/model/types.ts'
+} from '@/entities/Playlist/model/types.ts'
+import type { PlayableTrack } from '@/entities/Track/model/types.ts'
 import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
 import type { ArrayToUpdate } from '@/shared/types/utils.ts'
@@ -171,6 +171,15 @@ export const updatePlaylistDescription = async (
 }
 
 export const deletePlaylist = async (playlistId: string): Promise<void> => {
+	const { data: tracksData, error: tracksFetchError } = await supabase
+		.from('playlist_tracks')
+		.select('audio_path, cover_path')
+		.eq('playlist_id', playlistId)
+
+	if (tracksFetchError) {
+		throw tracksFetchError
+	}
+
 	const { data: deleteData, error: deleteError } = await supabase
 		.from('playlists')
 		.delete()
@@ -186,6 +195,11 @@ export const deletePlaylist = async (playlistId: string): Promise<void> => {
 	}
 
 	await removeFileIfUnused('covers', deleteData[0].cover_path)
+
+	for (const track of tracksData) {
+		await removeFileIfUnused('audio', track.audio_path)
+		await removeFileIfUnused('covers', track.cover_path)
+	}
 }
 
 export const updatePlaylistTitle = async (playlistId: string, title: string): Promise<void> => {

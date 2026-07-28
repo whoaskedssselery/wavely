@@ -65,10 +65,7 @@
   },
   "overrides": [
     {
-      "includes": [
-        "**/src/components/Player/Player.tsx",
-        "**/src/components/Player/PlayerSeekBar.tsx"
-      ],
+      "includes": ["**/src/widgets/Player/Player.tsx", "**/src/widgets/Player/PlayerSeekBar.tsx"],
       "linter": {
         "rules": {
           "correctness": {
@@ -78,7 +75,7 @@
       }
     },
     {
-      "includes": ["**/src/components/Player/Player.tsx"],
+      "includes": ["**/src/widgets/Player/Player.tsx"],
       "linter": {
         "rules": {
           "a11y": {
@@ -88,7 +85,7 @@
       }
     },
     {
-      "includes": ["**/src/components/TracksList/ui/SortableTrackCard.tsx"],
+      "includes": ["**/src/widgets/TracksList/ui/SortableTrackCard.tsx"],
       "linter": {
         "rules": {
           "a11y": {
@@ -98,11 +95,21 @@
       }
     },
     {
-      "includes": ["**/src/components/ShuffleBanner/ShuffleBanner.tsx"],
+      "includes": ["**/src/widgets/ShuffleBanner/ShuffleBanner.tsx"],
       "linter": {
         "rules": {
           "a11y": {
             "useSemanticElements": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/src/widgets/PlaylistsList/PlaylistsList.tsx"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useExhaustiveDependencies": "off"
           }
         }
       }

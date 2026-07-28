@@ -1,0 +1,60 @@
+@use '@/styles/helpers' as *;
+
+.section-header {
+  @include flex(row, center, space-between, $spacing-md);
+  max-width: var(--content-max-width, #{$content-max-width});
+  margin: 0;
+  padding-bottom: $spacing-lg;
+
+  &__title-row {
+    @include flex(row, center, flex-start, $spacing-xs);
+  }
+
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: 800;
+    color: $color-text-primary;
+  }
+
+  &__title-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xs;
+    background: none;
+    border: none;
+    border-radius: $border-radius-full;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: background-color $transition-fast, color $transition-fast;
+
+    @include hover {
+      background-color: $color-bg-surface;
+      color: $color-text-primary;
+
+      svg {
+        transform: translateX(3px);
+      }
+    }
+
+    svg {
+      transition: transform $transition-fast;
+    }
+  }
+
+  &__right {
+    @include flex(row, center, flex-end, $spacing-md);
+    flex-shrink: 0;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  &__counter {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+}

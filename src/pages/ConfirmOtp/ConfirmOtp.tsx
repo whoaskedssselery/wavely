@@ -3,8 +3,8 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { supabase } from '@/lib/supabase.ts'
-import { type OtpForm, otpSchema } from '@/schemas/auth.ts'
+import { type OtpForm, otpSchema } from '@/features/Auth/model/schema.ts'
+import { supabase } from '@/shared/lib/supabase.ts'
 import './ConfirmOtp.scss'
 
 const ConfirmOtp = () => {

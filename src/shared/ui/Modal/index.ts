@@ -1,3 +1,3 @@
-import Modal from '@/shared/ui/modal/Modal.tsx'
+import Modal from './Modal'
 
 export default Modal

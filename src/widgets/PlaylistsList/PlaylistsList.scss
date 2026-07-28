@@ -1,0 +1,120 @@
+@use '@/styles/helpers' as *;
+
+.playlists-list {
+  max-width: var(--content-max-width, #{$content-max-width});
+  margin: 0;
+  padding-top: $spacing-lg;
+
+  &__loading,
+  &__warning {
+    color: $color-text-muted;
+    font-size: $font-size-md;
+    padding: $spacing-lg 0;
+  }
+
+  &__error {
+    color: $color-danger;
+    font-size: $font-size-md;
+    padding: $spacing-lg 0;
+  }
+
+  &__track {
+    max-width: calc(5 * 210px + 4 * #{$spacing-md});
+    overflow: hidden;
+    padding: $spacing-xs $spacing-xs $spacing-sm;
+    margin: -$spacing-xs (-$spacing-xs) 0;
+  }
+
+  &__nav {
+    @include flex(row, center, center);
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-full;
+    color: $color-text-primary;
+    cursor: pointer;
+    opacity: 0;
+    transition:
+      opacity $transition-fast,
+      border-color $transition-fast,
+      background-color $transition-fast;
+
+    @include hover {
+      background-color: $color-bg;
+      border-color: $color-text-muted;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-accent;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &:hover &__nav,
+  &:focus-within &__nav {
+    opacity: 1;
+
+    &:disabled {
+      opacity: 0.3;
+    }
+  }
+
+  &__slide {
+    width: 210px;
+  }
+
+  &__card {
+    @include flex(column, flex-start, flex-start, $spacing-sm);
+    cursor: pointer;
+  }
+
+  &__image {
+    width: 210px;
+    height: 210px;
+    border-radius: $border-radius-lg;
+    object-fit: cover;
+    background-color: $color-bg-surface;
+    transition: transform $transition-fast;
+
+    &--placeholder {
+      @include flex(row, center, center);
+      padding: $spacing-xl;
+      color: $color-text-muted;
+    }
+  }
+
+  &__card:hover &__image {
+    transform: scale(1.03);
+  }
+
+  &__card-info {
+    @include flex(column, flex-start, flex-start, 2px);
+    width: 100%;
+  }
+
+  &__card-title {
+    width: 100%;
+    font-size: $font-size-lg;
+    font-weight: 700;
+    line-height: 1.1;
+    color: $color-text-primary;
+    @include truncate;
+  }
+
+  &__card-author {
+    width: 100%;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    @include truncate;
+  }
+}

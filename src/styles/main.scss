@@ -1,4 +1,5 @@
 @use 'helpers' as *;
+@use 'themes';
 
 *,
 *::before,
@@ -10,6 +11,8 @@
 
 html {
   height: 100%;
+  overflow: hidden;
+  scrollbar-gutter: auto;
 }
 
 body {
@@ -17,6 +20,7 @@ body {
   overflow: hidden;
   font-family: $font-primary;
   font-size: $font-size-md;
+  line-height: 1.5;
   color: $color-text-primary;
   background-color: $color-bg;
   -webkit-font-smoothing: antialiased;
@@ -34,12 +38,17 @@ button {
   color: inherit;
 }
 
-input {
+input,
+textarea,
+select {
   font: inherit;
   color: inherit;
   border: none;
-  outline: none;
   background: none;
+}
+
+textarea {
+  line-height: 1.5;
 }
 
 a {
@@ -55,4 +64,16 @@ svg {
 ul,
 ol {
   list-style: none;
+}
+
+:focus-visible {
+  outline: 2px solid $color-accent-text;
+  outline-offset: 2px;
+  border-radius: $border-radius-sm;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
 }
