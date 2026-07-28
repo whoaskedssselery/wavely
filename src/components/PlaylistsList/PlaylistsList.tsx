@@ -49,7 +49,10 @@ const PlaylistsList = ({ onCreatePlaylist }: PlaylistsListProps) => {
 					className="playlists-list__nav playlists-list__nav--prev"
 					aria-label="Предыдущие плейлисты"
 					disabled={isBeginning}
-					onClick={() => swiperInstance?.slidePrev()}
+					onClick={(event) => {
+						swiperInstance?.slidePrev()
+						event.currentTarget.blur()
+					}}
 				>
 					<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
 						<path
@@ -66,7 +69,10 @@ const PlaylistsList = ({ onCreatePlaylist }: PlaylistsListProps) => {
 					className="playlists-list__nav playlists-list__nav--next"
 					aria-label="Следующие плейлисты"
 					disabled={isEnd}
-					onClick={() => swiperInstance?.slideNext()}
+					onClick={(event) => {
+						swiperInstance?.slideNext()
+						event.currentTarget.blur()
+					}}
 				>
 					<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
 						<path
