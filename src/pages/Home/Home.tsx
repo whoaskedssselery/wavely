@@ -5,6 +5,7 @@ import CollectionHeader from '@/components/CollectionHeader'
 import CreatePlaylist from '@/components/CreatePlaylist'
 import Modal from '@/components/Modal'
 import PlaylistsList from '@/components/PlaylistsList'
+import ShuffleBanner from '@/components/ShuffleBanner'
 import TracksList from '@/components/TracksList'
 import UploadTrack from '@/components/UploadTrack'
 import { useAuthStore } from '@/store/authStore.ts'
@@ -40,6 +41,7 @@ const Home = () => {
 				variant="collection"
 				isPreview={true}
 			/>
+			<ShuffleBanner />
 			<PlaylistsList onCreatePlaylist={() => setActiveModal('create-playlist')} />
 		</div>
 	)
