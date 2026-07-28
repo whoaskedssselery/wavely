@@ -13,7 +13,9 @@ const Player = () => {
 		progress,
 		repeatMode,
 		shuffle,
+		shuffleHistory,
 		shuffleHistoryIndex,
+		queue,
 		queueIndex,
 		setProgress,
 		setVolume,
@@ -50,7 +52,10 @@ const Player = () => {
 		if (!audioRef.current) return
 
 		if (isPlaying && readyTrackId === currentTrack?.id) {
-			audioRef.current.play().catch(() => setIsPlaying(false))
+			audioRef.current.play().catch((error: DOMException) => {
+				if (error.name === 'AbortError') return
+				setIsPlaying(false)
+			})
 		} else {
 			audioRef.current.pause()
 		}
@@ -81,6 +86,12 @@ const Player = () => {
 
 	const canGoPrev = shuffle ? shuffleHistoryIndex > 0 : repeatMode !== 'off' || queueIndex > 0
 
+	const shuffleAtEdge = shuffleHistoryIndex === shuffleHistory.length - 1
+	const shuffleRemaining = queue.filter((track) => !shuffleHistory.some((t) => t.id === track.id))
+	const canGoNext = shuffle
+		? !shuffleAtEdge || shuffleRemaining.length > 0 || repeatMode !== 'off'
+		: true
+
 	return (
 		<section className="player">
 			<audio
@@ -90,7 +101,10 @@ const Player = () => {
 					if (audioRef.current) {
 						if (repeatMode === 'one') {
 							audioRef.current.currentTime = 0
-							audioRef.current.play().catch(() => setIsPlaying(false))
+							audioRef.current.play().catch((error: DOMException) => {
+								if (error.name === 'AbortError') return
+								setIsPlaying(false)
+							})
 						} else {
 							playNext()
 						}
@@ -171,6 +185,7 @@ const Player = () => {
 						className="player__next-button"
 						onClick={() => playNext(true)}
 						aria-label="Следующий трек"
+						disabled={!canGoNext}
 					>
 						<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
 							<path d="M16 6h2v12h-2zM4 6l11 6-11 6z" />
