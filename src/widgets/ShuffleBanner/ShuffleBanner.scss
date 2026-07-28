@@ -6,7 +6,7 @@
   width: 100%;
   margin: 0;
   padding: $spacing-lg $spacing-xl;
-  background-color: $color-accent;
+  background-color: $color-accent-hover;
   border-radius: $border-radius-lg;
   cursor: pointer;
 
@@ -32,7 +32,7 @@
 
   &__subtitle {
     font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.8);
   }
 
   &__controls {
@@ -48,7 +48,7 @@
     background-color: #fff;
     border: none;
     border-radius: $border-radius-full;
-    color: $color-accent;
+    color: $color-accent-hover;
     cursor: pointer;
 
     svg {
@@ -76,7 +76,7 @@
     height: 36px;
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.8);
     cursor: pointer;
     transition: color $transition-fast;
 
@@ -97,7 +97,7 @@
     &:disabled {
       opacity: 0.3;
       cursor: not-allowed;
-      color: rgba(255, 255, 255, 0.75);
+      color: rgba(255, 255, 255, 0.8);
     }
   }
 }

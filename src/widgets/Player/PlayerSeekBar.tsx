@@ -105,6 +105,7 @@ const PlayerSeekBar = ({
 			<input
 				type="range"
 				className="player__seek-input"
+				aria-label="Перемотка трека"
 				ref={inputRef}
 				min={0}
 				max={duration ?? 0}

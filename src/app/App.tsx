@@ -82,9 +82,9 @@ export default function App() {
 					<Player />
 				</aside>
 			)}
-			<div className="app__content" ref={contentRef}>
+			<main className="app__content" ref={contentRef}>
 				<AppRouter />
-			</div>
+			</main>
 		</div>
 	)
 }

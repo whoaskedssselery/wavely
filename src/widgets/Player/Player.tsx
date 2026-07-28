@@ -245,6 +245,7 @@ const Player = () => {
 							<input
 								type="range"
 								className="player__volume-slider"
+								aria-label="Уровень громкости"
 								min={0}
 								max={1}
 								step={0.01}
