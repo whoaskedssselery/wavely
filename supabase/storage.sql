@@ -39,3 +39,24 @@ USING (
     bucket_id = 'covers'
     AND auth.uid()::text = (storage.foldername(name))[1]
 );
+
+CREATE POLICY "Avatars - SELECT"
+ON storage.objects FOR SELECT
+                                  USING (
+                                  bucket_id = 'avatars'
+                                  AND auth.uid()::text = (storage.foldername(name))[1]
+                                  );
+
+CREATE POLICY "Avatars - INSERT"
+ON storage.objects FOR INSERT
+WITH CHECK (
+    bucket_id = 'avatars'
+    AND auth.uid()::text = (storage.foldername(name))[1]
+);
+
+CREATE POLICY "Avatars - DELETE"
+ON storage.objects FOR DELETE
+USING (
+    bucket_id = 'avatars'
+    AND auth.uid()::text = (storage.foldername(name))[1]
+);
