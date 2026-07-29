@@ -1,7 +1,7 @@
 const MAX_SIDE = 800
 const QUALITY = 0.85
 
-const compressCover = async (file: File): Promise<File> => {
+const compressImage = async (file: File): Promise<File> => {
 	if (!file.type.startsWith('image/')) return file
 
 	try {
@@ -34,4 +34,4 @@ const compressCover = async (file: File): Promise<File> => {
 	}
 }
 
-export default compressCover
+export default compressImage
