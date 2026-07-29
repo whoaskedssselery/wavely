@@ -5,10 +5,11 @@ interface CoverImageProps {
 	alt: string
 	className: string
 	kind: 'track' | 'playlist'
+	priority?: boolean
 }
 
 const CoverImage = (props: CoverImageProps) => {
-	const { coverPath, alt, className, kind } = props
+	const { coverPath, alt, className, kind, priority } = props
 
 	if (coverPath) {
 		return (
@@ -16,7 +17,8 @@ const CoverImage = (props: CoverImageProps) => {
 				className={className}
 				src={supabase.storage.from('covers').getPublicUrl(coverPath).data.publicUrl}
 				alt={alt}
-				loading="lazy"
+				loading="eager"
+				fetchPriority={priority ? 'high' : 'low'}
 				decoding="async"
 			/>
 		)

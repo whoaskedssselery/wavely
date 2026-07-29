@@ -8,7 +8,15 @@ import '@a1rth/css-normalize'
 import '@fontsource-variable/inter'
 import './styles/main.scss'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: 5 * 60 * 1000,
+			gcTime: 60 * 60 * 1000,
+			refetchOnWindowFocus: false,
+		},
+	},
+})
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>

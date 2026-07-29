@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import AppRouter from '@/app/router/AppRouter.tsx'
+import usePrefetchPlaylists from '@/entities/Playlist/model/usePrefetchPlaylists.ts'
 import useAuthListener from '@/features/Auth/model/useAuthListener.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import { useThemeStore } from '@/features/Theme/model/themeStore.ts'
@@ -10,6 +11,7 @@ import './App.scss'
 
 export default function App() {
 	useAuthListener()
+	usePrefetchPlaylists()
 
 	const currentTrack = usePlayerStore((state) => state.currentTrack)
 	const theme = useThemeStore((state) => state.theme)

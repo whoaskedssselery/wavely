@@ -117,6 +117,7 @@ const Player = () => {
 					alt={currentTrack.title}
 					className="player__logo"
 					kind="track"
+					priority
 				/>
 			</div>
 			<div className="player__info">

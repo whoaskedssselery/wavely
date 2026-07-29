@@ -58,6 +58,7 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
 							alt={playlistData.title}
 							className="playlist__cover"
 							kind="playlist"
+							priority
 						/>
 						<span className="playlist__cover-overlay" aria-hidden="true">
 							<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none">
