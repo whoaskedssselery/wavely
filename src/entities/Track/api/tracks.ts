@@ -2,7 +2,7 @@ import { getAudioDuration } from '@/entities/Track/lib/media.ts'
 import type { Track, UploadTrackParams } from '@/entities/Track/model/types.ts'
 import { CACHE_ONE_YEAR } from '@/shared/api/cache.ts'
 import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
-import compressCover from '@/shared/lib/compressCover.ts'
+import compressCover from '@/shared/lib/compressImage.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
 
 export const fetchTracks = async (userId: string): Promise<Track[]> => {

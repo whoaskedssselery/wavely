@@ -6,7 +6,7 @@ import type {
 import type { PlayableTrack } from '@/entities/Track/model/types.ts'
 import { CACHE_ONE_YEAR } from '@/shared/api/cache.ts'
 import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
-import compressCover from '@/shared/lib/compressCover.ts'
+import compressCover from '@/shared/lib/compressImage.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
 import type { ArrayToUpdate } from '@/shared/types/utils.ts'
 
