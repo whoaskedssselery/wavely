@@ -2,6 +2,7 @@ import { getAudioDuration } from '@/entities/Track/lib/media.ts'
 import type { Track, UploadTrackParams } from '@/entities/Track/model/types.ts'
 import { CACHE_ONE_YEAR } from '@/shared/api/cache.ts'
 import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
+import compressCover from '@/shared/lib/compressCover.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
 
 export const fetchTracks = async (userId: string): Promise<Track[]> => {
@@ -34,7 +35,7 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 	}
 
 	if (data.coverFile && data.coverFile.length > 0) {
-		const coverFile = data.coverFile[0]
+		const coverFile = await compressCover(data.coverFile[0])
 		const coverExtension = coverFile.name.split('.').pop()
 		coverPath = `${userId}/${Date.now()}.${coverExtension}`
 

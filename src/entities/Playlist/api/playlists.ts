@@ -6,6 +6,7 @@ import type {
 import type { PlayableTrack } from '@/entities/Track/model/types.ts'
 import { CACHE_ONE_YEAR } from '@/shared/api/cache.ts'
 import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
+import compressCover from '@/shared/lib/compressCover.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
 import type { ArrayToUpdate } from '@/shared/types/utils.ts'
 
@@ -67,7 +68,7 @@ export const uploadPlaylist = async ({ data, userId }: UploadPlaylistParams): Pr
 	let coverPath: string | null = null
 
 	if (data.coverFile && data.coverFile.length > 0) {
-		const coverFile = data.coverFile[0]
+		const coverFile = await compressCover(data.coverFile[0])
 		const coverExtension = coverFile.name.split('.').pop()
 		coverPath = `${userId}/${Date.now()}.${coverExtension}`
 
@@ -220,12 +221,13 @@ export const updatePlaylistCover = async (
 	coverFile: File,
 	oldCoverPath: string | null,
 ): Promise<void> => {
-	const coverExtension = coverFile.name.split('.').pop()
+	const compressedCover = await compressCover(coverFile)
+	const coverExtension = compressedCover.name.split('.').pop()
 	const newCoverPath = `${userId}/${Date.now()}.${coverExtension}`
 
 	const { error: uploadError } = await supabase.storage
 		.from('covers')
-		.upload(newCoverPath, coverFile, { cacheControl: CACHE_ONE_YEAR })
+		.upload(newCoverPath, compressedCover, { cacheControl: CACHE_ONE_YEAR })
 
 	if (uploadError) {
 		throw uploadError
