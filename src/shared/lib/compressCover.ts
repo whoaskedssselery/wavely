@@ -17,6 +17,8 @@ const compressCover = async (file: File): Promise<File> => {
 		const context = canvas.getContext('2d')
 		if (!context) return file
 
+		context.imageSmoothingEnabled = true
+		context.imageSmoothingQuality = 'high'
 		context.drawImage(bitmap, 0, 0, width, height)
 		bitmap.close()
 
