@@ -1,17 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-	type ChangeEvent,
-	type KeyboardEvent as ReactKeyboardEvent,
-	useEffect,
-	useRef,
-	useState,
-} from 'react'
+import { type ChangeEvent, useRef } from 'react'
 import {
 	updatePlaylistCover,
 	updatePlaylistDescription,
 	updatePlaylistTitle,
 } from '@/entities/Playlist/api/playlists.ts'
 import type { Playlist } from '@/entities/Playlist/model/types.ts'
+import useInlineEdit from '@/shared/lib/useInlineEdit.ts'
 
 const usePlaylistMetaEditing = (
 	playlistId: string,
@@ -20,14 +15,6 @@ const usePlaylistMetaEditing = (
 ) => {
 	const queryClient = useQueryClient()
 
-	const [isEditingTitle, setEditingTitle] = useState(false)
-	const [titleDraft, setTitleDraft] = useState('')
-
-	const [isEditingDescription, setEditingDescription] = useState(false)
-	const [descriptionDraft, setDescriptionDraft] = useState('')
-
-	const titleInputRef = useRef<HTMLInputElement>(null)
-	const descriptionRef = useRef<HTMLTextAreaElement>(null)
 	const coverInputRef = useRef<HTMLInputElement>(null)
 
 	const invalidatePlaylist = () =>
@@ -49,61 +36,31 @@ const usePlaylistMetaEditing = (
 		onSuccess: invalidatePlaylist,
 	})
 
-	const startEditingTitle = () => {
-		setTitleDraft(playlistData?.title ?? '')
-		setEditingTitle(true)
-	}
+	const {
+		isEditing: isEditingTitle,
+		draft: titleDraft,
+		setDraft: setTitleDraft,
+		startEditing: startEditingTitle,
+		save: saveTitle,
+		handleKeyDown: handleTitleKeyDown,
+		inputRef: titleInputRef,
+	} = useInlineEdit<HTMLInputElement>({
+		value: playlistData?.title ?? '',
+		onSave: mutateTitle,
+	})
 
-	const saveTitle = () => {
-		setEditingTitle(false)
-		if (titleDraft !== (playlistData?.title ?? '')) {
-			mutateTitle(titleDraft)
-		}
-	}
-
-	const startEditingDescription = () => {
-		setDescriptionDraft(playlistData?.description ?? '')
-		setEditingDescription(true)
-	}
-
-	const saveDescription = () => {
-		setEditingDescription(false)
-		if (descriptionDraft !== (playlistData?.description ?? '')) {
-			mutateDescription(descriptionDraft)
-		}
-	}
-
-	useEffect(() => {
-		if (isEditingTitle) titleInputRef.current?.focus()
-	}, [isEditingTitle])
-
-	useEffect(() => {
-		if (isEditingDescription) descriptionRef.current?.focus()
-	}, [isEditingDescription])
-
-	const handleTitleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
-		if (event.key === 'Escape') {
-			event.stopPropagation()
-			setEditingTitle(false)
-			return
-		}
-		if (event.key === 'Enter' && !event.shiftKey) {
-			event.preventDefault()
-			event.currentTarget.blur()
-		}
-	}
-
-	const handleDescriptionKeyDown = (event: ReactKeyboardEvent<HTMLTextAreaElement>) => {
-		if (event.key === 'Escape') {
-			event.stopPropagation()
-			setEditingDescription(false)
-			return
-		}
-		if (event.key === 'Enter' && !event.shiftKey) {
-			event.preventDefault()
-			event.currentTarget.blur()
-		}
-	}
+	const {
+		isEditing: isEditingDescription,
+		draft: descriptionDraft,
+		setDraft: setDescriptionDraft,
+		startEditing: startEditingDescription,
+		save: saveDescription,
+		handleKeyDown: handleDescriptionKeyDown,
+		inputRef: descriptionRef,
+	} = useInlineEdit<HTMLTextAreaElement>({
+		value: playlistData?.description ?? '',
+		onSave: mutateDescription,
+	})
 
 	const handleCoverChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0]
