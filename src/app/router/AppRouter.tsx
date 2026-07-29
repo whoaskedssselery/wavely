@@ -7,6 +7,7 @@ import ConfirmOtp from '@/pages/ConfirmOtp'
 import Home from '@/pages/Home'
 import Login from '@/pages/Login'
 import Playlist from '@/pages/Playlist'
+import Profile from '@/pages/Profile'
 import Register from '@/pages/Register'
 
 const AppRouter = () => {
@@ -21,6 +22,16 @@ const AppRouter = () => {
 						<ProtectedRoute>
 							<PageTransition>
 								<Home />
+							</PageTransition>
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/profile"
+					element={
+						<ProtectedRoute>
+							<PageTransition>
+								<Profile />
 							</PageTransition>
 						</ProtectedRoute>
 					}
