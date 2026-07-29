@@ -2,10 +2,12 @@ import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import AppRouter from '@/app/router/AppRouter.tsx'
 import usePrefetchPlaylists from '@/entities/Playlist/model/usePrefetchPlaylists.ts'
+import useProfile from '@/entities/Profile/model/useProfile.ts'
 import useAuthListener from '@/features/Auth/model/useAuthListener.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import { useThemeStore } from '@/features/Theme/model/themeStore.ts'
 import useScrollbarVisibility from '@/shared/lib/useScrollbarVisibility.ts'
+import CoverImage from '@/shared/ui/CoverImage'
 import Player from '@/widgets/Player'
 import './App.scss'
 
@@ -16,6 +18,7 @@ export default function App() {
 	const currentTrack = usePlayerStore((state) => state.currentTrack)
 	const theme = useThemeStore((state) => state.theme)
 	const setTheme = useThemeStore((state) => state.setTheme)
+	const { data: profile } = useProfile()
 
 	const contentRef = useRef<HTMLDivElement>(null)
 
@@ -35,7 +38,9 @@ export default function App() {
 							<span>Wavely</span>
 						</Link>
 						<div className="app__sidebar-controls">
-							<div className="app__theme-toggle">
+							<div
+								className={`app__theme-toggle ${theme === 'dark' ? 'app__theme-toggle--dark' : ''}`}
+							>
 								<button
 									type="button"
 									className={`app__theme-toggle-option ${theme === 'light' ? 'app__theme-toggle-option--active' : ''}`}
@@ -69,15 +74,13 @@ export default function App() {
 								</button>
 							</div>
 							<Link to="/profile" className="app__avatar" aria-label="Профиль">
-								<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none">
-									<circle cx="12" cy="8" r="4" fill="currentColor" />
-									<path
-										d="M4 20c0-3.5 3.5-6 8-6s8 2.5 8 6"
-										stroke="currentColor"
-										strokeWidth="2"
-										strokeLinecap="round"
-									/>
-								</svg>
+								<CoverImage
+									coverPath={profile?.avatar_url ?? null}
+									alt={profile?.username ?? 'Профиль'}
+									className="app__avatar-image"
+									kind="profile"
+									bucket="avatars"
+								/>
 							</Link>
 						</div>
 					</div>
