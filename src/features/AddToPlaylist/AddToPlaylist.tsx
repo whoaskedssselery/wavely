@@ -31,6 +31,7 @@ const AddToPlaylist = (props: AddToPlaylistProps) => {
 		mutationFn: (playlistId: string) => addTrackToPlaylist(track, playlistId),
 		onSuccess: (_data, playlistId) => {
 			queryClient.invalidateQueries({ queryKey: ['playlist_tracks', playlistId] })
+			queryClient.invalidateQueries({ queryKey: ['playlist-ids-with-track', track.audio_path] })
 			onAdded()
 		},
 	})
