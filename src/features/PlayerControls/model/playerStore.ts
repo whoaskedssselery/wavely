@@ -29,6 +29,7 @@ interface PlayerStore {
 	toggleShuffle: () => void
 	cycleRepeatMode: () => void
 	clearTrack: (trackId: string) => void
+	reset: () => void
 }
 
 export const usePlayerStore = create<PlayerStore>()(
@@ -183,6 +184,18 @@ export const usePlayerStore = create<PlayerStore>()(
 					} else {
 						return {}
 					}
+				}),
+			reset: () =>
+				set({
+					currentTrack: null,
+					isPlaying: false,
+					progress: 0,
+					queue: [],
+					queueIndex: 0,
+					shuffle: false,
+					shuffleHistory: [],
+					shuffleHistoryIndex: 0,
+					repeatMode: 'off',
 				}),
 		}),
 		{

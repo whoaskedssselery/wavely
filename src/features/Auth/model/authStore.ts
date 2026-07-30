@@ -1,5 +1,6 @@
 import type { Session, User } from '@supabase/supabase-js'
 import { create } from 'zustand/react'
+import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
 
 interface AuthStore {
@@ -17,6 +18,7 @@ export const useAuthStore = create<AuthStore>()((set) => ({
 	setAuth: (user, session) => set({ user, session, isLoading: false }),
 	signOut: async () => {
 		await supabase.auth.signOut()
+		usePlayerStore.getState().reset()
 		set({ user: null, session: null, isLoading: false })
 	},
 }))
