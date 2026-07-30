@@ -22,7 +22,7 @@ const CoverImage = (props: CoverImageProps) => {
 				className={className}
 				src={src}
 				alt={alt}
-				loading="eager"
+				loading={priority ? 'eager' : 'lazy'}
 				fetchPriority={priority ? 'high' : 'low'}
 				decoding="async"
 			/>
