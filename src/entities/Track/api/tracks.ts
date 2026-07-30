@@ -71,10 +71,12 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 	}
 }
 
+export const TRACK_AUDIO_URL_STALE_TIME = 5.5 * 60 * 60 * 1000
+
 export const getTrackAudioUrl = async (audioPath: string): Promise<string> => {
 	const { data, error: getUrlError } = await supabase.storage
 		.from('audio')
-		.createSignedUrl(audioPath, 3600)
+		.createSignedUrl(audioPath, 21600)
 
 	if (getUrlError) {
 		throw getUrlError

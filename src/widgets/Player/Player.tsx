@@ -1,11 +1,13 @@
 import { type CSSProperties, useEffect, useRef, useState } from 'react'
-import { getTrackAudioUrl } from '@/entities/Track/api/tracks.ts'
+import { getTrackAudioUrl, TRACK_AUDIO_URL_STALE_TIME } from '@/entities/Track/api/tracks.ts'
 import { formatDuration } from '@/entities/Track/lib/formatDuration.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import usePlayerNav from '@/features/PlayerControls/model/usePlayerNav.ts'
+import usePrefetchNextTrack from '@/features/PlayerControls/model/usePrefetchNextTrack.ts'
 import CoverImage from '@/shared/ui/CoverImage'
 import PlayerSeekBar from './PlayerSeekBar.tsx'
 import './Player.scss'
+import { useQueryClient } from '@tanstack/react-query'
 
 const Player = () => {
 	const {
@@ -26,6 +28,9 @@ const Player = () => {
 	} = usePlayerStore()
 
 	const { canGoPrev, canGoNext } = usePlayerNav()
+	usePrefetchNextTrack()
+
+	const queryClient = useQueryClient()
 
 	const audioRef = useRef<HTMLAudioElement>(null)
 
@@ -40,7 +45,12 @@ const Player = () => {
 		setReadyTrackId(null)
 
 		const loadTrack = async () => {
-			const url = await getTrackAudioUrl(currentTrack.audio_path)
+			const url = await queryClient.fetchQuery({
+				queryKey: ['track-audio-url', currentTrack.audio_path],
+				queryFn: () => getTrackAudioUrl(currentTrack.audio_path),
+				staleTime: TRACK_AUDIO_URL_STALE_TIME,
+			})
+
 			if (cancelled || !audioRef.current) return
 
 			audioRef.current.src = url
