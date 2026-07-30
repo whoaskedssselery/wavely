@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { type ChangeEvent, useRef } from 'react'
+import { type ChangeEvent, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import usePlaylists from '@/entities/Playlist/model/usePlaylists.ts'
 import { updateAvatar, updateUsername } from '@/entities/Profile/api/profile.ts'
@@ -10,10 +10,12 @@ import { fetchAllTracks } from '@/shared/api/library.ts'
 import { pluralize } from '@/shared/lib/pluralize.ts'
 import useInlineEdit from '@/shared/lib/useInlineEdit.ts'
 import CoverImage from '@/shared/ui/CoverImage'
+import Modal from '@/shared/ui/Modal'
 import './Profile.scss'
 
 const Profile = () => {
 	const { user, signOut } = useAuthStore()
+	const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false)
 
 	const { data: userData, isLoading: isUserLoading, error: userError } = useProfile()
 	const { data: playlists } = usePlaylists()
@@ -75,7 +77,7 @@ const Profile = () => {
 				type="button"
 				className="profile__sign-out"
 				aria-label="Выйти из аккаунта"
-				onClick={signOut}
+				onClick={() => setIsSignOutModalOpen(true)}
 			>
 				<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
 					<path
@@ -212,6 +214,41 @@ const Profile = () => {
 					)}
 				</div>
 			)}
+
+			<Modal isOpen={isSignOutModalOpen} onClose={() => setIsSignOutModalOpen(false)}>
+				<div className="modal-panel">
+					<h2 className="modal-panel__title">Выйти из аккаунта?</h2>
+					<div className="profile__account-preview">
+						<CoverImage
+							coverPath={userData.avatar_url}
+							alt={userData.username}
+							className="profile__account-avatar"
+							kind="profile"
+							bucket="avatars"
+						/>
+						<div className="profile__account-info">
+							<span className="profile__account-name">{userData.username}</span>
+							<span className="profile__account-email">{user?.email}</span>
+						</div>
+					</div>
+					<div className="modal-panel__actions">
+						<button
+							type="button"
+							className="modal-panel__button modal-panel__button--ghost"
+							onClick={() => setIsSignOutModalOpen(false)}
+						>
+							Отмена
+						</button>
+						<button
+							type="button"
+							className="modal-panel__button modal-panel__button--danger"
+							onClick={signOut}
+						>
+							Выйти
+						</button>
+					</div>
+				</div>
+			</Modal>
 		</section>
 	)
 }
