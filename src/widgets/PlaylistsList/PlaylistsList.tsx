@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { Swiper as SwiperType } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import usePlaylists from '@/entities/Playlist/model/usePlaylists.ts'
+import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import { pluralize } from '@/shared/lib/pluralize.ts'
 import CoverImage from '@/shared/ui/CoverImage'
 import SectionHeader from '@/shared/ui/SectionHeader'
@@ -15,6 +16,7 @@ interface PlaylistsListProps {
 
 const PlaylistsList = ({ searchQuery = '' }: PlaylistsListProps) => {
 	const { data, isLoading, error } = usePlaylists()
+	const hasPlayer = usePlayerStore((state) => !!state.currentTrack)
 
 	const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null)
 	const [isBeginning, setIsBeginning] = useState(true)
@@ -40,7 +42,7 @@ const PlaylistsList = ({ searchQuery = '' }: PlaylistsListProps) => {
 		swiperInstance.update()
 		setIsBeginning(swiperInstance.isBeginning)
 		setIsEnd(swiperInstance.isEnd)
-	}, [swiperInstance, filteredData?.length])
+	}, [swiperInstance, filteredData?.length, hasPlayer])
 
 	return (
 		<section className="playlists-list">
@@ -106,7 +108,7 @@ const PlaylistsList = ({ searchQuery = '' }: PlaylistsListProps) => {
 						updateNavState(swiper)
 					}}
 					onSlideChange={updateNavState}
-					slidesPerView="auto"
+					slidesPerView={hasPlayer ? 5 : 6}
 					slidesPerGroup={1}
 					spaceBetween={14}
 					className="playlists-list__track"

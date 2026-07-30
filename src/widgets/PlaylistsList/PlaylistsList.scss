@@ -19,7 +19,7 @@
   }
 
   &__track {
-    max-width: calc(5 * 210px + 4 * #{$spacing-md});
+    width: 100%;
     overflow: hidden;
     padding: $spacing-xs $spacing-xs $spacing-sm;
     margin: -$spacing-xs (-$spacing-xs) 0;
@@ -69,18 +69,14 @@
     }
   }
 
-  &__slide {
-    width: 210px;
-  }
-
   &__card {
     @include flex(column, flex-start, flex-start, $spacing-sm);
     cursor: pointer;
   }
 
   &__image {
-    width: 210px;
-    height: 210px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
     border-radius: $border-radius-lg;
     object-fit: cover;
     background-color: $color-bg-surface;
