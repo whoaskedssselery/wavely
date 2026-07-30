@@ -2,6 +2,7 @@ import type { PlayableTrack } from '@/entities/Track/model/types.ts'
 
 interface ShuffleNextState {
 	queue: PlayableTrack[]
+	isPlaying: boolean
 	shuffleHistory: PlayableTrack[]
 	shuffleHistoryIndex: number
 	repeatMode: 'off' | 'all' | 'one'
@@ -20,7 +21,7 @@ export const getNextShuffleTrack = (state: ShuffleNextState) => {
 			currentTrack: state.shuffleHistory[state.shuffleHistoryIndex + 1],
 			shuffleHistoryIndex: state.shuffleHistoryIndex + 1,
 			progress: 0,
-			isPlaying: true,
+			isPlaying: state.isPlaying,
 		}
 	}
 
@@ -37,7 +38,7 @@ export const getNextShuffleTrack = (state: ShuffleNextState) => {
 			shuffleHistoryIndex: state.shuffleHistoryIndex + 1,
 			currentTrack: nextTrack,
 			progress: 0,
-			isPlaying: true,
+			isPlaying: state.isPlaying,
 		}
 	}
 
@@ -50,7 +51,7 @@ export const getNextShuffleTrack = (state: ShuffleNextState) => {
 			shuffleHistoryIndex: 0,
 			currentTrack: nextTrack,
 			progress: 0,
-			isPlaying: true,
+			isPlaying: state.isPlaying,
 		}
 	}
 

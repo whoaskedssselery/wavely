@@ -89,20 +89,25 @@ export const usePlayerStore = create<PlayerStore>()(
 								currentTrack: state.queue[state.queueIndex + 1],
 								queueIndex: state.queueIndex + 1,
 								progress: 0,
-								isPlaying: true,
+								isPlaying: state.isPlaying,
 							}
 						} else {
 							return { isPlaying: false }
 						}
 					} else {
 						if (state.queue.length - 1 === state.queueIndex) {
-							return { currentTrack: state.queue[0], queueIndex: 0, progress: 0, isPlaying: true }
+							return {
+								currentTrack: state.queue[0],
+								queueIndex: 0,
+								progress: 0,
+								isPlaying: state.isPlaying,
+							}
 						} else {
 							return {
 								currentTrack: state.queue[state.queueIndex + 1],
 								queueIndex: state.queueIndex + 1,
 								progress: 0,
-								isPlaying: true,
+								isPlaying: state.isPlaying,
 							}
 						}
 					}
