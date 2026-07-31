@@ -36,12 +36,14 @@
   }
 }
 
-@mixin custom-scrollbar($width: 10px) {
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
+@mixin custom-scrollbar($width: 8px) {
+  @supports not selector(::-webkit-scrollbar) {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
 
-  &.is-scrolling {
-    scrollbar-color: $color-scrollbar-thumb transparent;
+    &.is-scrolling {
+      scrollbar-color: $color-scrollbar-thumb transparent;
+    }
   }
 
   &::-webkit-scrollbar {
@@ -50,6 +52,7 @@
 
   &::-webkit-scrollbar-track {
     background: transparent;
+    margin: 10px 0;
   }
 
   &::-webkit-scrollbar-button {
