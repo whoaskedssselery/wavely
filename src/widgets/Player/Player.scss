@@ -170,7 +170,7 @@
     border: none;
     border-radius: $border-radius-full;
     cursor: pointer;
-    transition: color $transition-fast, background-color $transition-fast;
+    transition: color $transition-base, background-color $transition-base;
 
     svg {
       width: 22px;
@@ -198,7 +198,7 @@
     border: none;
     border-radius: $border-radius-full;
     cursor: pointer;
-    transition: background-color $transition-fast;
+    transition: background-color $transition-base;
 
     svg {
       width: 32px;
@@ -228,7 +228,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    transition: color $transition-fast;
+    transition: color $transition-base;
 
     svg {
       width: 24px;

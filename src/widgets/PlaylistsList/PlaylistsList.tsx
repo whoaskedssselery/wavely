@@ -4,6 +4,7 @@ import type { Swiper as SwiperType } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import usePlaylists from '@/entities/Playlist/model/usePlaylists.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
+import { useSidebarStore } from '@/features/Sidebar/model/sidebarStore.ts'
 import { pluralize } from '@/shared/lib/pluralize.ts'
 import CoverImage from '@/shared/ui/CoverImage'
 import SectionHeader from '@/shared/ui/SectionHeader'
@@ -16,7 +17,8 @@ interface PlaylistsListProps {
 
 const PlaylistsList = ({ searchQuery = '' }: PlaylistsListProps) => {
 	const { data, isLoading, error } = usePlaylists()
-	const hasPlayer = usePlayerStore((state) => !!state.currentTrack)
+	const currentTrack = usePlayerStore((state) => state.currentTrack)
+	const hasPlayer = useSidebarStore((state) => state.isExpanded) && !!currentTrack
 
 	const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null)
 	const [isBeginning, setIsBeginning] = useState(true)

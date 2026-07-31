@@ -14,11 +14,62 @@
 
 .app__sidebar {
   @include flex(column, stretch, flex-start);
+  position: relative;
   flex-shrink: 0;
   width: $sidebar-width;
   height: 100%;
   background-color: $color-bg-elevated;
   border-right: 1px solid $color-border;
+  transition:
+    width $transition-base,
+    background-color $transition-base,
+    border-color $transition-base;
+
+  &--collapsed {
+    width: $sidebar-width-mini;
+
+    .player {
+      display: none;
+    }
+  }
+}
+
+.app__sidebar-toggle {
+  @include flex(row, center, center);
+  position: absolute;
+  top: $spacing-lg;
+  right: 4px;
+  z-index: 5;
+  width: 28px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: $color-text-secondary;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity $transition-fast, color $transition-base;
+
+  @include hover {
+    color: $color-text-primary;
+  }
+
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:disabled {
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+.app__sidebar {
+  @include hover {
+    .app__sidebar-toggle:not(:disabled) {
+      opacity: 1;
+    }
+  }
 }
 
 .app__sidebar-header {
@@ -30,9 +81,14 @@
 .app__logo {
   @include flex(row, center, flex-start, $spacing-sm);
   color: $color-accent-text;
-  font-size: $font-size-lg;
+  font-size: $font-size-xl;
   font-weight: 800;
+  line-height: 1;
   text-decoration: none;
+
+  svg {
+    transform: translateY(-2px);
+  }
 }
 
 .app__sidebar-controls {
@@ -46,7 +102,7 @@
   border-radius: $border-radius-full;
   background-color: $color-bg-surface;
   color: $color-accent-text;
-  transition: background-color $transition-fast, color $transition-fast;
+  transition: background-color $transition-base, color $transition-base;
 
   @include hover {
     background-color: $color-accent-soft-strong;
@@ -68,21 +124,21 @@
 .app__theme-toggle {
   @include flex(row, center, center, 2px);
   position: relative;
-  padding: 5px;
+  padding: 6px 5px;
   background-color: $color-bg-surface;
   border-radius: $border-radius-full;
 
   &::before {
     content: '';
     position: absolute;
-    top: 5px;
+    top: 6px;
     left: 5px;
     width: 32px;
     height: 32px;
     background-color: $color-bg-elevated;
     border-radius: $border-radius-full;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    transition: transform $transition-base;
+    transition: transform $transition-base, background-color $transition-base;
   }
 
   &--dark::before {
@@ -97,7 +153,7 @@
   height: 32px;
   border-radius: $border-radius-full;
   color: $color-text-secondary;
-  transition: color $transition-fast;
+  transition: color $transition-base;
 
   @include hover {
     color: $color-text-primary;
@@ -113,6 +169,87 @@
     svg {
       transform: scale(1.1);
     }
+  }
+}
+
+.app__sidebar-mini {
+  @include flex(column, center, flex-start, $spacing-lg);
+  height: 100%;
+  padding: $spacing-lg 0;
+}
+
+.app__logo--mini {
+  justify-content: center;
+  height: 44px;
+}
+
+.app__mini-player {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.app__mini-player-cover {
+  width: 100%;
+  height: 100%;
+  border-radius: $border-radius-md;
+  object-fit: cover;
+  background-color: $color-bg-surface;
+
+  &--placeholder {
+    @include flex(row, center, center);
+    padding: $spacing-sm;
+    color: $color-text-muted;
+    box-sizing: border-box;
+  }
+}
+
+.app__mini-player-overlay {
+  @include flex(row, center, center);
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  border-radius: $border-radius-md;
+  color: #fff;
+  opacity: 0;
+  transition: opacity $transition-fast;
+}
+
+.app__mini-player {
+  @include hover {
+    .app__mini-player-overlay {
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible .app__mini-player-overlay {
+    opacity: 1;
+  }
+}
+
+.app__sidebar-mini-footer {
+  @include flex(column, center, flex-end, $spacing-md);
+  margin-top: auto;
+}
+
+.app__theme-toggle-mini {
+  @include flex(row, center, center);
+  width: 44px;
+  height: 44px;
+  background-color: $color-bg-surface;
+  border-radius: $border-radius-full;
+  color: $color-text-secondary;
+  transition: color $transition-base, background-color $transition-base;
+
+  @include hover {
+    color: $color-text-primary;
+    background-color: $color-accent-soft-strong;
   }
 }
 

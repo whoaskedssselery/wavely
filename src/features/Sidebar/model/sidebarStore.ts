@@ -11,9 +11,8 @@ export const useSidebarStore = create<SidebarStore>()(
 	persist(
 		(set) => ({
 			isExpanded: !!usePlayerStore.getState().currentTrack,
-			toggleExpanded: () => set((state) => ({ isExpanded: !state.toggleExpanded
-		})),
+			toggleExpanded: () => set((state) => ({ isExpanded: !state.isExpanded })),
 		}),
 		{ name: 'sidebar-store' },
-	)
+	),
 )
