@@ -8,6 +8,7 @@ import CoverImage from '@/shared/ui/CoverImage'
 import PlayerSeekBar from './PlayerSeekBar.tsx'
 import './Player.scss'
 import { useQueryClient } from '@tanstack/react-query'
+import { PREV_RESTART_THRESHOLD } from '@/shared/constants/player.ts'
 
 const Player = () => {
 	const {
@@ -102,6 +103,14 @@ const Player = () => {
 		setVolume(Math.min(1, Math.max(0, nextVolume)))
 	}
 
+	const handlePrev = () => {
+		if (audioRef.current && audioRef.current.currentTime > PREV_RESTART_THRESHOLD) {
+			audioRef.current.currentTime = 0
+		}
+
+		playPrev()
+	}
+
 	return (
 		<section className="player">
 			<audio
@@ -150,7 +159,7 @@ const Player = () => {
 				<button
 					type="button"
 					className="player__prev-button"
-					onClick={playPrev}
+					onClick={handlePrev}
 					aria-label="Предыдущий трек"
 					disabled={!canGoPrev}
 				>

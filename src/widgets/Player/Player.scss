@@ -191,8 +191,8 @@
 
   &__play-button {
     @include flex(row, center, center);
-    width: 72px;
-    height: 72px;
+    width: 82px;
+    height: 82px;
     color: $color-accent-contrast;
     background-color: $color-accent;
     border: none;
@@ -201,8 +201,8 @@
     transition: background-color $transition-base;
 
     svg {
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
     }
 
     .player__play-icon {

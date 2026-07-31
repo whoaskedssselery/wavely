@@ -5,6 +5,7 @@ import {
 	getNextShuffleTrack,
 	getPrevShuffleTrack,
 } from '@/features/PlayerControls/model/shuffleQueue.ts'
+import { PREV_RESTART_THRESHOLD } from '@/shared/constants/player.ts'
 
 interface PlayerStore {
 	currentTrack: PlayableTrack | null
@@ -115,6 +116,10 @@ export const usePlayerStore = create<PlayerStore>()(
 				}),
 			playPrev: () =>
 				set((state) => {
+					if (state.progress > PREV_RESTART_THRESHOLD) {
+						return { progress: 0 }
+					}
+
 					if (state.shuffle) {
 						return getPrevShuffleTrack(state)
 					} else {
