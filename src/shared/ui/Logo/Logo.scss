@@ -1,0 +1,11 @@
+@use '@/styles/helpers' as *;
+
+.logo {
+  @include flex(row, center, flex-start, $spacing-sm);
+  font-weight: 800;
+  line-height: 1;
+
+  svg {
+    transform: translateY(-2px);
+  }
+}

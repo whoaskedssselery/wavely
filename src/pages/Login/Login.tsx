@@ -6,6 +6,7 @@ import { type LoginForm, loginSchema } from '@/features/Auth/model/schema.ts'
 import './Login.scss'
 import { useState } from 'react'
 import { supabase } from '@/shared/lib/supabase.ts'
+import Logo from '@/shared/ui/Logo'
 
 const Login = () => {
 	const {
@@ -52,7 +53,9 @@ const Login = () => {
 			exit={{ opacity: 0, y: -10 }}
 			transition={{ duration: 0.2 }}
 		>
-			<div className="login__brand">wavely</div>
+			<div className="login__brand">
+				<Logo />
+			</div>
 
 			<div className="login__card">
 				<h2 className="login__title">Вход в аккаунт</h2>

@@ -24,6 +24,7 @@ const useTrackRowMenu = () => {
 		track: PlayableTrack,
 	) => {
 		event.stopPropagation()
+		setOpenMenuTrackId(undefined)
 		setActiveTrackModal({ type, track })
 	}
 

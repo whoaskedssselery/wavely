@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import AppRouter from '@/app/router/AppRouter.tsx'
 import usePrefetchPlaylists from '@/entities/Playlist/model/usePrefetchPlaylists.ts'
@@ -10,7 +10,8 @@ import { useSidebarStore } from '@/features/Sidebar/model/sidebarStore.ts'
 import { useThemeStore } from '@/features/Theme/model/themeStore.ts'
 import useScrollbarVisibility from '@/shared/lib/useScrollbarVisibility.ts'
 import CoverImage from '@/shared/ui/CoverImage'
-import Player from '@/widgets/Player'
+import Logo from '@/shared/ui/Logo'
+import Player, { MobilePlayer } from '@/widgets/Player'
 import './App.scss'
 
 export default function App() {
@@ -24,14 +25,64 @@ export default function App() {
 	const setTheme = useThemeStore((state) => state.setTheme)
 	const isExpanded = useSidebarStore((state) => state.isExpanded) && !!currentTrack
 	const toggleExpanded = useSidebarStore((state) => state.toggleExpanded)
+	const setExpanded = useSidebarStore((state) => state.setExpanded)
 	const { data: profile } = useProfile()
 
 	const contentRef = useRef<HTMLDivElement>(null)
+	const hadTrackRef = useRef(!!currentTrack)
 
 	useScrollbarVisibility(contentRef)
 
+	useEffect(() => {
+		if (!hadTrackRef.current && currentTrack) {
+			setExpanded(true)
+		}
+		hadTrackRef.current = !!currentTrack
+	}, [currentTrack, setExpanded])
+
 	return (
-		<div className={`app ${!isExpanded ? 'app--no-sidebar' : ''}`}>
+		<div className={`app ${!isExpanded ? 'app--no-sidebar' : ''} ${currentTrack ? 'app--playing' : ''}`}>
+			<header className="app__mobile-topbar">
+				<Link to="/" className="app__logo" aria-label="Wavely">
+					<Logo />
+				</Link>
+				<div className="app__mobile-topbar-controls">
+					<button
+						type="button"
+						className="app__theme-toggle-mini"
+						aria-label={theme === 'dark' ? 'Включить светлую тему' : 'Включить тёмную тему'}
+						onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+					>
+						{theme === 'dark' ? (
+							<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none">
+								<path
+									d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"
+									fill="currentColor"
+								/>
+							</svg>
+						) : (
+							<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none">
+								<circle cx="12" cy="12" r="4" fill="currentColor" />
+								<path
+									d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"
+									stroke="currentColor"
+									strokeWidth="2"
+									strokeLinecap="round"
+								/>
+							</svg>
+						)}
+					</button>
+					<Link to="/profile" className="app__avatar" aria-label="Профиль">
+						<CoverImage
+							coverPath={profile?.avatar_url ?? null}
+							alt={profile?.username ?? 'Профиль'}
+							className="app__avatar-image"
+							kind="profile"
+							bucket="avatars"
+						/>
+					</Link>
+				</div>
+			</header>
 			<aside className={`app__sidebar ${!isExpanded ? 'app__sidebar--collapsed' : ''}`}>
 				<button
 					type="button"
@@ -62,12 +113,7 @@ export default function App() {
 							transition={{ duration: 0.15 }}
 						>
 							<Link to="/" className="app__logo">
-								<svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none">
-									<rect x="3" y="12" width="4" height="9" rx="1" fill="currentColor" />
-									<rect x="10" y="6" width="4" height="15" rx="1" fill="currentColor" />
-									<rect x="17" y="9" width="4" height="12" rx="1" fill="currentColor" />
-								</svg>
-								<span>Wavely</span>
+								<Logo />
 							</Link>
 							<div className="app__sidebar-controls">
 								<div
@@ -126,11 +172,7 @@ export default function App() {
 							transition={{ duration: 0.15 }}
 						>
 							<Link to="/" className="app__logo app__logo--mini" aria-label="Wavely">
-								<svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none">
-									<rect x="3" y="12" width="4" height="9" rx="1" fill="currentColor" />
-									<rect x="10" y="6" width="4" height="15" rx="1" fill="currentColor" />
-									<rect x="17" y="9" width="4" height="12" rx="1" fill="currentColor" />
-								</svg>
+								<Logo withLabel={false} />
 							</Link>
 
 							{currentTrack && (
@@ -217,6 +259,7 @@ export default function App() {
 			<main className="app__content" ref={contentRef}>
 				<AppRouter />
 			</main>
+			<MobilePlayer />
 		</div>
 	)
 }

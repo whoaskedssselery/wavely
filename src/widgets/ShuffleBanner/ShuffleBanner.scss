@@ -8,20 +8,32 @@
   padding: $spacing-lg $spacing-xl;
   background-color: $color-accent-hover;
   border-radius: $border-radius-lg;
-  cursor: pointer;
 
-  &:focus {
-    outline: none;
-  }
-
-  &:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 2px;
+  @include media($breakpoint-mobile) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-md;
+    padding: $spacing-lg;
   }
 
   &__info {
     @include flex(column, flex-start, flex-start, $spacing-xs);
     min-width: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 4px;
+      border-radius: $border-radius-sm;
+    }
   }
 
   &__title {
@@ -32,12 +44,16 @@
 
   &__subtitle {
     font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.92);
   }
 
   &__controls {
     @include flex(row, center, center, $spacing-md);
     flex-shrink: 0;
+
+    @include media($breakpoint-mobile) {
+      justify-content: flex-start;
+    }
   }
 
   &__play {

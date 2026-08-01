@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { type OtpForm, otpSchema } from '@/features/Auth/model/schema.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
+import Logo from '@/shared/ui/Logo'
 import './ConfirmOtp.scss'
 
 const ConfirmOtp = () => {
@@ -48,7 +49,9 @@ const ConfirmOtp = () => {
 			exit={{ opacity: 0, y: -10 }}
 			transition={{ duration: 0.2 }}
 		>
-			<div className="confirm-otp__brand">wavely</div>
+			<div className="confirm-otp__brand">
+				<Logo />
+			</div>
 
 			<div className="confirm-otp__card">
 				<h2 className="confirm-otp__title">Подтверждение регистрации</h2>

@@ -91,6 +91,12 @@
     cursor: default;
   }
 
+  &__play {
+    display: contents;
+    text-align: left;
+    cursor: pointer;
+  }
+
   &__eq-wrap {
     @include flex(row, center, center);
     flex-shrink: 0;
@@ -156,8 +162,8 @@
 
   &__menu {
     @include flex(row, center, center);
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     background: none;
     border: none;
     border-radius: $border-radius-sm;

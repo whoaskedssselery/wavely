@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { type RegisterForm, registerSchema } from '@/features/Auth/model/schema.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
+import Logo from '@/shared/ui/Logo'
 import './Register.scss'
 
 const Register = () => {
@@ -60,7 +61,9 @@ const Register = () => {
 			exit={{ opacity: 0, y: -10 }}
 			transition={{ duration: 0.2 }}
 		>
-			<div className="register__brand">wavely</div>
+			<div className="register__brand">
+				<Logo />
+			</div>
 
 			<div className="register__card">
 				<h2 className="register__title">Регистрация</h2>

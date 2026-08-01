@@ -41,33 +41,18 @@ const ShuffleBanner = () => {
 	const isActive = isShuffleQueueActive && isPlaying
 
 	return (
-		<div
-			className="shuffle-banner"
-			role="button"
-			tabIndex={0}
-			onClick={onShuffleClick}
-			onKeyDown={(event) => {
-				if (event.target !== event.currentTarget) return
-				if (event.key === 'Enter' || event.key === ' ') {
-					event.preventDefault()
-					onShuffleClick()
-				}
-			}}
-		>
-			<div className="shuffle-banner__info">
+		<div className="shuffle-banner">
+			<button type="button" className="shuffle-banner__info" onClick={onShuffleClick}>
 				<h2 className="shuffle-banner__title">Вперемешку</h2>
 				<p className="shuffle-banner__subtitle">Коллекция и плейлисты в случайном порядке</p>
-			</div>
+			</button>
 			<div className="shuffle-banner__controls">
 				<button
 					type="button"
 					className="shuffle-banner__nav"
 					aria-label="Предыдущий трек"
 					disabled={!isShuffleQueueActive || !canGoPrev}
-					onClick={(event) => {
-						event.stopPropagation()
-						playPrev()
-					}}
+					onClick={playPrev}
 				>
 					<svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
 						<path d="M5 6h2v12H5zM19 6L8 12l11 6z" />
@@ -77,6 +62,7 @@ const ShuffleBanner = () => {
 					type="button"
 					className="shuffle-banner__play"
 					aria-label={isActive ? 'Пауза' : 'Слушать вперемешку'}
+					onClick={onShuffleClick}
 				>
 					{isActive ? (
 						<svg aria-hidden="true" width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
@@ -93,10 +79,7 @@ const ShuffleBanner = () => {
 					className="shuffle-banner__nav"
 					aria-label="Следующий трек"
 					disabled={!isShuffleQueueActive || !canGoNext}
-					onClick={(event) => {
-						event.stopPropagation()
-						playNext(true)
-					}}
+					onClick={() => playNext(true)}
 				>
 					<svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
 						<path d="M17 6h2v12h-2zM5 6l11 6-11 6z" />

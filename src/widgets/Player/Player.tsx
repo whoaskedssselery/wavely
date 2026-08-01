@@ -1,6 +1,7 @@
-import { type CSSProperties, useEffect, useRef, useState } from 'react'
+import { type CSSProperties, useEffect, useState } from 'react'
 import { getTrackAudioUrl, TRACK_AUDIO_URL_STALE_TIME } from '@/entities/Track/api/tracks.ts'
 import { formatDuration } from '@/entities/Track/lib/formatDuration.ts'
+import audioRef from '@/features/PlayerControls/model/audioRef.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import usePlayerNav from '@/features/PlayerControls/model/usePlayerNav.ts'
 import usePrefetchNextTrack from '@/features/PlayerControls/model/usePrefetchNextTrack.ts'
@@ -32,8 +33,6 @@ const Player = () => {
 	usePrefetchNextTrack()
 
 	const queryClient = useQueryClient()
-
-	const audioRef = useRef<HTMLAudioElement>(null)
 
 	const [readyTrackId, setReadyTrackId] = useState<string | null>(null)
 

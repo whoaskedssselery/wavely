@@ -10,6 +10,10 @@
   &--no-sidebar {
     --content-max-width: #{$content-max-width-wide};
   }
+
+  @include media($breakpoint-tablet) {
+    flex-direction: column;
+  }
 }
 
 .app__sidebar {
@@ -23,14 +27,11 @@
   transition:
     width $transition-base,
     background-color $transition-base,
-    border-color $transition-base;
+    border-color $transition-base,
+    transform $transition-base;
 
-  @include media($breakpoint-tablet) {
+  @include media($breakpoint-desktop) {
     width: 320px;
-  }
-
-  @include media($breakpoint-tablet-sm) {
-    width: 280px;
   }
 
   &--collapsed {
@@ -39,6 +40,10 @@
     .player {
       display: none;
     }
+  }
+
+  @include media($breakpoint-tablet) {
+    display: none;
   }
 }
 
@@ -62,13 +67,13 @@
     color: $color-text-primary;
   }
 
-  &:focus-visible {
-    opacity: 1;
-  }
-
   &:disabled {
     cursor: default;
     pointer-events: none;
+  }
+
+  &:focus-visible {
+    opacity: 1;
   }
 }
 
@@ -80,6 +85,24 @@
   }
 }
 
+.app__mobile-topbar {
+  display: none;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  background-color: $color-bg-elevated;
+  border-bottom: 1px solid $color-border;
+
+  @include media($breakpoint-tablet) {
+    display: flex;
+  }
+}
+
+.app__mobile-topbar-controls {
+  @include flex(row, center, flex-end, $spacing-md);
+}
+
 .app__sidebar-header {
   @include flex(row, center, space-between, $spacing-md);
   flex-shrink: 0;
@@ -87,16 +110,10 @@
 }
 
 .app__logo {
-  @include flex(row, center, flex-start, $spacing-sm);
+  @include flex(row, center, flex-start);
   color: $color-accent-text;
   font-size: $font-size-xl;
-  font-weight: 800;
-  line-height: 1;
   text-decoration: none;
-
-  svg {
-    transform: translateY(-2px);
-  }
 }
 
 .app__sidebar-controls {
@@ -141,8 +158,8 @@
     position: absolute;
     top: 6px;
     left: 5px;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     background-color: $color-bg-elevated;
     border-radius: $border-radius-full;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
@@ -150,15 +167,15 @@
   }
 
   &--dark::before {
-    transform: translateX(34px);
+    transform: translateX(38px);
   }
 }
 
 .app__theme-toggle-option {
   @include flex(row, center, center);
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: $border-radius-full;
   color: $color-text-secondary;
   transition: color $transition-base;
@@ -273,5 +290,11 @@
     &::-webkit-scrollbar-thumb {
       background-color: transparent;
     }
+  }
+}
+
+.app--playing .app__content {
+  @include media($breakpoint-tablet) {
+    padding-bottom: 110px;
   }
 }

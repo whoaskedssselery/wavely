@@ -2,6 +2,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import PageTransition from '@/app/router/PageTransition.tsx'
 import ProtectedRoute from '@/app/router/ProtectedRoute.tsx'
+import PublicRoute from '@/app/router/PublicRoute.tsx'
 import Collection from '@/pages/Collection'
 import ConfirmOtp from '@/pages/ConfirmOtp'
 import Home from '@/pages/Home'
@@ -59,17 +60,21 @@ const AppRouter = () => {
 				<Route
 					path="/login"
 					element={
-						<PageTransition>
-							<Login />
-						</PageTransition>
+						<PublicRoute>
+							<PageTransition>
+								<Login />
+							</PageTransition>
+						</PublicRoute>
 					}
 				/>
 				<Route
 					path="/register"
 					element={
-						<PageTransition>
-							<Register />
-						</PageTransition>
+						<PublicRoute>
+							<PageTransition>
+								<Register />
+							</PageTransition>
+						</PublicRoute>
 					}
 				/>
 				<Route

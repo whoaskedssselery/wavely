@@ -18,6 +18,12 @@ const SortableTrackCard = (props: SortableTrackCardProps) => {
 
 	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: track.id })
 
+	const playLabel = isCurrent
+		? isActive
+			? 'Пауза'
+			: 'Продолжить'
+		: `Воспроизвести «${track.title}»`
+
 	return (
 		<div
 			ref={setNodeRef}
@@ -25,30 +31,27 @@ const SortableTrackCard = (props: SortableTrackCardProps) => {
 			{...(variant === 'playlist' ? attributes : {})}
 			{...(variant === 'playlist' ? listeners : {})}
 			className={`tracks-list__card ${isCurrent ? 'tracks-list__card--current' : ''} ${openMenuTrackId === track.id ? 'tracks-list__card--menu-open' : ''}`}
-			role="button"
-			tabIndex={0}
-			onClick={() => onTrackClick(track)}
-			onKeyDown={(event) => {
-				if (event.target !== event.currentTarget) return
-				if (event.key === 'Enter' || event.key === ' ') {
-					event.preventDefault()
-					onTrackClick(track)
-				}
-			}}
 		>
-			<span className="tracks-list__eq-wrap" aria-hidden="true">
-				{isCurrent && (
-					<span className={`tracks-list__eq ${isActive ? 'tracks-list__eq--playing' : ''}`}>
-						<span />
-						<span />
-						<span />
-					</span>
-				)}
-			</span>
-			<div className="tracks-list__info">
-				<h3 className="tracks-list__title">{track.title}</h3>
-				<span className="tracks-list__artist">{track.artist}</span>
-			</div>
+			<button
+				type="button"
+				className="tracks-list__play"
+				aria-label={playLabel}
+				onClick={() => onTrackClick(track)}
+			>
+				<span className="tracks-list__eq-wrap" aria-hidden="true">
+					{isCurrent && (
+						<span className={`tracks-list__eq ${isActive ? 'tracks-list__eq--playing' : ''}`}>
+							<span />
+							<span />
+							<span />
+						</span>
+					)}
+				</span>
+				<div className="tracks-list__info">
+					<h3 className="tracks-list__title">{track.title}</h3>
+					<span className="tracks-list__artist">{track.artist}</span>
+				</div>
+			</button>
 			<div className="tracks-list__meta">
 				<span className="tracks-list__duration">{formatDuration(track.duration)}</span>
 				<button

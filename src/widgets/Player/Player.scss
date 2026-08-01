@@ -226,6 +226,8 @@
   &__volume-button {
     @include flex(row, center, center);
     position: relative;
+    width: 44px;
+    height: 44px;
     color: $color-text-secondary;
     background: none;
     border: none;
@@ -253,8 +255,8 @@
 
   &__repeat-badge {
     position: absolute;
-    top: -4px;
-    right: -4px;
+    top: 4px;
+    right: 4px;
     width: 12px;
     height: 12px;
     border-radius: $border-radius-full;
@@ -270,6 +272,14 @@
     position: relative;
 
     @include hover {
+      .player__volume-popover {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, 0);
+      }
+    }
+
+    &:focus-within {
       .player__volume-popover {
         opacity: 1;
         visibility: visible;
