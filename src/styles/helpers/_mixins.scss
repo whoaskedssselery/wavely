@@ -36,6 +36,12 @@
   }
 }
 
+@mixin media($breakpoint) {
+  @media (max-width: $breakpoint) {
+    @content;
+  }
+}
+
 @mixin custom-scrollbar($width: 8px) {
   @supports not selector(::-webkit-scrollbar) {
     scrollbar-width: thin;
