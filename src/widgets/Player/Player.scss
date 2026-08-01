@@ -1,11 +1,11 @@
 @use '@/styles/helpers' as *;
 
 .player {
-  @include flex(column, stretch, flex-start, $spacing-xl);
+  @include flex(column, stretch, flex-start, $spacing-lg);
   flex: 1;
   min-height: 0;
   width: 100%;
-  padding: $spacing-2xl $spacing-xl;
+  padding: $spacing-xl;
   overflow-y: auto;
   @include custom-scrollbar;
 
@@ -14,7 +14,9 @@
   }
 
   &__cover-wrap {
-    width: 100%;
+    flex: 1;
+    align-self: center;
+    max-width: 100%;
     aspect-ratio: 1 / 1;
     border-radius: $border-radius-lg;
     overflow: hidden;
