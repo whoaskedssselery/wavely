@@ -105,7 +105,6 @@ const PlaylistsList = ({ searchQuery = '' }: PlaylistsListProps) => {
 
 			{filteredData && filteredData.length > 0 && (
 				<Swiper
-					key={hasPlayer ? 'with-player' : 'no-player'}
 					onSwiper={(swiper) => {
 						setSwiperInstance(swiper)
 						updateNavState(swiper)
@@ -119,8 +118,8 @@ const PlaylistsList = ({ searchQuery = '' }: PlaylistsListProps) => {
 						680: { slidesPerView: 4, spaceBetween: 12 },
 						900: { slidesPerView: 5, spaceBetween: 14 },
 						1024: { slidesPerView: hasPlayer ? 4 : 5, spaceBetween: 14 },
-						1280: { slidesPerView: hasPlayer ? 5 : 6, spaceBetween: 14 },
-						1600: { slidesPerView: hasPlayer ? 6 : 7, spaceBetween: 14 },
+						1280: { slidesPerView: hasPlayer ? 4 : 5, spaceBetween: 14 },
+						1600: { slidesPerView: hasPlayer ? 5 : 6, spaceBetween: 14 },
 					}}
 					className="playlists-list__track"
 				>
