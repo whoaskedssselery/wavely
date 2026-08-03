@@ -8,33 +8,30 @@
 }
 
 .home__toolbar {
-  @include flex(row, center, space-between, $spacing-lg);
+  @include flex(row, center, space-between);
   max-width: var(--content-max-width, #{$content-max-width});
   width: 100%;
   margin: 0;
-  flex-wrap: wrap;
-
-  @include media($breakpoint-tablet-sm) {
-    flex-direction: column;
-    align-items: stretch;
-  }
 }
 
 .home__search {
   @include flex(row, center, flex-start, $spacing-md);
   flex: 1 1 240px;
   min-width: 0;
-  max-width: 480px;
-
-  @include media($breakpoint-tablet-sm) {
-    max-width: none;
-  }
+  max-width: 640px;
   padding: $spacing-md $spacing-lg;
   background-color: $color-bg-surface;
   border: 1px solid $color-border;
   border-radius: $border-radius-md;
   color: $color-text-muted;
-  transition: border-color $transition-fast, background-color $transition-fast;
+  transition:
+    max-width 0.34s ease,
+    border-color $transition-fast,
+    background-color $transition-fast;
+
+  .home__toolbar--search-expanded & {
+    max-width: 2000px;
+  }
 
   &:focus-within {
     background-color: $color-bg-elevated;
@@ -64,20 +61,42 @@
 }
 
 .home__toolbar-actions {
-  @include flex(row, center, flex-end, $spacing-md);
+  @include flex(row, center, flex-end);
   flex-shrink: 0;
+}
 
-  @include media($breakpoint-tablet-sm) {
-    justify-content: stretch;
+.home__add-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  background: none;
+  border: none;
+  cursor: default;
+}
 
-    .home__toolbar-button {
-      flex: 1;
-    }
+.home__add-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.home__add-menu-collapse {
+  max-width: 240px;
+  margin-left: $spacing-lg;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-width 0.34s ease, margin-left 0.34s ease, opacity $transition-fast;
+
+  .home__toolbar--search-expanded & {
+    max-width: 0;
+    margin-left: 0;
+    opacity: 0;
+    pointer-events: none;
   }
 }
 
 .home__toolbar-button {
   @include flex(row, center, center, $spacing-xs);
+  width: 100%;
   padding: $spacing-md $spacing-lg;
   background-color: transparent;
   border: none;
