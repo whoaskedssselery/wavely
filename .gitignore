@@ -23,6 +23,7 @@ DESIGN.md
 PRODUCT.md
 .claude/
 .codegraph/
+.impeccable/
 
 # Editor directories and files
 .vscode/*
@@ -34,3 +35,8 @@ PRODUCT.md
 *.njsproj
 *.sln
 *.sw?
+
+# --- claude-workspace: local Claude Code state (do not remove this block) ---
+.claude/settings.local.json
+.DS_Store
+# --- end claude-workspace ---
