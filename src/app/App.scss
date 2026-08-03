@@ -20,7 +20,7 @@
   @include flex(column, stretch, flex-start);
   position: relative;
   flex-shrink: 0;
-  width: clamp(400px, 26vw, 620px);
+  width: clamp(320px, calc(100vh - #{$player-chrome-height} + #{$spacing-xl} * 2), 524px);
   height: 100%;
   background-color: $color-bg-elevated;
   border-right: 1px solid $color-border;
@@ -29,10 +29,6 @@
     background-color $transition-base,
     border-color $transition-base,
     transform $transition-base;
-
-  @include media($breakpoint-desktop) {
-    width: 320px;
-  }
 
   &--collapsed {
     width: $sidebar-width-mini;
@@ -284,6 +280,7 @@
   min-height: 0;
   overflow-y: scroll;
   overflow-x: hidden;
+  contain: layout;
   @include custom-scrollbar;
 
   body.modal-open & {

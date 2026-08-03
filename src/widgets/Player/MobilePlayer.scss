@@ -4,16 +4,15 @@
   display: none;
   flex-direction: column;
   position: fixed;
-  left: $spacing-md;
-  right: $spacing-md;
+  left: $spacing-xl;
+  right: $spacing-xl;
   bottom: $spacing-md;
   z-index: 40;
-  width: calc(100% - #{$spacing-md} * 2);
+  width: calc(100% - #{$spacing-xl} * 2);
   background-color: $color-bg-elevated;
   border: 1px solid $color-border;
   border-radius: $border-radius-lg;
   box-shadow: #{$shadow-modal};
-  overflow: hidden;
 
   @include media($breakpoint-tablet) {
     display: flex;
@@ -37,8 +36,8 @@
 
 .mobile-player__cover {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: 52px;
+  height: 52px;
   border-radius: $border-radius-md;
   object-fit: cover;
   background-color: $color-bg-surface;
@@ -54,7 +53,7 @@
   @include truncate;
   display: block;
   width: 100%;
-  font-size: $font-size-sm;
+  font-size: $font-size-md;
   font-weight: 600;
   color: $color-text-primary;
 }
@@ -63,7 +62,7 @@
   @include truncate;
   display: block;
   width: 100%;
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
   color: $color-text-secondary;
 }
 
@@ -76,8 +75,8 @@
 .mobile-player__prev-button,
 .mobile-player__next-button {
   @include flex(row, center, center);
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   color: $color-text-primary;
   background: none;
   border: none;
@@ -91,17 +90,13 @@
 
 .mobile-player__play-button {
   @include flex(row, center, center);
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   color: $color-bg-elevated;
   background-color: $color-text-primary;
   border: none;
   border-radius: $border-radius-full;
   cursor: pointer;
-
-  .mobile-player__play-icon {
-    margin-left: 2px;
-  }
 }
 
 .mobile-player__extra {
@@ -114,8 +109,8 @@
 .mobile-player__shuffle-button {
   @include flex(row, center, center);
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   color: $color-text-muted;
   background: none;
   border: none;
@@ -142,17 +137,53 @@
   text-align: center;
 }
 
+.mobile-player__volume {
+  position: relative;
+}
+
+.mobile-player__volume-popover {
+  @include flex(column, center, center);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, 4px);
+  margin-bottom: $spacing-sm;
+  padding: $spacing-sm;
+  background-color: $color-bg-elevated;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-md;
+  box-shadow: #{$shadow-popover};
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity $transition-fast, transform $transition-fast, visibility $transition-fast;
+  z-index: 5;
+}
+
+.mobile-player__volume {
+  @include hover {
+    .mobile-player__volume-popover {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  &:focus-within .mobile-player__volume-popover {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+  }
+}
+
 .mobile-player__seek {
   width: 100%;
-  padding-bottom: $spacing-sm;
+  padding: 0 $spacing-md $spacing-sm;
 
   .player__progress {
     height: 6px;
   }
 
   .player__seek-input {
-    border-radius: 0;
-
     &::-webkit-slider-thumb {
       opacity: 1;
     }

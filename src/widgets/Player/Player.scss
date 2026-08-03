@@ -1,7 +1,7 @@
 @use '@/styles/helpers' as *;
 
 .player {
-  @include flex(column, stretch, flex-start, $spacing-lg);
+  @include flex(column, stretch, center, $spacing-lg);
   flex: 1;
   min-height: 0;
   width: 100%;
@@ -14,12 +14,15 @@
   }
 
   &__cover-wrap {
+    --cover-cap: min(460px, calc(100vh - #{$player-chrome-height}));
     flex: 1;
     align-self: center;
-    max-width: 100%;
+    max-width: min(100%, var(--cover-cap));
+    max-height: var(--cover-cap);
     aspect-ratio: 1 / 1;
     border-radius: $border-radius-lg;
     overflow: hidden;
+    contain: layout paint;
     box-shadow: #{$shadow-cover};
   }
 
@@ -295,7 +298,7 @@
     left: 50%;
     transform: translate(-50%, 4px);
     margin-bottom: $spacing-sm;
-    padding: $spacing-md $spacing-sm;
+    padding: $spacing-sm;
     background-color: $color-bg-elevated;
     border: 1px solid $color-border;
     border-radius: $border-radius-md;
@@ -309,7 +312,7 @@
   &__volume-track {
     @include flex(row, center, center);
     position: relative;
-    height: 90px;
+    height: 130px;
 
     .player__volume-slider:hover ~ .player__volume-tooltip,
     .player__volume-slider:active ~ .player__volume-tooltip,

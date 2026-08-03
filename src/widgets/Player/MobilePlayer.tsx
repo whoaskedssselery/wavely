@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import audioRef from '@/features/PlayerControls/model/audioRef.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import usePlayerNav from '@/features/PlayerControls/model/usePlayerNav.ts'
@@ -19,6 +20,8 @@ const MobilePlayer = () => {
 		toggleShuffle,
 		cycleRepeatMode,
 		shuffle,
+		volume,
+		setVolume,
 	} = usePlayerStore()
 
 	const { canGoPrev, canGoNext } = usePlayerNav()
@@ -31,6 +34,10 @@ const MobilePlayer = () => {
 		}
 
 		playPrev()
+	}
+
+	const handleVolumeChange = (nextVolume: number) => {
+		setVolume(Math.min(1, Math.max(0, nextVolume)))
 	}
 
 	return (
@@ -68,15 +75,20 @@ const MobilePlayer = () => {
 						aria-label={isPlaying ? 'Пауза' : 'Воспроизвести'}
 					>
 						{isPlaying ? (
-							<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+							<svg
+								aria-hidden="true"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="currentColor"
+							>
 								<path d="M7 5h4v14H7zM13 5h4v14h-4z" />
 							</svg>
 						) : (
 							<svg
 								aria-hidden="true"
-								className="mobile-player__play-icon"
-								width="20"
-								height="20"
+								width="24"
+								height="24"
 								viewBox="0 0 24 24"
 								fill="currentColor"
 							>
@@ -105,8 +117,8 @@ const MobilePlayer = () => {
 					>
 						<svg
 							aria-hidden="true"
-							width="18"
-							height="18"
+							width="20"
+							height="20"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
@@ -126,8 +138,8 @@ const MobilePlayer = () => {
 					>
 						<svg
 							aria-hidden="true"
-							width="18"
-							height="18"
+							width="20"
+							height="20"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
@@ -138,6 +150,44 @@ const MobilePlayer = () => {
 							<path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
 						</svg>
 					</button>
+					<div className="mobile-player__volume">
+						<button type="button" className="player__volume-button" aria-label="Громкость">
+							<svg
+								aria-hidden="true"
+								width="18"
+								height="18"
+								viewBox="0 0 24 24"
+								fill="currentColor"
+							>
+								<path d="M3 9v6h4l5 5V4L7 9H3z" />
+								<path
+									d="M16 8.5a4.5 4.5 0 0 1 0 7"
+									stroke="currentColor"
+									strokeWidth="2"
+									fill="none"
+									strokeLinecap="round"
+								/>
+							</svg>
+						</button>
+						<div className="mobile-player__volume-popover">
+							<div
+								className="player__volume-track"
+								style={{ '--volume': `${volume * 100}%` } as CSSProperties}
+							>
+								<input
+									type="range"
+									className="player__volume-slider"
+									aria-label="Уровень громкости"
+									min={0}
+									max={1}
+									step={0.01}
+									value={volume}
+									onChange={(e) => handleVolumeChange(Number(e.target.value))}
+								/>
+								<span className="player__volume-tooltip">{Math.round(volume * 100)}%</span>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div className="mobile-player__seek">

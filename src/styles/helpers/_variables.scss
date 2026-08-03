@@ -45,12 +45,13 @@ $spacing-2xl: 48px;
 // Breakpoints
 $breakpoint-desktop-wide: 1600px;
 $breakpoint-desktop: 1200px;
-$breakpoint-tablet: 1024px;
+$breakpoint-tablet: 1280px;
 $breakpoint-tablet-sm: 768px;
 $breakpoint-mobile: 600px;
 
 // Layout
 $track-row-height: 89px; // padding 2×16 + title 20×1.5 + gap 2 + artist 16×1.5 + border 1
+$player-chrome-height: 460px; // sidebar-header 96 + player padding 64 + gaps 96 + info 64 + progress-row 17 + controls 82 + extra-buttons 44
 $sidebar-width: 400px;
 $sidebar-width-mini: 88px;
 $content-max-width: 1440px;
