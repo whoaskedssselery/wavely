@@ -8,12 +8,15 @@
 
   &__title-row {
     @include flex(row, center, flex-start, $spacing-xs);
+    min-width: 0;
+    flex: 1;
   }
 
   &__title {
     font-size: $font-size-2xl;
     font-weight: 800;
     color: $color-text-primary;
+    @include truncate;
   }
 
   &__title-link {

@@ -6,6 +6,10 @@
   margin: 0 auto;
   padding: $spacing-2xl $spacing-xl;
 
+  @include media($breakpoint-mobile) {
+    padding: $spacing-xl $spacing-lg;
+  }
+
   &__loading,
   &__error {
     padding: $spacing-2xl $spacing-xl;
@@ -31,11 +35,22 @@
       background-color: $color-border;
       color: $color-text-primary;
     }
+
+    @include media($breakpoint-mobile) {
+      top: $spacing-xl;
+      right: $spacing-lg;
+    }
   }
 
   &__header {
     @include flex(row, center, flex-start, $spacing-lg);
     margin-bottom: $spacing-2xl;
+
+    @include media($breakpoint-mobile) {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
   }
 
   &__cover-wrap {
@@ -175,6 +190,10 @@
     @include flex(row, stretch, flex-start, $spacing-md);
     width: 100%;
     margin-top: $spacing-md;
+
+    @include media($breakpoint-mobile) {
+      flex-direction: column;
+    }
   }
 
   &__recent-card {
