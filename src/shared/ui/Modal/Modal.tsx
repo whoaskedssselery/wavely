@@ -1,5 +1,6 @@
 import './Modal.scss'
 import { useEffect, useId, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import type { ModalProps } from '@/shared/types/utils.ts'
 
 const FOCUSABLE_SELECTOR =
@@ -62,7 +63,7 @@ const Modal = (props: ModalProps) => {
 
 	if (!isOpen) return null
 
-	return (
+	return createPortal(
 		<section className="modal">
 			<div
 				ref={contentRef}
@@ -87,7 +88,8 @@ const Modal = (props: ModalProps) => {
 				</button>
 				{children}
 			</div>
-		</section>
+		</section>,
+		document.body,
 	)
 }
 
