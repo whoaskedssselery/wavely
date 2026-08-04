@@ -58,3 +58,11 @@ export const updateAvatar = async (
 		await supabase.storage.from('avatars').remove([oldAvatarPath])
 	}
 }
+
+export const deleteAccount = async (): Promise<void> => {
+	const { error } = await supabase.rpc('delete_own_account')
+
+	if (error) {
+		throw error
+	}
+}

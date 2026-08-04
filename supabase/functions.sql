@@ -31,3 +31,44 @@ AS $$
 $$;
 
 GRANT EXECUTE ON FUNCTION record_track_play(text, text, text, text) TO authenticated;
+
+CREATE OR REPLACE FUNCTION delete_own_account()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    target_uid uuid := auth.uid();
+    bucket_name text;
+    object_paths text[];
+    service_key text := current_setting('app.settings.service_role_key', true);
+BEGIN
+    IF target_uid IS NULL THEN
+        RAISE EXCEPTION 'Not authenticated';
+    END IF;
+
+    FOREACH bucket_name IN ARRAY ARRAY['audio', 'covers', 'avatars'] LOOP
+        SELECT array_agg(name) INTO object_paths
+        FROM storage.objects
+        WHERE bucket_id = bucket_name
+          AND (storage.foldername(name))[1] = target_uid::text;
+
+        IF object_paths IS NOT NULL THEN
+            PERFORM net.http_delete(
+                url := 'http://storage:5000/object/' || bucket_name,
+                headers := jsonb_build_object(
+                    'Authorization', 'Bearer ' || service_key,
+                    'apikey', service_key,
+                    'Content-Type', 'application/json'
+                ),
+                body := jsonb_build_object('prefixes', to_jsonb(object_paths))
+            );
+        END IF;
+    END LOOP;
+
+    DELETE FROM auth.users WHERE id = target_uid;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION delete_own_account() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION delete_own_account() TO authenticated;

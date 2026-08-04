@@ -17,18 +17,29 @@
     color: $color-text-muted;
   }
 
-  &__sign-out {
-    @include flex(row, center, center);
+  &__toolbar {
+    @include flex(column, flex-end, flex-start, $spacing-sm);
     position: absolute;
     top: $spacing-2xl;
     right: $spacing-xl;
+
+    @include media($breakpoint-mobile) {
+      top: $spacing-xl;
+      right: $spacing-lg;
+    }
+  }
+
+  &__toolbar-row {
+    @include flex(row, center, center, $spacing-sm);
+  }
+
+  &__toolbar-button {
+    @include flex(row, center, center);
     width: 40px;
     height: 40px;
     background-color: $color-bg-surface;
-    border: none;
     border-radius: $border-radius-full;
     color: $color-text-secondary;
-    cursor: pointer;
     transition: background-color $transition-fast, color $transition-fast;
 
     @include hover {
@@ -36,10 +47,18 @@
       color: $color-text-primary;
     }
 
-    @include media($breakpoint-mobile) {
-      top: $spacing-xl;
-      right: $spacing-lg;
+    &--danger {
+      @include hover {
+        background-color: $color-danger;
+        color: #fff;
+      }
     }
+  }
+
+  &__delete-warning {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    line-height: 1.5;
   }
 
   &__header {

@@ -2,13 +2,16 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { type ChangeEvent, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import usePlaylists from '@/entities/Playlist/model/usePlaylists.ts'
-import { updateAvatar, updateUsername } from '@/entities/Profile/api/profile.ts'
+import { deleteAccount, updateAvatar, updateUsername } from '@/entities/Profile/api/profile.ts'
 import useProfile from '@/entities/Profile/model/useProfile.ts'
+import useFavoriteTrack from '@/entities/Track/model/useFavoriteTrack.ts'
 import useTracks from '@/entities/Track/model/useTracks.ts'
 import { useAuthStore } from '@/features/Auth/model/authStore.ts'
 import { fetchAllTracks } from '@/shared/api/library.ts'
 import { pluralize } from '@/shared/lib/pluralize.ts'
+import useEscapeToNavigate from '@/shared/lib/useEscapeToNavigate.ts'
 import useInlineEdit from '@/shared/lib/useInlineEdit.ts'
+import useSmartBack from '@/shared/lib/useSmartBack.ts'
 import CoverImage from '@/shared/ui/CoverImage'
 import Modal from '@/shared/ui/Modal'
 import './Profile.scss'
@@ -16,10 +19,12 @@ import './Profile.scss'
 const Profile = () => {
 	const { user, signOut } = useAuthStore()
 	const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false)
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
 	const { data: userData, isLoading: isUserLoading, error: userError } = useProfile()
 	const { data: playlists } = usePlaylists()
 	const { data: tracks } = useTracks()
+	const { data: favoriteTrack } = useFavoriteTrack()
 	const { data: allTracks } = useQuery({
 		queryKey: ['all-tracks', user?.id],
 		queryFn: () => fetchAllTracks(user!.id),
@@ -45,6 +50,11 @@ const Profile = () => {
 		onSuccess: invalidateProfile,
 	})
 
+	const { mutate: mutateDeleteAccount, isPending: isDeletingAccount } = useMutation({
+		mutationFn: deleteAccount,
+		onSuccess: signOut,
+	})
+
 	const {
 		isEditing: isUsernameEditing,
 		draft: usernameDraft,
@@ -56,6 +66,9 @@ const Profile = () => {
 	} = useInlineEdit<HTMLInputElement>({ value: userData?.username ?? '', onSave: mutateUsername })
 
 	const avatarInputRef = useRef<HTMLInputElement>(null)
+	const goBack = useSmartBack('/')
+
+	useEscapeToNavigate('/')
 
 	const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target?.files?.[0]
@@ -73,22 +86,58 @@ const Profile = () => {
 
 	return (
 		<section className="profile">
-			<button
-				type="button"
-				className="profile__sign-out"
-				aria-label="Выйти из аккаунта"
-				onClick={() => setIsSignOutModalOpen(true)}
-			>
-				<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
-					<path
-						d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"
-						stroke="currentColor"
-						strokeWidth="2"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					/>
-				</svg>
-			</button>
+			<div className="profile__toolbar">
+				<div className="profile__toolbar-row">
+					<button
+						type="button"
+						className="profile__toolbar-button"
+						aria-label="Назад"
+						onClick={goBack}
+					>
+						<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none">
+							<path
+								d="M19 12H5M11 18l-6-6 6-6"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							/>
+						</svg>
+					</button>
+					<button
+						type="button"
+						className="profile__toolbar-button"
+						aria-label="Выйти из аккаунта"
+						onClick={() => setIsSignOutModalOpen(true)}
+					>
+						<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
+							<path
+								d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							/>
+						</svg>
+					</button>
+				</div>
+				<button
+					type="button"
+					className="profile__toolbar-button profile__toolbar-button--danger"
+					aria-label="Удалить аккаунт"
+					onClick={() => setIsDeleteModalOpen(true)}
+				>
+					<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
+						<path
+							d="M4 7h16M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3m2 0-1 13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 7h12ZM10 11v6M14 11v6"
+							stroke="currentColor"
+							strokeWidth="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+						/>
+					</svg>
+				</button>
+			</div>
 
 			<div className="profile__header">
 				<button
@@ -176,8 +225,33 @@ const Profile = () => {
 				</div>
 			</div>
 
-			{(latestTrack || latestPlaylist) && (
+			{(latestTrack || latestPlaylist || favoriteTrack) && (
 				<div className="profile__recent">
+					{favoriteTrack && (
+						<div className="profile__recent-card">
+							<span className="profile__recent-label">Любимый трек</span>
+							<div className="profile__recent-item">
+								<CoverImage
+									coverPath={favoriteTrack.cover_path}
+									alt={favoriteTrack.title}
+									className="profile__recent-cover"
+									kind="track"
+								/>
+								<div className="profile__recent-info">
+									<span className="profile__recent-title">{favoriteTrack.title}</span>
+									<span className="profile__recent-subtitle">
+										{favoriteTrack.play_count}{' '}
+										{pluralize(favoriteTrack.play_count, [
+											'прослушивание',
+											'прослушивания',
+											'прослушиваний',
+										])}
+									</span>
+								</div>
+							</div>
+						</div>
+					)}
+
 					{latestTrack && (
 						<div className="profile__recent-card">
 							<span className="profile__recent-label">Последний трек</span>
@@ -245,6 +319,47 @@ const Profile = () => {
 							onClick={signOut}
 						>
 							Выйти
+						</button>
+					</div>
+				</div>
+			</Modal>
+
+			<Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}>
+				<div className="modal-panel">
+					<h2 className="modal-panel__title">Удалить аккаунт?</h2>
+					<p className="profile__delete-warning">
+						Действие необратимо: удалятся все треки, плейлисты и обложки. Отменить или восстановить
+						аккаунт после этого нельзя.
+					</p>
+					<div className="profile__account-preview">
+						<CoverImage
+							coverPath={userData.avatar_url}
+							alt={userData.username}
+							className="profile__account-avatar"
+							kind="profile"
+							bucket="avatars"
+						/>
+						<div className="profile__account-info">
+							<span className="profile__account-name">{userData.username}</span>
+							<span className="profile__account-email">{user?.email}</span>
+						</div>
+					</div>
+					<div className="modal-panel__actions">
+						<button
+							type="button"
+							className="modal-panel__button modal-panel__button--ghost"
+							onClick={() => setIsDeleteModalOpen(false)}
+							disabled={isDeletingAccount}
+						>
+							Отмена
+						</button>
+						<button
+							type="button"
+							className="modal-panel__button modal-panel__button--danger"
+							onClick={() => mutateDeleteAccount()}
+							disabled={isDeletingAccount}
+						>
+							{isDeletingAccount ? 'Удаляем...' : 'Удалить навсегда'}
 						</button>
 					</div>
 				</div>
