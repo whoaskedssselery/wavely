@@ -101,6 +101,28 @@
     }
   }
 
+  &__resend-button {
+    width: 100%;
+    padding: 11px;
+    background-color: $color-bg-surface;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $color-text-secondary;
+    transition: background-color $transition-fast, color $transition-fast;
+
+    @include hover {
+      background-color: $color-border;
+      color: $color-text-primary;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
   &__footer {
     margin-top: -$spacing-sm;
     font-size: $font-size-sm;
