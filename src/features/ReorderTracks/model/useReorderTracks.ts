@@ -1,5 +1,11 @@
-import { type DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { arrayMove } from '@dnd-kit/sortable'
+import {
+	type DragEndEvent,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from '@dnd-kit/core'
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { reorderPlaylistTracks } from '@/entities/Playlist/api/playlists.ts'
 import type { PlayableTrack } from '@/entities/Track/model/types.ts'
@@ -32,6 +38,9 @@ const useReorderTracks = (tracks: PlayableTrack[], playlistId: string | undefine
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
 			activationConstraint: { distance: 8 },
+		}),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
 		}),
 	)
 
