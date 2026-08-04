@@ -1,1 +1,4 @@
 export const PREV_RESTART_THRESHOLD = 5
+
+export const TRACK_PLAY_THRESHOLD_RATIO = 0.5
+export const TRACK_PLAY_THRESHOLD_MAX = 30

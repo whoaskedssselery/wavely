@@ -25,3 +25,11 @@ export interface UploadTrackParams {
 	data: TrackForm
 	userId: string
 }
+
+export interface FavoriteTrack {
+	audio_path: string
+	title: string
+	artist: string
+	cover_path: string | null
+	play_count: number
+}

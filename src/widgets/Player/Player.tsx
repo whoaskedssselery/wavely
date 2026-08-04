@@ -5,6 +5,7 @@ import audioRef from '@/features/PlayerControls/model/audioRef.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import usePlayerNav from '@/features/PlayerControls/model/usePlayerNav.ts'
 import usePrefetchNextTrack from '@/features/PlayerControls/model/usePrefetchNextTrack.ts'
+import useRecordTrackPlay from '@/features/PlayerControls/model/useRecordTrackPlay.ts'
 import CoverImage from '@/shared/ui/CoverImage'
 import PlayerSeekBar from './PlayerSeekBar.tsx'
 import './Player.scss'
@@ -31,6 +32,7 @@ const Player = () => {
 
 	const { canGoPrev, canGoNext } = usePlayerNav()
 	usePrefetchNextTrack()
+	useRecordTrackPlay()
 
 	const queryClient = useQueryClient()
 

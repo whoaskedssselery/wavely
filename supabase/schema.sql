@@ -37,3 +37,15 @@ CREATE TABLE IF NOT EXISTS playlist_tracks (
     position INTEGER NOT NULL,
     added_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS track_play_counts (
+    id             UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id        UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    audio_path     TEXT NOT NULL,
+    title          TEXT NOT NULL,
+    artist         TEXT NOT NULL,
+    cover_path     TEXT,
+    play_count     INTEGER NOT NULL DEFAULT 0,
+    last_played_at TIMESTAMPTZ,
+    UNIQUE (user_id, audio_path)
+);
