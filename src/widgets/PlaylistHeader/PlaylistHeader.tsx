@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom'
 import type { Playlist } from '@/entities/Playlist/model/types.ts'
 import { pluralize } from '@/shared/lib/pluralize.ts'
+import useSmartBack from '@/shared/lib/useSmartBack.ts'
 import CoverImage from '@/shared/ui/CoverImage'
 import Popover from '@/shared/ui/Popover'
 import type usePlaylistMetaEditing from '@/widgets/PlaylistHeader/model/usePlaylistMetaEditing.ts'
@@ -28,9 +28,11 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
 		meta,
 	} = props
 
+	const goBack = useSmartBack('/')
+
 	return (
 		<div className="playlist__header">
-			<Link to="/" className="playlist__back" aria-label="Назад">
+			<button type="button" className="playlist__back" aria-label="Назад" onClick={goBack}>
 				<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none">
 					<path
 						d="M19 12H5M11 18l-6-6 6-6"
@@ -40,7 +42,7 @@ const PlaylistHeader = (props: PlaylistHeaderProps) => {
 						strokeLinejoin="round"
 					/>
 				</svg>
-			</Link>
+			</button>
 
 			{isLoading && <p className="playlist__loading">Загружаем плейлист</p>}
 			{error && <p className="playlist__error">Не удалось загрузить плейлист</p>}

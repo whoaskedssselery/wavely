@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom'
 import useTracks from '@/entities/Track/model/useTracks.ts'
 import { pluralize } from '@/shared/lib/pluralize.ts'
 import useEscapeToNavigate from '@/shared/lib/useEscapeToNavigate.ts'
+import useSmartBack from '@/shared/lib/useSmartBack.ts'
 import useTrackSearch from '@/shared/lib/useTrackSearch.ts'
 import TracksList from '@/widgets/TracksList'
 import './Collection.scss'
@@ -10,6 +10,7 @@ const Collection = () => {
 	const { data: tracks, isLoading: isTracksLoading, error: tracksError } = useTracks()
 
 	const { setSearchQuery, filteredTracks } = useTrackSearch(tracks)
+	const goBack = useSmartBack('/')
 
 	useEscapeToNavigate('/')
 
@@ -18,7 +19,7 @@ const Collection = () => {
 	return (
 		<section className="collection">
 			<div className="collection__header">
-				<Link to="/" className="collection__back" aria-label="Назад">
+				<button type="button" className="collection__back" aria-label="Назад" onClick={goBack}>
 					<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none">
 						<path
 							d="M19 12H5M11 18l-6-6 6-6"
@@ -28,7 +29,7 @@ const Collection = () => {
 							strokeLinejoin="round"
 						/>
 					</svg>
-				</Link>
+				</button>
 
 				<div className="collection__cover-wrap">
 					<div className="collection__cover">

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import useSmartBack from '@/shared/lib/useSmartBack.ts'
 
 const useEscapeToNavigate = (to: string, onEscape?: () => boolean) => {
-	const navigate = useNavigate()
+	const goBack = useSmartBack(to)
 	const onEscapeRef = useRef(onEscape)
 	onEscapeRef.current = onEscape
 
@@ -10,7 +10,7 @@ const useEscapeToNavigate = (to: string, onEscape?: () => boolean) => {
 		const handleEscape = (event: KeyboardEvent) => {
 			if (event.key !== 'Escape') return
 			if (onEscapeRef.current?.()) return
-			navigate(to)
+			goBack()
 		}
 
 		window.addEventListener('keydown', handleEscape)
@@ -18,7 +18,7 @@ const useEscapeToNavigate = (to: string, onEscape?: () => boolean) => {
 		return () => {
 			window.removeEventListener('keydown', handleEscape)
 		}
-	}, [navigate, to])
+	}, [goBack])
 }
 
 export default useEscapeToNavigate
