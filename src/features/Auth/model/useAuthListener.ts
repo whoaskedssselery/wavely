@@ -22,6 +22,21 @@ const useAuthListener = () => {
 
 		return () => subscription.unsubscribe()
 	}, [setAuth])
+
+	useEffect(() => {
+		if (!window.electronAPI) return
+
+		return window.electronAPI.onAuthCallback((url) => {
+			const hash = url.split('#')[1] ?? ''
+			const params = new URLSearchParams(hash)
+			const access_token = params.get('access_token')
+			const refresh_token = params.get('refresh_token')
+
+			if (access_token && refresh_token) {
+				supabase.auth.setSession({ access_token, refresh_token })
+			}
+		})
+	}, [])
 }
 
 export default useAuthListener

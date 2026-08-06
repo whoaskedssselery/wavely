@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { type RegisterForm, registerSchema } from '@/features/Auth/model/schema.ts'
+import getOAuthRedirectUrl from '@/shared/lib/getOAuthRedirectUrl.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
 import Logo from '@/shared/ui/Logo'
 import './Register.scss'
@@ -23,12 +24,17 @@ const Register = () => {
 	const [showPassword, setShowPassword] = useState(false)
 
 	const handleOAuth = async (provider: 'github' | 'google') => {
-		await supabase.auth.signInWithOAuth({
+		const { data } = await supabase.auth.signInWithOAuth({
 			provider,
 			options: {
-				redirectTo: `${window.location.origin}/`,
+				redirectTo: getOAuthRedirectUrl(),
+				skipBrowserRedirect: !!window.electronAPI,
 			},
 		})
+
+		if (window.electronAPI && data.url) {
+			window.electronAPI.openExternal(data.url)
+		}
 	}
 
 	const onSubmit = async (data: RegisterForm) => {

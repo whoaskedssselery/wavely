@@ -48,13 +48,24 @@
   "build": {
     "appId": "com.wavely.app",
     "productName": "wavely",
-    "files": ["dist/**", "electron/**"],
+    "files": [
+      "dist/**",
+      "electron/**"
+    ],
     "directories": {
       "output": "release"
     },
+    "protocols": {
+      "name": "wavely-auth-callback",
+      "schemes": [
+        "wavely"
+      ]
+    },
     "linux": {
       "icon": "build/icon.png",
-      "target": ["AppImage"],
+      "target": [
+        "AppImage"
+      ],
       "category": "AudioVideo"
     },
     "mac": {
