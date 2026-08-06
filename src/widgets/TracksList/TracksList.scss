@@ -134,6 +134,7 @@
   }
 
   &__title {
+    width: 100%;
     font-size: $font-size-lg;
     font-weight: 600;
     color: $color-text-primary;
@@ -141,6 +142,7 @@
   }
 
   &__artist {
+    width: 100%;
     font-size: $font-size-md;
     color: $color-text-secondary;
     @include truncate;

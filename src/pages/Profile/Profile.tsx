@@ -216,9 +216,9 @@ const Profile = () => {
 				<div className="profile__stat">
 					<span className="profile__stat-value">
 						{new Date(userData.created_at).toLocaleDateString('ru-RU', {
-							day: 'numeric',
-							month: 'long',
-							year: 'numeric',
+							day: '2-digit',
+							month: '2-digit',
+							year: '2-digit',
 						})}
 					</span>
 					<span className="profile__stat-label">В приложении с</span>

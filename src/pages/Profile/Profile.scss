@@ -186,8 +186,9 @@
   }
 
   &__stat {
-    @include flex(column-reverse, flex-start, center, 2px);
+    @include flex(column-reverse, stretch, center, 2px);
     flex: 1;
+    min-width: 0;
     padding: $spacing-md $spacing-lg;
     background-color: $color-bg-surface;
     border-radius: $border-radius-lg;
@@ -218,6 +219,7 @@
   &__recent-card {
     @include flex(column, stretch, flex-start, $spacing-sm);
     flex: 1;
+    min-width: 0;
     padding: $spacing-md;
     background-color: $color-bg-surface;
     border-radius: $border-radius-lg;
