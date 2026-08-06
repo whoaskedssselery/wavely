@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -10,11 +11,11 @@
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check --write .",
-    "tauri": "tauri"
+    "electron:dev": "node electron/dev.js",
+    "electron:build": "tsc -b && vite build && electron-builder"
   },
   "dependencies": {
     "@a1rth/css-normalize": "1.2.4",
-    "@tauri-apps/api": "2.9.0",
     "@dnd-kit/core": "6.3.1",
     "@dnd-kit/sortable": "10.0.0",
     "@dnd-kit/utilities": "3.2.2",
@@ -35,12 +36,32 @@
   "devDependencies": {
     "@biomejs/biome": "2.5.1",
     "@tanstack/react-query-devtools": "5.101.0",
-    "@tauri-apps/cli": "2.11.4",
     "@types/node": "24.12.3",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.1",
+    "electron": "43.3.0",
+    "electron-builder": "26.15.3",
     "typescript": "~6.0.2",
     "vite": "8.0.12"
+  },
+  "build": {
+    "appId": "com.wavely.app",
+    "productName": "wavely",
+    "files": ["dist/**", "electron/**"],
+    "directories": {
+      "output": "release"
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "target": ["AppImage"],
+      "category": "AudioVideo"
+    },
+    "mac": {
+      "icon": "build/icon.png"
+    },
+    "win": {
+      "icon": "build/icon.png"
+    }
   }
 }

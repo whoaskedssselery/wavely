@@ -1,2 +1,6 @@
 allowBuilds:
   '@parcel/watcher': false
+  electron-winstaller: false
+  electron: true
+minimumReleaseAgeExclude:
+  - electron@43.3.0
