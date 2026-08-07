@@ -434,10 +434,7 @@ X-GNOME-Autostart-enabled=true
 }
 
 app.on('second-instance', () => {
-	if (mainWindow) {
-		if (mainWindow.isMinimized()) mainWindow.restore()
-		mainWindow.focus()
-	}
+	showMainWindow()
 })
 
 app.whenReady().then(() => {
