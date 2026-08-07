@@ -75,7 +75,7 @@
       }
     },
     {
-      "includes": ["**/src/widgets/Player/Player.tsx"],
+      "includes": ["**/src/app/engine/PlayerEngine.tsx"],
       "linter": {
         "rules": {
           "a11y": {

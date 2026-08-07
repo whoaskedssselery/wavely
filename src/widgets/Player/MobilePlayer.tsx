@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react'
-import audioRef from '@/features/PlayerControls/model/audioRef.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import usePlayerNav from '@/features/PlayerControls/model/usePlayerNav.ts'
 import { PREV_RESTART_THRESHOLD } from '@/shared/constants/player.ts'
@@ -13,7 +12,7 @@ const MobilePlayer = () => {
 		isPlaying,
 		progress,
 		repeatMode,
-		setProgress,
+		seekTo,
 		togglePlay,
 		playNext,
 		playPrev,
@@ -29,8 +28,8 @@ const MobilePlayer = () => {
 	if (!currentTrack) return null
 
 	const handlePrev = () => {
-		if (audioRef.current && audioRef.current.currentTime > PREV_RESTART_THRESHOLD) {
-			audioRef.current.currentTime = 0
+		if (progress > PREV_RESTART_THRESHOLD) {
+			seekTo(0)
 		}
 
 		playPrev()
@@ -192,12 +191,11 @@ const MobilePlayer = () => {
 			</div>
 			<div className="mobile-player__seek">
 				<PlayerSeekBar
-					audioRef={audioRef}
+					progress={progress}
 					isPlaying={isPlaying}
 					duration={currentTrack.duration}
-					initialProgress={progress}
 					trackId={currentTrack.id}
-					onSeek={setProgress}
+					onSeek={seekTo}
 				/>
 			</div>
 		</section>

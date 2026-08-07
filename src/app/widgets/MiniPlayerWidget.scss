@@ -1,0 +1,294 @@
+@use '@/styles/helpers' as *;
+
+:where(:root[data-window='mini-player']),
+:where(:root[data-window='mini-player']) body {
+  background: transparent;
+}
+
+.mini-player {
+  @include flex(column, stretch, center, $spacing-md);
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  padding: $spacing-sm $spacing-md $spacing-lg;
+  overflow: hidden;
+  background-color: $color-bg-elevated;
+  border-radius: 0;
+
+  &__drag-region {
+    flex-shrink: 0;
+    height: 10px;
+    margin: (-$spacing-sm) (-$spacing-md) 0;
+    -webkit-app-region: drag;
+  }
+
+  &__close {
+    @include flex(row, center, center);
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    color: $color-text-muted;
+    background: none;
+    border: none;
+    border-radius: $border-radius-full;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    transition: color $transition-fast, background-color $transition-fast;
+
+    @include hover {
+      color: $color-text-primary;
+      background-color: $color-bg-surface;
+    }
+  }
+
+  &__head {
+    @include flex(row, center, flex-start, $spacing-md);
+    min-width: 0;
+    padding-right: 26px;
+  }
+
+  &__cover {
+    flex-shrink: 0;
+    width: 78px;
+    height: 78px;
+    border-radius: $border-radius-md;
+    overflow: hidden;
+    background-color: $color-bg-surface;
+  }
+
+  &__cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    &--placeholder {
+      @include flex(row, center, center);
+      width: 100%;
+      height: 100%;
+      color: $color-text-muted;
+      background-color: $color-bg-surface;
+    }
+  }
+
+  &__cover-placeholder {
+    @include flex(row, center, center);
+    width: 100%;
+    height: 100%;
+    color: $color-text-muted;
+  }
+
+  &__info {
+    @include flex(column, flex-start, center, 2px);
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__title {
+    width: 100%;
+    font-size: $font-size-lg;
+    font-weight: 700;
+    color: $color-text-primary;
+    @include truncate;
+  }
+
+  &__artist {
+    width: 100%;
+    font-size: $font-size-md;
+    color: $color-text-secondary;
+    @include truncate;
+  }
+
+  &__progress {
+    @include flex(row, center, space-between, $spacing-sm);
+
+    .player__progress {
+      position: relative;
+      flex: 1;
+      height: 8px;
+    }
+
+    .player__seek-input {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      display: block;
+      appearance: none;
+      border-radius: $border-radius-full;
+      background: linear-gradient(
+        to right,
+        $color-accent var(--progress, 0%),
+        $color-border var(--progress, 0%)
+      );
+      cursor: pointer;
+
+      &::-webkit-slider-thumb {
+        appearance: none;
+        width: 12px;
+        height: 12px;
+        border-radius: $border-radius-full;
+        background-color: $color-accent;
+        opacity: 0;
+        transition: opacity $transition-fast;
+      }
+
+      &:focus {
+        outline: none;
+      }
+
+      @include hover {
+        &::-webkit-slider-thumb {
+          opacity: 1;
+        }
+      }
+    }
+
+    .player__progress-tooltip {
+      position: absolute;
+      bottom: calc(100% + #{$spacing-xs});
+      transform: translateX(-50%);
+      padding: 2px $spacing-sm;
+      background-color: $color-bg-surface;
+      border: 1px solid $color-border;
+      border-radius: $border-radius-sm;
+      font-size: $font-size-xs;
+      color: $color-text-primary;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+  }
+
+  &__progress-idle {
+    flex: 1;
+    height: 8px;
+    border-radius: $border-radius-full;
+    background-color: $color-border;
+  }
+
+  &__time {
+    flex-shrink: 0;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__controls {
+    @include flex(row, center, center, $spacing-sm);
+  }
+
+  &__nav,
+  &__toggle {
+    @include flex(row, center, center);
+    position: relative;
+    flex-shrink: 0;
+    padding: 0;
+    color: $color-text-secondary;
+    background: none;
+    border: none;
+    border-radius: $border-radius-full;
+    cursor: pointer;
+    transition: color $transition-fast, background-color $transition-fast;
+
+    @include hover {
+      color: $color-text-primary;
+      background-color: $color-bg-surface;
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+
+  &__nav {
+    width: 42px;
+    height: 42px;
+  }
+
+  &__toggle {
+    width: 38px;
+    height: 38px;
+
+    &--active {
+      color: $color-accent-text;
+
+      @include hover {
+        color: $color-accent-hover;
+      }
+    }
+  }
+
+  &__play {
+    @include flex(row, center, center);
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    color: $color-accent-contrast;
+    background-color: $color-accent;
+    border: none;
+    border-radius: $border-radius-full;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+
+    @include hover {
+      background-color: $color-accent-hover;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+
+  &__repeat-badge {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 11px;
+    height: 11px;
+    border-radius: $border-radius-full;
+    background-color: $color-accent;
+    color: $color-accent-contrast;
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 11px;
+    text-align: center;
+  }
+
+  &__shuffle-play {
+    @include flex(row, center, center);
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    margin-left: $spacing-sm;
+    color: $color-accent-text;
+    background-color: $color-accent-soft;
+    border: 1px solid $color-accent-ring;
+    border-radius: $border-radius-full;
+    cursor: pointer;
+    transition: background-color $transition-fast, color $transition-fast;
+
+    @include hover {
+      color: $color-accent-contrast;
+      background-color: $color-accent;
+    }
+
+    &--active {
+      color: $color-accent-contrast;
+      background-color: $color-accent;
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+}

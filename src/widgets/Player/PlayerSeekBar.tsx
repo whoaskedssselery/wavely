@@ -1,34 +1,19 @@
-import {
-	type ChangeEvent,
-	type MouseEvent,
-	type RefObject,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from 'react'
+import { type ChangeEvent, type MouseEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { formatDuration } from '@/entities/Track/lib/formatDuration.ts'
 
 interface PlayerSeekBarProps {
-	audioRef: RefObject<HTMLAudioElement | null>
+	progress: number
 	isPlaying: boolean
 	duration: number | null
-	initialProgress: number
 	trackId: string
 	onSeek: (time: number) => void
 }
 
-const PlayerSeekBar = ({
-	audioRef,
-	isPlaying,
-	duration,
-	initialProgress,
-	trackId,
-	onSeek,
-}: PlayerSeekBarProps) => {
+const PlayerSeekBar = ({ progress, isPlaying, duration, trackId, onSeek }: PlayerSeekBarProps) => {
 	const inputRef = useRef<HTMLInputElement>(null)
 	const isDraggingRef = useRef(false)
 	const [seekHover, setSeekHover] = useState<{ percent: number; time: number } | null>(null)
+	const lastSyncRef = useRef({ progress, at: performance.now() })
 
 	const applyVisual = useCallback(
 		(time: number) => {
@@ -41,31 +26,23 @@ const PlayerSeekBar = ({
 	)
 
 	useEffect(() => {
-		applyVisual(initialProgress)
+		applyVisual(progress)
 	}, [trackId, applyVisual])
+
+	useEffect(() => {
+		lastSyncRef.current = { progress, at: performance.now() }
+		if (!isDraggingRef.current) applyVisual(progress)
+	}, [progress, applyVisual])
 
 	useEffect(() => {
 		if (!isPlaying) return
 
 		let rafId: number
-		let lastMediaTime = -1
-		let lastSyncAt = 0
 
 		const tick = () => {
-			const audio = audioRef.current
-			if (audio && !isDraggingRef.current) {
-				if (audio.currentTime !== lastMediaTime) {
-					lastMediaTime = audio.currentTime
-					lastSyncAt = performance.now()
-				}
-
-				const canExtrapolate =
-					!audio.paused && audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA
-				const elapsed = canExtrapolate
-					? ((performance.now() - lastSyncAt) / 1000) * audio.playbackRate
-					: 0
-
-				const time = lastMediaTime + elapsed
+			if (!isDraggingRef.current) {
+				const { progress: lastProgress, at } = lastSyncRef.current
+				const time = lastProgress + (performance.now() - at) / 1000
 				applyVisual(duration ? Math.min(time, duration) : time)
 			}
 			rafId = requestAnimationFrame(tick)
@@ -74,12 +51,9 @@ const PlayerSeekBar = ({
 		rafId = requestAnimationFrame(tick)
 
 		return () => cancelAnimationFrame(rafId)
-	}, [isPlaying, audioRef, applyVisual, duration])
+	}, [isPlaying, applyVisual, duration])
 
 	const commitSeek = (time: number) => {
-		if (audioRef.current) {
-			audioRef.current.currentTime = time
-		}
 		applyVisual(time)
 		onSeek(time)
 	}
@@ -110,7 +84,7 @@ const PlayerSeekBar = ({
 				min={0}
 				max={duration ?? 0}
 				step="any"
-				defaultValue={initialProgress}
+				defaultValue={progress}
 				onChange={handleChange}
 				onPointerDown={() => {
 					isDraggingRef.current = true

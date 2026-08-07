@@ -1,0 +1,150 @@
+@use '@/styles/helpers' as *;
+
+$search-playlists-per-view: 4;
+
+:where(:root[data-window='search']),
+:where(:root[data-window='search']) body {
+  background: transparent;
+}
+
+.search-widget {
+  @include flex(column, stretch, flex-start, $spacing-sm);
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: transparent;
+
+  &__bar,
+  &__panel {
+    background-color: $color-bg-elevated;
+  }
+
+  &__bar {
+    @include flex(row, center, flex-start, $spacing-md);
+    flex-shrink: 0;
+    height: 56px;
+    padding: 0 $spacing-lg;
+    box-sizing: border-box;
+    color: $color-text-muted;
+    -webkit-app-region: drag;
+  }
+
+  &__input {
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    outline: none;
+    color: $color-text-primary;
+    font-size: $font-size-lg;
+    -webkit-app-region: no-drag;
+
+    &::placeholder {
+      color: $color-text-muted;
+    }
+  }
+
+  &__panel {
+    @include flex(column, stretch, flex-start, $spacing-md);
+    flex: 1;
+    min-height: 0;
+    padding: $spacing-md $spacing-lg;
+    box-sizing: border-box;
+    overflow-y: auto;
+    animation: search-widget-panel-in 120ms ease-out;
+    @include custom-scrollbar;
+  }
+
+  @keyframes search-widget-panel-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  &__section-title {
+    margin: 0 0 $spacing-sm;
+    color: $color-text-muted;
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__playlists {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc(
+      (100% - #{$spacing-sm} * (#{$search-playlists-per-view} - 1)) / #{$search-playlists-per-view}
+    );
+    gap: $spacing-sm;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: $spacing-xs;
+    @include custom-scrollbar(6px);
+  }
+
+  &__playlist {
+    @include flex(column, center, flex-start, $spacing-xs);
+    min-width: 0;
+    padding: $spacing-xs;
+    background: none;
+    border: none;
+    border-radius: $border-radius-md;
+    color: $color-text-primary;
+    cursor: pointer;
+    scroll-snap-align: start;
+    transition: background-color $transition-fast;
+
+    @include hover {
+      background-color: $color-bg-surface;
+    }
+  }
+
+  &__playlist-cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: $border-radius-md;
+    object-fit: cover;
+
+    &--placeholder {
+      color: $color-text-muted;
+      background-color: $color-bg-surface;
+      padding: $spacing-md;
+      box-sizing: border-box;
+    }
+  }
+
+  &__playlist-title {
+    width: 100%;
+    font-size: $font-size-sm;
+    text-align: center;
+    @include truncate;
+  }
+
+  &__empty {
+    padding: $spacing-lg 0;
+    color: $color-text-muted;
+    font-size: $font-size-sm;
+    text-align: center;
+  }
+
+  &__back {
+    @include flex(row, center, flex-start, $spacing-sm);
+    flex-shrink: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    color: $color-text-primary;
+    font-size: $font-size-md;
+    font-weight: 700;
+    cursor: pointer;
+
+    @include hover {
+      color: $color-accent-text;
+    }
+  }
+}

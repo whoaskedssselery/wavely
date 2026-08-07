@@ -9,10 +9,6 @@
   overflow-y: auto;
   @include custom-scrollbar;
 
-  &__audio {
-    @include visually-hidden;
-  }
-
   &__cover-wrap {
     --cover-cap: min(460px, calc(100vh - #{$player-chrome-height}));
     flex: 1;

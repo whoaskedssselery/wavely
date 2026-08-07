@@ -20,8 +20,15 @@ export const useThemeStore = create<ThemeStore>()(
 	),
 )
 
+const THEME_BG: Record<Theme, string> = {
+	light: '#f5f6fb',
+	dark: '#0f1015',
+}
+
 const applyTheme = (theme: Theme) => {
 	document.documentElement.dataset.theme = theme
+
+	window.electronAPI?.setWindowBackground(THEME_BG[theme])
 }
 
 applyTheme(useThemeStore.getState().theme)
