@@ -216,6 +216,7 @@ const createEngineWindow = () => {
 		skipTaskbar: true,
 		webPreferences: {
 			preload: path.join(__dirname, 'preload.js'),
+			backgroundThrottling: false,
 		},
 	})
 

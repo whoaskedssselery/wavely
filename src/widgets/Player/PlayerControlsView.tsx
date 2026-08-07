@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { formatDuration } from '@/entities/Track/lib/formatDuration.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
+import useDisplayedProgress from '@/features/PlayerControls/model/useDisplayedProgress.ts'
 import usePlayerNav from '@/features/PlayerControls/model/usePlayerNav.ts'
 import { PREV_RESTART_THRESHOLD } from '@/shared/constants/player.ts'
 import CoverImage from '@/shared/ui/CoverImage'
@@ -22,6 +23,8 @@ const PlayerControlsView = () => {
 		cycleRepeatMode,
 		shuffle,
 	} = usePlayerStore()
+
+	const displayedProgress = useDisplayedProgress(progress, isPlaying)
 
 	const { canGoPrev, canGoNext } = usePlayerNav()
 
@@ -55,7 +58,7 @@ const PlayerControlsView = () => {
 				<span className="player__artist">{currentTrack.artist}</span>
 			</div>
 			<div className="player__progress-row">
-				<span className="player__time">{formatDuration(Math.round(progress))}</span>
+				<span className="player__time">{formatDuration(Math.round(displayedProgress))}</span>
 				<PlayerSeekBar
 					progress={progress}
 					isPlaying={isPlaying}

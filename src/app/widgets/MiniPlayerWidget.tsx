@@ -4,6 +4,7 @@ import { formatDuration } from '@/entities/Track/lib/formatDuration.ts'
 import { useAuthStore } from '@/features/Auth/model/authStore.ts'
 import useAuthListener from '@/features/Auth/model/useAuthListener.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
+import useDisplayedProgress from '@/features/PlayerControls/model/useDisplayedProgress.ts'
 import usePlayerNav from '@/features/PlayerControls/model/usePlayerNav.ts'
 import { fetchAllTracks } from '@/shared/api/library.ts'
 import { PREV_RESTART_THRESHOLD } from '@/shared/constants/player.ts'
@@ -30,6 +31,8 @@ const MiniPlayerWidget = () => {
 		toggleShuffle,
 		cycleRepeatMode,
 	} = usePlayerStore()
+
+	const displayedProgress = useDisplayedProgress(progress, isPlaying)
 
 	const { canGoPrev, canGoNext } = usePlayerNav()
 
@@ -124,7 +127,7 @@ const MiniPlayerWidget = () => {
 			</div>
 
 			<div className="mini-player__progress">
-				<span className="mini-player__time">{formatDuration(Math.round(progress))}</span>
+				<span className="mini-player__time">{formatDuration(Math.round(displayedProgress))}</span>
 				{currentTrack ? (
 					<PlayerSeekBar
 						progress={progress}

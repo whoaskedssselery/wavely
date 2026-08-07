@@ -37,7 +37,7 @@ const TracksList = (props: TracksListProps) => {
 	const { sensors, handleDragEnd } = useReorderTracks(tracks, playlistId)
 
 	const onTrackClick = (track: PlayableTrack) => {
-		if (currentTrack === null || currentTrack !== track) {
+		if (currentTrack === null || currentTrack.id !== track.id) {
 			if (tracks) {
 				const index = tracks.findIndex((t) => t.id === track.id)
 				playTrack(track, tracks, index)
