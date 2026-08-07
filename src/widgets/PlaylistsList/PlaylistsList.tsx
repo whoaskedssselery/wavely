@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Swiper as SwiperType } from 'swiper'
+import { Mousewheel } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import usePlaylists from '@/entities/Playlist/model/usePlaylists.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
@@ -110,6 +111,12 @@ const PlaylistsList = ({ searchQuery = '' }: PlaylistsListProps) => {
 						updateNavState(swiper)
 					}}
 					onSlideChange={updateNavState}
+					// Two-finger horizontal swipes on a trackpad arrive as wheel events, which Swiper
+					// ignores unless the Mousewheel module is registered — hence the arrows being the only
+					// way through the carousel. forceToAxis limits it to horizontal intent, so a vertical
+					// scroll over the row still scrolls the page instead of paging the playlists.
+					modules={[Mousewheel]}
+					mousewheel={{ forceToAxis: true }}
 					slidesPerView={2}
 					spaceBetween={10}
 					slidesPerGroup={1}
