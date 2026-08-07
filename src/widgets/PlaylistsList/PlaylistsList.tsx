@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Swiper as SwiperType } from 'swiper'
+import { Mousewheel } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { filterPlaylists } from '@/entities/Playlist/lib/filterPlaylists.ts'
 import usePlaylists from '@/entities/Playlist/model/usePlaylists.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import { useSidebarStore } from '@/features/Sidebar/model/sidebarStore.ts'
@@ -31,13 +33,7 @@ const PlaylistsList = ({ searchQuery = '' }: PlaylistsListProps) => {
 
 	const playlistCount = data?.length ?? 0
 
-	const filteredData = data?.filter((playlist) => {
-		const query = searchQuery.toLowerCase()
-		return (
-			playlist.title.toLowerCase().includes(query) ||
-			(playlist.author?.toLowerCase().includes(query) ?? false)
-		)
-	})
+	const filteredData = filterPlaylists(data, searchQuery)
 
 	useEffect(() => {
 		if (!swiperInstance) return
@@ -110,6 +106,8 @@ const PlaylistsList = ({ searchQuery = '' }: PlaylistsListProps) => {
 						updateNavState(swiper)
 					}}
 					onSlideChange={updateNavState}
+					modules={[Mousewheel]}
+					mousewheel={{ forceToAxis: true }}
 					slidesPerView={2}
 					spaceBetween={10}
 					slidesPerGroup={1}
