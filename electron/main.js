@@ -384,6 +384,19 @@ const registerGlobalShortcuts = () => {
 
 const HIDDEN_LAUNCH_ARG = '--hidden'
 
+const xdgConfigHome = () => process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config')
+const xdgDataHome = () => process.env.XDG_DATA_HOME || path.join(os.homedir(), '.local', 'share')
+
+const writeDesktopEntry = (filePath, entry) => {
+	try {
+		if (existsSync(filePath) && readFileSync(filePath, 'utf8') === entry) return
+		mkdirSync(path.dirname(filePath), { recursive: true })
+		writeFileSync(filePath, entry)
+	} catch (error) {
+		debugLog('desktop entry install failed', filePath, String(error))
+	}
+}
+
 const ensureAutostart = () => {
 	if (!app.isPackaged) return
 
@@ -398,20 +411,8 @@ const ensureAutostart = () => {
 
 	if (process.platform !== 'linux') return
 
-	const autostartDir = path.join(os.homedir(), '.config', 'autostart')
-	const desktopFile = path.join(autostartDir, 'wavely.desktop')
 	const execPath = process.env.APPIMAGE || process.execPath
-
-	const iconPath = path.join(os.homedir(), '.local', 'share', 'icons', 'wavely.png')
-
-	const desktopEntry = `[Desktop Entry]
-Type=Application
-Name=wavely
-Exec="${execPath}" ${HIDDEN_LAUNCH_ARG}
-Icon=${iconPath}
-Terminal=false
-X-GNOME-Autostart-enabled=true
-`
+	const iconPath = path.join(xdgDataHome(), 'icons', 'wavely.png')
 
 	try {
 		mkdirSync(path.dirname(iconPath), { recursive: true })
@@ -423,14 +424,23 @@ X-GNOME-Autostart-enabled=true
 		debugLog('autostart icon install failed', String(error))
 	}
 
-	try {
-		if (existsSync(desktopFile) && readFileSync(desktopFile, 'utf8') === desktopEntry) return
+	const baseEntry = `Type=Application
+Name=wavely
+Comment=Личный музыкальный плеер
+Icon=${iconPath}
+Terminal=false
+Categories=AudioVideo;Audio;Player;
+StartupWMClass=wavely`
 
-		mkdirSync(autostartDir, { recursive: true })
-		writeFileSync(desktopFile, desktopEntry)
-	} catch (error) {
-		debugLog('autostart install failed', String(error))
-	}
+	writeDesktopEntry(
+		path.join(xdgConfigHome(), 'autostart', 'wavely.desktop'),
+		`[Desktop Entry]\n${baseEntry}\nExec="${execPath}" ${HIDDEN_LAUNCH_ARG}\nX-GNOME-Autostart-enabled=true\n`,
+	)
+
+	writeDesktopEntry(
+		path.join(xdgDataHome(), 'applications', 'wavely.desktop'),
+		`[Desktop Entry]\n${baseEntry}\nExec="${execPath}"\n`,
+	)
 }
 
 app.on('second-instance', () => {
