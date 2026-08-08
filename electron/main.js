@@ -433,7 +433,7 @@ const registerGlobalShortcuts = () => {
 		['Control+Alt+N', () => sendPlayerCommand('playNext', [true])],
 		['Control+Alt+P', () => sendPlayerCommand('playPrev')],
 		['Control+Alt+S', () => sendPlayerCommand('pause')],
-		['Control+Alt+M', toggleMiniPlayerWidget],
+		['Control+Shift+M', toggleMiniPlayerWidget],
 		['Control+Space', toggleSearchWidget],
 	]
 
