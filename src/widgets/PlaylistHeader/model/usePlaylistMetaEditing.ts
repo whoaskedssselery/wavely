@@ -23,17 +23,20 @@ const usePlaylistMetaEditing = (
 	const { mutate: mutateTitle } = useMutation({
 		mutationFn: (title: string) => updatePlaylistTitle(playlistId, title),
 		onSuccess: invalidatePlaylist,
+		onError: (error) => console.error('Не удалось обновить название плейлиста:', error),
 	})
 
 	const { mutate: mutateDescription } = useMutation({
 		mutationFn: (description: string) => updatePlaylistDescription(playlistId, description),
 		onSuccess: invalidatePlaylist,
+		onError: (error) => console.error('Не удалось обновить описание плейлиста:', error),
 	})
 
 	const { mutate: mutateCover } = useMutation({
 		mutationFn: (coverFile: File) =>
 			updatePlaylistCover(playlistId, userId, coverFile, playlistData?.cover_path ?? null),
 		onSuccess: invalidatePlaylist,
+		onError: (error) => console.error('Не удалось обновить обложку плейлиста:', error),
 	})
 
 	const {

@@ -61,6 +61,11 @@
     color: $color-text-primary;
   }
 
+  &__error {
+    font-size: $font-size-xs;
+    color: $color-danger;
+  }
+
   &__actions {
     display: flex;
     gap: $spacing-sm;
