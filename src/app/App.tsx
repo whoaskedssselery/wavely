@@ -48,23 +48,23 @@ export default function App() {
 
 	if (!isAppReady) {
 		return (
-			<div className="app-window">
+			<>
 				<TitleBar />
 				<SplashOverlay />
-			</div>
+			</>
 		)
 	}
 	if (!user) {
 		return (
-			<div className="app-window">
+			<>
 				<TitleBar />
 				<AppRouter />
-			</div>
+			</>
 		)
 	}
 
 	return (
-		<div className="app-window">
+		<>
 			<TitleBar />
 			<div
 				className={`app ${!isExpanded ? 'app--no-sidebar' : ''} ${currentTrack ? 'app--playing' : ''}`}
@@ -285,6 +285,6 @@ export default function App() {
 			</main>
 			<MobilePlayer />
 			</div>
-		</div>
+		</>
 	)
 }

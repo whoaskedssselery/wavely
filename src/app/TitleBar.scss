@@ -1,39 +1,31 @@
 @use '@/styles/helpers' as *;
 
 .title-bar {
-  @include flex(row, center, space-between);
-  flex-shrink: 0;
-  height: 36px;
-  background-color: $color-bg-elevated;
-  border-bottom: 1px solid $color-border;
-  -webkit-app-region: drag;
-}
-
-.title-bar__drag {
-  @include flex(row, center, flex-start);
-  height: 100%;
-  padding-left: $spacing-md;
-  color: $color-accent-text;
-}
-
-.title-bar__controls {
   @include flex(row, center, flex-end);
-  height: 100%;
-  -webkit-app-region: no-drag;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 100;
+  height: 40px;
+  padding: 0 4px;
+  background: transparent;
+  -webkit-app-region: drag;
 }
 
 .title-bar__button {
   @include flex(row, center, center);
   width: 46px;
-  height: 100%;
-  background: none;
+  height: 32px;
+  background: transparent;
   border: none;
+  border-radius: $border-radius-sm;
   color: $color-text-secondary;
   cursor: pointer;
   transition: background-color $transition-fast, color $transition-fast;
+  -webkit-app-region: no-drag;
 
   @include hover {
-    background-color: $color-bg-surface;
+    background-color: rgba(128, 128, 128, 0.16);
     color: $color-text-primary;
   }
 
