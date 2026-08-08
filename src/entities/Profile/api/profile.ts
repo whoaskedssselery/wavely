@@ -2,29 +2,15 @@ import type { Profile } from '@/entities/Profile/model/types.ts'
 import { CACHE_ONE_YEAR } from '@/shared/api/cache.ts'
 import compressImage from '@/shared/lib/compressImage.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
+import { throwOnError, unwrap } from '@/shared/lib/unwrap.ts'
 
 export const fetchProfile = async (userId: string): Promise<Profile> => {
-	const { data: fetchData, error: fetchError } = await supabase
-		.from('profiles')
-		.select('*')
-		.eq('id', userId)
-
-	if (fetchError) {
-		throw fetchError
-	}
-
-	return fetchData[0]
+	const data = await unwrap(supabase.from('profiles').select('*').eq('id', userId))
+	return data[0]
 }
 
 export const updateUsername = async (userId: string, username: string): Promise<void> => {
-	const { error: updateError } = await supabase
-		.from('profiles')
-		.update({ username: username })
-		.eq('id', userId)
-
-	if (updateError) {
-		throw updateError
-	}
+	await throwOnError(supabase.from('profiles').update({ username: username }).eq('id', userId))
 }
 
 export const updateAvatar = async (
@@ -36,13 +22,11 @@ export const updateAvatar = async (
 	const avatarExtension = compressedAvatar.name.split('.').pop()
 	const newAvatarPath = `${userId}/${Date.now()}.${avatarExtension}`
 
-	const { error: uploadError } = await supabase.storage
-		.from('avatars')
-		.upload(newAvatarPath, compressedAvatar, { cacheControl: CACHE_ONE_YEAR })
-
-	if (uploadError) {
-		throw uploadError
-	}
+	await throwOnError(
+		supabase.storage
+			.from('avatars')
+			.upload(newAvatarPath, compressedAvatar, { cacheControl: CACHE_ONE_YEAR }),
+	)
 
 	const { error: updateError } = await supabase
 		.from('profiles')
@@ -60,9 +44,5 @@ export const updateAvatar = async (
 }
 
 export const deleteAccount = async (): Promise<void> => {
-	const { error } = await supabase.rpc('delete_own_account')
-
-	if (error) {
-		throw error
-	}
+	await throwOnError(supabase.rpc('delete_own_account'))
 }

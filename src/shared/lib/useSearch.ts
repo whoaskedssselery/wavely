@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { filterBySearch } from '@/shared/lib/filterBySearch.ts'
 
 const useSearch = <T>(
 	items: T[] | undefined,
@@ -6,11 +7,7 @@ const useSearch = <T>(
 ) => {
 	const [searchQuery, setSearchQuery] = useState('')
 
-	const query = searchQuery.trim().toLowerCase()
-
-	const filteredItems = query
-		? items?.filter((item) => getFields(item).some((field) => field?.toLowerCase().includes(query)))
-		: items
+	const filteredItems = filterBySearch(items, searchQuery, getFields)
 
 	return { searchQuery, setSearchQuery, filteredItems }
 }

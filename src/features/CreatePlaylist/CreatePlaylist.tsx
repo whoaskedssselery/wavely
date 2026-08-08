@@ -10,6 +10,7 @@ import {
 } from '@/features/CreatePlaylist/model/schema.ts'
 import useAuthedUser from '@/shared/lib/useAuthedUser.ts'
 import type { UploadProps } from '@/shared/types/utils.ts'
+import { UploadIcon } from '@/shared/ui/icons'
 import './CreatePlaylist.scss'
 
 const CreatePlaylist = (props: UploadProps) => {
@@ -108,26 +109,7 @@ const CreatePlaylist = (props: UploadProps) => {
 							htmlFor="coverFileInput"
 						>
 							<span className="create-playlist__dropzone-icon">
-								<svg
-									aria-hidden="true"
-									width="20"
-									height="20"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									strokeWidth="2"
-								>
-									<path
-										d="M12 16V4M12 4l-4 4M12 4l4 4"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-									/>
-									<path
-										d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-									/>
-								</svg>
+								<UploadIcon />
 							</span>
 							<span className="create-playlist__dropzone-text">
 								{coverFileName || 'Нажмите, чтобы выбрать обложку'}

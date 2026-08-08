@@ -3,6 +3,7 @@ import { pluralize } from '@/shared/lib/pluralize.ts'
 import useEscapeToNavigate from '@/shared/lib/useEscapeToNavigate.ts'
 import useSmartBack from '@/shared/lib/useSmartBack.ts'
 import useTrackSearch from '@/shared/lib/useTrackSearch.ts'
+import { BackIcon, SearchIcon } from '@/shared/ui/icons'
 import TracksList from '@/widgets/TracksList'
 import './Collection.scss'
 
@@ -20,15 +21,7 @@ const Collection = () => {
 		<section className="collection">
 			<div className="collection__header">
 				<button type="button" className="collection__back" aria-label="Назад" onClick={goBack}>
-					<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none">
-						<path
-							d="M19 12H5M11 18l-6-6 6-6"
-							stroke="currentColor"
-							strokeWidth="2"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						/>
-					</svg>
+					<BackIcon />
 				</button>
 
 				<div className="collection__cover-wrap">
@@ -53,15 +46,7 @@ const Collection = () => {
 			</div>
 
 			<label className="collection__search">
-				<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none">
-					<circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
-					<path
-						d="M21 21l-4.35-4.35"
-						stroke="currentColor"
-						strokeWidth="1.5"
-						strokeLinecap="round"
-					/>
-				</svg>
+				<SearchIcon />
 				<input
 					type="text"
 					className="collection__search-input"

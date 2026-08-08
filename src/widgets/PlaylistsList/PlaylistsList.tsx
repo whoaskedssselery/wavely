@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import usePlaylists from '@/entities/Playlist/model/usePlaylists.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import { useSidebarStore } from '@/features/Sidebar/model/sidebarStore.ts'
+import { filterBySearch } from '@/shared/lib/filterBySearch.ts'
 import { pluralize } from '@/shared/lib/pluralize.ts'
 import CoverImage from '@/shared/ui/CoverImage'
 import SectionHeader from '@/shared/ui/SectionHeader'
@@ -32,13 +33,10 @@ const PlaylistsList = ({ searchQuery = '' }: PlaylistsListProps) => {
 
 	const playlistCount = data?.length ?? 0
 
-	const filteredData = data?.filter((playlist) => {
-		const query = searchQuery.toLowerCase()
-		return (
-			playlist.title.toLowerCase().includes(query) ||
-			(playlist.author?.toLowerCase().includes(query) ?? false)
-		)
-	})
+	const filteredData = filterBySearch(data, searchQuery, (playlist) => [
+		playlist.title,
+		playlist.author,
+	])
 
 	useEffect(() => {
 		if (!swiperInstance) return
