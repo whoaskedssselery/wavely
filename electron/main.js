@@ -1,3 +1,4 @@
+import { randomBytes, timingSafeEqual } from 'node:crypto'
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:http'
 import os from 'node:os'
@@ -16,7 +17,10 @@ import {
 } from 'electron'
 
 const debugLog = (...args) => {
-	appendFileSync('/tmp/wavely-debug.log', `${new Date().toISOString()} ${args.join(' ')}\n`)
+	appendFileSync(
+		path.join(os.tmpdir(), 'wavely-debug.log'),
+		`${new Date().toISOString()} ${args.join(' ')}\n`,
+	)
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -26,6 +30,12 @@ const MIN_HEIGHT = 300
 const SEARCH_WIDGET_COLLAPSED_HEIGHT = 56
 const SEARCH_WIDGET_TOP_RATIO = 0.16
 const OAUTH_CALLBACK_PORT = 53682
+const controlToken = randomBytes(24).toString('hex')
+
+const isValidControlToken = (candidate) => {
+	if (typeof candidate !== 'string' || candidate.length !== controlToken.length) return false
+	return timingSafeEqual(Buffer.from(candidate), Buffer.from(controlToken))
+}
 
 const gotSingleInstanceLock = app.requestSingleInstanceLock()
 if (!gotSingleInstanceLock) {
@@ -78,11 +88,27 @@ const WINDOW_COMMANDS = {
 	'show-main': () => showMainWindow(),
 }
 
+const writeControlToken = () => {
+	try {
+		writeFileSync(path.join(app.getPath('userData'), 'control-token'), controlToken, {
+			mode: 0o600,
+		})
+	} catch (error) {
+		debugLog('failed to write control token', String(error))
+	}
+}
+
 const startLocalServer = () => {
 	createServer((req, res) => {
 		const url = new URL(req.url, `http://127.0.0.1:${OAUTH_CALLBACK_PORT}`)
 
 		if (url.pathname === '/control') {
+			if (!isValidControlToken(url.searchParams.get('token'))) {
+				res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' })
+				res.end('forbidden')
+				return
+			}
+
 			const cmd = url.searchParams.get('cmd')
 			const command = CONTROL_COMMANDS[cmd]
 			const windowAction = WINDOW_COMMANDS[cmd]
@@ -93,6 +119,12 @@ const startLocalServer = () => {
 			const known = !!command || !!windowAction
 			res.writeHead(known ? 200 : 400, { 'Content-Type': 'text/plain; charset=utf-8' })
 			res.end(known ? 'ok' : 'unknown command')
+			return
+		}
+
+		if (url.pathname !== '/callback') {
+			res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' })
+			res.end('not found')
 			return
 		}
 
@@ -115,7 +147,18 @@ const WINDOW_BG = { light: '#f5f6fb', dark: '#0f1015' }
 
 Menu.setApplicationMenu(null)
 
-ipcMain.handle('open-external', (_event, url) => shell.openExternal(url))
+const isExternalUrlAllowed = (url) => {
+	try {
+		return ['http:', 'https:'].includes(new URL(url).protocol)
+	} catch {
+		return false
+	}
+}
+
+ipcMain.handle('open-external', (_event, url) => {
+	if (!isExternalUrlAllowed(url)) return
+	return shell.openExternal(url)
+})
 
 let pendingPlayerCommands = []
 const isEngineReady = () => engineWindow && !engineWindow.webContents.isLoading()
@@ -466,6 +509,7 @@ app.whenReady().then(() => {
 	createTray()
 	registerGlobalShortcuts()
 	ensureAutostart()
+	writeControlToken()
 	startLocalServer()
 
 	app.on('activate', () => {

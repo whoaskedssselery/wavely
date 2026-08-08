@@ -7,6 +7,7 @@ import useTracks from '@/entities/Track/model/useTracks.ts'
 import useAuthListener from '@/features/Auth/model/useAuthListener.ts'
 import useTrackSearch from '@/shared/lib/useTrackSearch.ts'
 import CoverImage from '@/shared/ui/CoverImage'
+import { SearchIcon } from '@/shared/ui/icons'
 import TracksList from '@/widgets/TracksList'
 import '@/features/Theme/model/themeStore.ts'
 import './SearchWidget.scss'
@@ -93,15 +94,7 @@ const SearchWidget = () => {
 	return (
 		<div className="search-widget">
 			<div className="search-widget__bar">
-				<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
-					<circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
-					<path
-						d="M21 21l-4.35-4.35"
-						stroke="currentColor"
-						strokeWidth="1.5"
-						strokeLinecap="round"
-					/>
-				</svg>
+				<SearchIcon size={18} />
 				<input
 					ref={inputRef}
 					type="text"

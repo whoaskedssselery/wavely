@@ -10,8 +10,8 @@ export const BackIcon = () => (
 	</svg>
 )
 
-export const SearchIcon = () => (
-	<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none">
+export const SearchIcon = ({ size = 16 }: { size?: number }) => (
+	<svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none">
 		<circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
 		<path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
 	</svg>
