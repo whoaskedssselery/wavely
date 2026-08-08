@@ -4,6 +4,11 @@
   "version": "1.0.3",
   "type": "module",
   "main": "electron/main.js",
+  "packageManager": "pnpm@11.18.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/whoaskedssselery/wavely.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -55,6 +60,9 @@
     ],
     "directories": {
       "output": "release"
+    },
+    "publish": {
+      "provider": "github"
     },
     "protocols": {
       "name": "wavely-auth-callback",
