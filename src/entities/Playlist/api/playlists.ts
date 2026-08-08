@@ -8,60 +8,38 @@ import { CACHE_ONE_YEAR } from '@/shared/api/cache.ts'
 import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
 import compressCover from '@/shared/lib/compressImage.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
+import { throwOnError, unwrap } from '@/shared/lib/unwrap.ts'
 import type { ArrayToUpdate } from '@/shared/types/utils.ts'
 
 export const fetchPlaylists = async (userId: string): Promise<Playlist[]> => {
-	const { data: fetchData, error: fetchError } = await supabase
-		.from('playlists')
-		.select('*')
-		.eq('user_id', userId)
-		.order('created_at', { ascending: false })
-
-	if (fetchError) {
-		throw fetchError
-	}
-
-	return fetchData
+	return unwrap(
+		supabase
+			.from('playlists')
+			.select('*')
+			.eq('user_id', userId)
+			.order('created_at', { ascending: false }),
+	)
 }
 
 export const fetchPlaylist = async (playlistId: string): Promise<Playlist | null> => {
-	const { data: fetchData, error: fetchError } = await supabase
-		.from('playlists')
-		.select('*')
-		.eq('id', playlistId)
-
-	if (fetchError) {
-		throw fetchError
-	}
-
-	return fetchData[0] ?? null
+	const data = await unwrap(supabase.from('playlists').select('*').eq('id', playlistId))
+	return data[0] ?? null
 }
 
 export const fetchPlaylistTracks = async (playlistId: string): Promise<PlaylistTrack[]> => {
-	const { data: fetchData, error: fetchError } = await supabase
-		.from('playlist_tracks')
-		.select('*')
-		.eq('playlist_id', playlistId)
-		.order('position', { ascending: false })
-
-	if (fetchError) {
-		throw fetchError
-	}
-
-	return fetchData
+	return unwrap(
+		supabase
+			.from('playlist_tracks')
+			.select('*')
+			.eq('playlist_id', playlistId)
+			.order('position', { ascending: false }),
+	)
 }
 
 export const fetchAllPlaylistTracks = async (userId: string): Promise<PlaylistTrack[]> => {
-	const { data: fetchData, error: fetchError } = await supabase
-		.from('playlist_tracks')
-		.select('*, playlists!inner(user_id)')
-		.eq('playlists.user_id', userId)
-
-	if (fetchError) {
-		throw fetchError
-	}
-
-	return fetchData
+	return unwrap(
+		supabase.from('playlist_tracks').select('*, playlists!inner(user_id)').eq('playlists.user_id', userId),
+	)
 }
 
 export const uploadPlaylist = async ({ data, userId }: UploadPlaylistParams): Promise<void> => {
@@ -100,42 +78,32 @@ export const addTrackToPlaylist = async (
 	data: PlayableTrack,
 	playlistId: string,
 ): Promise<void> => {
-	const { data: maxData, error: maxDataError } = await supabase
-		.from('playlist_tracks')
-		.select('position')
-		.eq('playlist_id', playlistId)
-		.order('position', { ascending: false })
-		.limit(1)
+	const maxData = await unwrap(
+		supabase
+			.from('playlist_tracks')
+			.select('position')
+			.eq('playlist_id', playlistId)
+			.order('position', { ascending: false })
+			.limit(1),
+	)
 
-	if (maxDataError) {
-		throw maxDataError
-	}
-
-	const { error: uploadError } = await supabase.from('playlist_tracks').insert({
-		playlist_id: playlistId,
-		title: data.title,
-		artist: data.artist,
-		duration: data.duration,
-		audio_path: data.audio_path,
-		cover_path: data.cover_path,
-		position: maxData[0] ? maxData[0].position + 1 : 1,
-	})
-
-	if (uploadError) {
-		throw uploadError
-	}
+	await throwOnError(
+		supabase.from('playlist_tracks').insert({
+			playlist_id: playlistId,
+			title: data.title,
+			artist: data.artist,
+			duration: data.duration,
+			audio_path: data.audio_path,
+			cover_path: data.cover_path,
+			position: maxData[0] ? maxData[0].position + 1 : 1,
+		}),
+	)
 }
 
 export const removeTrackFromPlaylist = async (playlistTrackId: string): Promise<void> => {
-	const { data: removeData, error: removeError } = await supabase
-		.from('playlist_tracks')
-		.delete()
-		.eq('id', playlistTrackId)
-		.select()
-
-	if (removeError) {
-		throw removeError
-	}
+	const removeData = await unwrap(
+		supabase.from('playlist_tracks').delete().eq('id', playlistTrackId).select(),
+	)
 
 	if (removeData.length === 0) {
 		throw new Error('Трек уже удалён из плейлиста')
@@ -146,51 +114,33 @@ export const removeTrackFromPlaylist = async (playlistTrackId: string): Promise<
 }
 
 export const fetchPlaylistIdsWithTrack = async (audioPath: string): Promise<string[]> => {
-	const { data: fetchData, error: fetchError } = await supabase
-		.from('playlist_tracks')
-		.select('playlist_id')
-		.eq('audio_path', audioPath)
+	const data = await unwrap(
+		supabase.from('playlist_tracks').select('playlist_id').eq('audio_path', audioPath),
+	)
 
-	if (fetchError) {
-		throw fetchError
-	}
-
-	return fetchData.map((row) => row.playlist_id)
+	return data.map((row) => row.playlist_id)
 }
 
 export const updatePlaylistDescription = async (
 	playlistId: string,
 	description: string,
 ): Promise<void> => {
-	const { error: updateError } = await supabase
-		.from('playlists')
-		.update({ description: description || null })
-		.eq('id', playlistId)
-
-	if (updateError) {
-		throw updateError
-	}
+	await throwOnError(
+		supabase
+			.from('playlists')
+			.update({ description: description || null })
+			.eq('id', playlistId),
+	)
 }
 
 export const deletePlaylist = async (playlistId: string): Promise<void> => {
-	const { data: tracksData, error: tracksFetchError } = await supabase
-		.from('playlist_tracks')
-		.select('audio_path, cover_path')
-		.eq('playlist_id', playlistId)
+	const tracksData = await unwrap(
+		supabase.from('playlist_tracks').select('audio_path, cover_path').eq('playlist_id', playlistId),
+	)
 
-	if (tracksFetchError) {
-		throw tracksFetchError
-	}
-
-	const { data: deleteData, error: deleteError } = await supabase
-		.from('playlists')
-		.delete()
-		.select()
-		.eq('id', playlistId)
-
-	if (deleteError) {
-		throw deleteError
-	}
+	const deleteData = await unwrap(
+		supabase.from('playlists').delete().select().eq('id', playlistId),
+	)
 
 	if (deleteData.length === 0) {
 		throw new Error('Плейлист уже удалён')
@@ -205,14 +155,7 @@ export const deletePlaylist = async (playlistId: string): Promise<void> => {
 }
 
 export const updatePlaylistTitle = async (playlistId: string, title: string): Promise<void> => {
-	const { error: updateError } = await supabase
-		.from('playlists')
-		.update({ title })
-		.eq('id', playlistId)
-
-	if (updateError) {
-		throw updateError
-	}
+	await throwOnError(supabase.from('playlists').update({ title }).eq('id', playlistId))
 }
 
 export const updatePlaylistCover = async (
@@ -225,13 +168,11 @@ export const updatePlaylistCover = async (
 	const coverExtension = compressedCover.name.split('.').pop()
 	const newCoverPath = `${userId}/${Date.now()}.${coverExtension}`
 
-	const { error: uploadError } = await supabase.storage
-		.from('covers')
-		.upload(newCoverPath, compressedCover, { cacheControl: CACHE_ONE_YEAR })
-
-	if (uploadError) {
-		throw uploadError
-	}
+	await throwOnError(
+		supabase.storage
+			.from('covers')
+			.upload(newCoverPath, compressedCover, { cacheControl: CACHE_ONE_YEAR }),
+	)
 
 	const { error: updateError } = await supabase
 		.from('playlists')
@@ -258,11 +199,5 @@ export const reorderPlaylistTracks = async (tracks: PlayableTrack[]): Promise<vo
 		}
 	})
 
-	const { error: rpcError } = await supabase.rpc('reorder_playlist_tracks', {
-		updates: arrayToUpdate,
-	})
-
-	if (rpcError) {
-		throw rpcError
-	}
+	await throwOnError(supabase.rpc('reorder_playlist_tracks', { updates: arrayToUpdate }))
 }

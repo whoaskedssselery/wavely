@@ -6,6 +6,7 @@ import DeletePlaylist from '@/features/DeletePlaylist'
 import useAuthedUser from '@/shared/lib/useAuthedUser.ts'
 import useEscapeToNavigate from '@/shared/lib/useEscapeToNavigate.ts'
 import useTrackSearch from '@/shared/lib/useTrackSearch.ts'
+import { SearchIcon } from '@/shared/ui/icons'
 import Modal from '@/shared/ui/Modal'
 import PlaylistHeader from '@/widgets/PlaylistHeader'
 import usePlaylistMetaEditing from '@/widgets/PlaylistHeader/model/usePlaylistMetaEditing.ts'
@@ -78,15 +79,7 @@ const Playlist = () => {
 			/>
 
 			<label className="playlist__search">
-				<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none">
-					<circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
-					<path
-						d="M21 21l-4.35-4.35"
-						stroke="currentColor"
-						strokeWidth="1.5"
-						strokeLinecap="round"
-					/>
-				</svg>
+				<SearchIcon />
 				<input
 					type="text"
 					className="playlist__search-input"

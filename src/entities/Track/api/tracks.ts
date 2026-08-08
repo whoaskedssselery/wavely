@@ -4,19 +4,12 @@ import { CACHE_ONE_YEAR } from '@/shared/api/cache.ts'
 import { cleanupFiles, removeFileIfUnused } from '@/shared/api/storage.ts'
 import compressCover from '@/shared/lib/compressImage.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
+import { throwOnError, unwrap } from '@/shared/lib/unwrap.ts'
 
 export const fetchTracks = async (userId: string): Promise<Track[]> => {
-	const { data, error: fetchError } = await supabase
-		.from('tracks')
-		.select('*')
-		.eq('user_id', userId)
-		.order('created_at', { ascending: false })
-
-	if (fetchError) {
-		throw fetchError
-	}
-
-	return data
+	return unwrap(
+		supabase.from('tracks').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+	)
 }
 
 export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<void> => {
@@ -26,13 +19,9 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 	const audioExtension = audioFile.name.split('.').pop()
 	const audioPath = `${userId}/${Date.now()}.${audioExtension}`
 
-	const { error: uploadError } = await supabase.storage
-		.from('audio')
-		.upload(audioPath, audioFile, { cacheControl: CACHE_ONE_YEAR })
-
-	if (uploadError) {
-		throw uploadError
-	}
+	await throwOnError(
+		supabase.storage.from('audio').upload(audioPath, audioFile, { cacheControl: CACHE_ONE_YEAR }),
+	)
 
 	if (data.coverFile && data.coverFile.length > 0) {
 		const coverFile = await compressCover(data.coverFile[0])
@@ -74,27 +63,12 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 export const TRACK_AUDIO_URL_STALE_TIME = 5.5 * 60 * 60 * 1000
 
 export const getTrackAudioUrl = async (audioPath: string): Promise<string> => {
-	const { data, error: getUrlError } = await supabase.storage
-		.from('audio')
-		.createSignedUrl(audioPath, 21600)
-
-	if (getUrlError) {
-		throw getUrlError
-	}
-
+	const data = await unwrap(supabase.storage.from('audio').createSignedUrl(audioPath, 21600))
 	return data.signedUrl
 }
 
 export const deleteTrack = async (trackId: string): Promise<void> => {
-	const { data: removeData, error: removeError } = await supabase
-		.from('tracks')
-		.delete()
-		.eq('id', trackId)
-		.select()
-
-	if (removeError) {
-		throw removeError
-	}
+	const removeData = await unwrap(supabase.from('tracks').delete().eq('id', trackId).select())
 
 	if (removeData.length === 0) {
 		throw new Error('Трек уже удалён')
