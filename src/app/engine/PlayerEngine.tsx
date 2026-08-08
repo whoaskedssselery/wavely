@@ -40,7 +40,7 @@ const PlayerEngine = () => {
 
 			audioRef.current.src = url
 			audioRef.current.currentTime = usePlayerStore.getState().progress
-			audioRef.current.volume = volume
+			audioRef.current.volume = usePlayerStore.getState().volume
 			setReadyTrackId(trackId)
 		}
 
@@ -49,7 +49,7 @@ const PlayerEngine = () => {
 		return () => {
 			cancelled = true
 		}
-	}, [currentTrack, queryClient, volume])
+	}, [currentTrack, queryClient])
 
 	useEffect(() => {
 		if (!audioRef.current) return
