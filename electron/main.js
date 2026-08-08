@@ -423,6 +423,14 @@ const showMainWindow = () => {
 	mainWindow.focus()
 }
 
+const toggleMainWindow = () => {
+	if (mainWindow && mainWindow.isVisible() && !mainWindow.isMinimized() && mainWindow.isFocused()) {
+		mainWindow.hide()
+	} else {
+		showMainWindow()
+	}
+}
+
 const createTray = () => {
 	const icon = nativeImage.createFromPath(path.join(__dirname, '../build/icon.png'))
 	tray = new Tray(icon.resize({ width: 24, height: 24 }))
@@ -458,8 +466,7 @@ const registerGlobalShortcuts = () => {
 		['Control+Shift+M', toggleMiniPlayerWidget],
 		['Control+Alt+M', toggleMiniPlayerWidget],
 		['Control+Space', toggleSearchWidget],
-		['Super+W', showMainWindow],
-		['Control+Shift+W', showMainWindow],
+		['Control+Shift+W', toggleMainWindow],
 	]
 
 	for (const [accelerator, handler] of shortcuts) {
