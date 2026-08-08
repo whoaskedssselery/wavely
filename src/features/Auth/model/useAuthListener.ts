@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useAuthStore } from '@/features/Auth/model/authStore.ts'
+import { useAuthStore } from '@/shared/lib/authStore.ts'
 import { supabase } from '@/shared/lib/supabase.ts'
 
 const useAuthListener = () => {

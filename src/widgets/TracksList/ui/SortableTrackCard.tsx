@@ -1,8 +1,20 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import type { MouseEvent } from 'react'
 import { formatDuration } from '@/entities/Track/lib/formatDuration.ts'
-import type { SortableTrackCardProps } from '@/shared/types/utils.ts'
+import type { PlayableTrack } from '@/entities/Track/model/types.ts'
 import Popover from '@/shared/ui/Popover'
+
+interface SortableTrackCardProps {
+	track: PlayableTrack
+	isActive: boolean
+	isCurrent: boolean
+	variant: 'collection' | 'playlist'
+	openMenuTrackId?: string
+	onTrackClick: (track: PlayableTrack) => void
+	handleMenu: (event: MouseEvent, trackId: string) => void
+	onMenuClick: (event: MouseEvent, type: 'delete' | 'add-to-playlist', track: PlayableTrack) => void
+}
 
 const SortableTrackCard = (props: SortableTrackCardProps) => {
 	const {

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchProfile } from '@/entities/Profile/api/profile.ts'
-import { useAuthStore } from '@/features/Auth/model/authStore.ts'
+import { useAuthStore } from '@/shared/lib/authStore.ts'
 
 const useProfile = () => {
 	const { user } = useAuthStore()

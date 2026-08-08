@@ -1,5 +1,3 @@
-import type { PlaylistForm } from '@/features/CreatePlaylist/model/schema.ts'
-
 export interface Playlist {
 	id: string
 	user_id: string
@@ -23,6 +21,11 @@ export interface PlaylistTrack {
 }
 
 export interface UploadPlaylistParams {
-	data: PlaylistForm
+	data: {
+		title: string
+		description?: string
+		author?: string
+		coverFile?: FileList
+	}
 	userId: string
 }

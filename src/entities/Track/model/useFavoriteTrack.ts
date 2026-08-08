@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchFavoriteTrack } from '@/entities/Track/api/trackPlays.ts'
-import { useAuthStore } from '@/features/Auth/model/authStore.ts'
+import { useAuthStore } from '@/shared/lib/authStore.ts'
 
 const useFavoriteTrack = () => {
 	const { user } = useAuthStore()

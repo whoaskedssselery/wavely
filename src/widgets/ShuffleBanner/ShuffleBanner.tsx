@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { useAuthStore } from '@/features/Auth/model/authStore.ts'
+import { useAuthStore } from '@/shared/lib/authStore.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import usePlayerNav from '@/features/PlayerControls/model/usePlayerNav.ts'
 import useSyncPersistedQueue from '@/features/PlayerControls/model/useSyncPersistedQueue.ts'
-import { fetchAllTracks } from '@/shared/api/library.ts'
+import { fetchAllTracks } from '@/entities/Track/api/library.ts'
 import './ShuffleBanner.scss'
 
 const ShuffleBanner = () => {

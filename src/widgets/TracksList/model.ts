@@ -1,6 +1,10 @@
 import { type MouseEvent, useEffect, useState } from 'react'
 import type { PlayableTrack } from '@/entities/Track/model/types.ts'
-import type { ActiveTrackModal } from '@/shared/types/utils.ts'
+
+interface ActiveTrackModal {
+	type: 'delete' | 'add-to-playlist'
+	track: PlayableTrack
+}
 
 const useTrackRowMenu = () => {
 	const [openMenuTrackId, setOpenMenuTrackId] = useState<string>()

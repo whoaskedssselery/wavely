@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchPlaylists } from '@/entities/Playlist/api/playlists.ts'
-import { useAuthStore } from '@/features/Auth/model/authStore.ts'
+import { useAuthStore } from '@/shared/lib/authStore.ts'
 
 const usePlaylists = () => {
 	const { user } = useAuthStore()
