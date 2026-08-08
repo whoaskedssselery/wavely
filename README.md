@@ -38,8 +38,10 @@ pnpm dev
 
 ```bash
 pnpm electron:dev    # разработка
-pnpm electron:build  # сборка AppImage (Linux)
+pnpm electron:build  # сборка под текущую ОС: AppImage (Linux), NSIS-инсталлятор + portable .exe (Windows)
 ```
+
+Сборка кросс-платформенная в electron-builder, но собирать под конкретную ОС проще всего на ней самой — на Windows команда выше сама сделает `wavely Setup.exe` и `wavely.exe` (portable) в `release/`.
 
 Десктоп-часть живёт в отдельной ветке `wavely-desktop` и не смешивается с
 веб-веткой `main`.
