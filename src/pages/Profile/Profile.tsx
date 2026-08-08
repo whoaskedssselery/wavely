@@ -4,22 +4,32 @@ import { Link } from 'react-router-dom'
 import usePlaylists from '@/entities/Playlist/model/usePlaylists.ts'
 import { deleteAccount, updateAvatar, updateUsername } from '@/entities/Profile/api/profile.ts'
 import useProfile from '@/entities/Profile/model/useProfile.ts'
+import { fetchAllTracks } from '@/entities/Track/api/library.ts'
 import useFavoriteTrack from '@/entities/Track/model/useFavoriteTrack.ts'
 import useTracks from '@/entities/Track/model/useTracks.ts'
-import { useAuthStore } from '@/features/Auth/model/authStore.ts'
-import { fetchAllTracks } from '@/shared/api/library.ts'
+import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
+import { useAuthStore } from '@/shared/lib/authStore.ts'
 import { pluralize } from '@/shared/lib/pluralize.ts'
 import useEscapeToNavigate from '@/shared/lib/useEscapeToNavigate.ts'
 import useInlineEdit from '@/shared/lib/useInlineEdit.ts'
 import useSmartBack from '@/shared/lib/useSmartBack.ts'
 import CoverImage from '@/shared/ui/CoverImage'
+import { BackIcon } from '@/shared/ui/icons'
 import Modal from '@/shared/ui/Modal'
 import './Profile.scss'
 
 const Profile = () => {
 	const { user, signOut } = useAuthStore()
+	const resetPlayer = usePlayerStore((state) => state.reset)
 	const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false)
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+	const [profileError, setProfileError] = useState<string | null>(null)
+	const [accountError, setAccountError] = useState<string | null>(null)
+
+	const handleSignOut = async () => {
+		await signOut()
+		resetPlayer()
+	}
 
 	const { data: userData, isLoading: isUserLoading, error: userError } = useProfile()
 	const { data: playlists } = usePlaylists()
@@ -42,17 +52,20 @@ const Profile = () => {
 	const { mutate: mutateUsername } = useMutation({
 		mutationFn: (username: string) => updateUsername(user!.id, username),
 		onSuccess: invalidateProfile,
+		onError: (error) => setProfileError(error.message),
 	})
 
 	const { mutate: mutateAvatar } = useMutation({
 		mutationFn: (avatarFile: File) =>
 			updateAvatar(user!.id, avatarFile, userData?.avatar_url ?? null),
 		onSuccess: invalidateProfile,
+		onError: (error) => setProfileError(error.message),
 	})
 
 	const { mutate: mutateDeleteAccount, isPending: isDeletingAccount } = useMutation({
 		mutationFn: deleteAccount,
-		onSuccess: signOut,
+		onSuccess: handleSignOut,
+		onError: (error) => setAccountError(error.message),
 	})
 
 	const {
@@ -94,15 +107,7 @@ const Profile = () => {
 						aria-label="Назад"
 						onClick={goBack}
 					>
-						<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none">
-							<path
-								d="M19 12H5M11 18l-6-6 6-6"
-								stroke="currentColor"
-								strokeWidth="2"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							/>
-						</svg>
+						<BackIcon />
 					</button>
 					<button
 						type="button"
@@ -199,6 +204,7 @@ const Profile = () => {
 					<span className="profile__email">{user?.email}</span>
 				</div>
 			</div>
+			{profileError && <p className="modal-panel__error">{profileError}</p>}
 
 			<div className="profile__stats">
 				<div className="profile__stat">
@@ -316,7 +322,7 @@ const Profile = () => {
 						<button
 							type="button"
 							className="modal-panel__button modal-panel__button--danger"
-							onClick={signOut}
+							onClick={handleSignOut}
 						>
 							Выйти
 						</button>
@@ -344,6 +350,7 @@ const Profile = () => {
 							<span className="profile__account-email">{user?.email}</span>
 						</div>
 					</div>
+					{accountError && <p className="modal-panel__error">{accountError}</p>}
 					<div className="modal-panel__actions">
 						<button
 							type="button"

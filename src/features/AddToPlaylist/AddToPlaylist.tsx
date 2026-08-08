@@ -1,12 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { addTrackToPlaylist, fetchPlaylistIdsWithTrack } from '@/entities/Playlist/api/playlists.ts'
 import usePlaylists from '@/entities/Playlist/model/usePlaylists.ts'
+import type { PlayableTrack } from '@/entities/Track/model/types.ts'
 import useScrollbarVisibility from '@/shared/lib/useScrollbarVisibility.ts'
 import useSearch from '@/shared/lib/useSearch.ts'
-import type { AddToPlaylistProps } from '@/shared/types/utils.ts'
 import CoverImage from '@/shared/ui/CoverImage'
+import { SearchIcon } from '@/shared/ui/icons'
 import './AddToPlaylist.scss'
+
+interface AddToPlaylistProps {
+	track: PlayableTrack
+	onClose: () => void
+	onAdded: () => void
+}
 
 const AddToPlaylist = (props: AddToPlaylistProps) => {
 	const { track, onAdded } = props
@@ -27,6 +34,8 @@ const AddToPlaylist = (props: AddToPlaylistProps) => {
 		queryFn: () => fetchPlaylistIdsWithTrack(track.audio_path),
 	})
 
+	const [serverError, setServerError] = useState<string | null>(null)
+
 	const { mutate } = useMutation({
 		mutationFn: (playlistId: string) => addTrackToPlaylist(track, playlistId),
 		onSuccess: (_data, playlistId) => {
@@ -34,21 +43,14 @@ const AddToPlaylist = (props: AddToPlaylistProps) => {
 			queryClient.invalidateQueries({ queryKey: ['playlist-ids-with-track', track.audio_path] })
 			onAdded()
 		},
+		onError: (error) => setServerError(error.message),
 	})
 
 	return (
 		<div className="add-to-playlist">
 			<h2 className="add-to-playlist__text">Добавить в плейлист</h2>
 			<label className="add-to-playlist__search">
-				<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none">
-					<circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
-					<path
-						d="M21 21l-4.35-4.35"
-						stroke="currentColor"
-						strokeWidth="1.5"
-						strokeLinecap="round"
-					/>
-				</svg>
+				<SearchIcon />
 				<input
 					type="text"
 					className="add-to-playlist__search-input"
@@ -57,6 +59,7 @@ const AddToPlaylist = (props: AddToPlaylistProps) => {
 					onChange={(event) => setSearchQuery(event.target.value)}
 				/>
 			</label>
+			{serverError && <p className="modal-panel__error">{serverError}</p>}
 			<div className="add-to-playlist__list" ref={listRef}>
 				{filteredPlaylists?.length === 0 && (
 					<p className="add-to-playlist__empty">Ничего не нашлось</p>

@@ -1,12 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { removeTrackFromPlaylist } from '@/entities/Playlist/api/playlists.ts'
 import { deleteTrack } from '@/entities/Track/api/tracks.ts'
 import { formatDuration } from '@/entities/Track/lib/formatDuration.ts'
-import { useAuthStore } from '@/features/Auth/model/authStore.ts'
+import type { PlayableTrack } from '@/entities/Track/model/types.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
-import type { DeleteTrackProps } from '@/shared/types/utils.ts'
+import { useAuthStore } from '@/shared/lib/authStore.ts'
 import CoverImage from '@/shared/ui/CoverImage'
 import './DeleteTrack.scss'
+
+interface DeleteTrackProps {
+	track: PlayableTrack
+	variant: 'collection' | 'playlist'
+	playlistId?: string
+	onClose: () => void
+	onDeleted: () => void
+}
 
 const DeleteTrack = (props: DeleteTrackProps) => {
 	const { track, variant, playlistId, onClose, onDeleted } = props
@@ -15,6 +24,8 @@ const DeleteTrack = (props: DeleteTrackProps) => {
 	const { user } = useAuthStore()
 
 	const { clearTrack } = usePlayerStore()
+
+	const [serverError, setServerError] = useState<string | null>(null)
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: () => {
@@ -32,6 +43,7 @@ const DeleteTrack = (props: DeleteTrackProps) => {
 			clearTrack(track.id)
 			onClose()
 		},
+		onError: (error) => setServerError(error.message),
 	})
 
 	return (
@@ -52,6 +64,7 @@ const DeleteTrack = (props: DeleteTrackProps) => {
 				</div>
 				<span className="delete-track__duration">{formatDuration(track.duration)}</span>
 			</div>
+			{serverError && <p className="modal-panel__error">{serverError}</p>}
 			<div className="modal-panel__actions">
 				<button
 					type="button"

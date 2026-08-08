@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { recordTrackPlay } from '@/entities/Track/api/trackPlays.ts'
-import { useAuthStore } from '@/features/Auth/model/authStore.ts'
+import { useAuthStore } from '@/shared/lib/authStore.ts'
 import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import { TRACK_PLAY_THRESHOLD_MAX, TRACK_PLAY_THRESHOLD_RATIO } from '@/shared/constants/player.ts'
 
@@ -18,6 +18,7 @@ const useRecordTrackPlay = () => {
 	const { mutate } = useMutation({
 		mutationFn: recordTrackPlay,
 		onSuccess: () => queryClient.invalidateQueries({ queryKey: ['favorite-track', user?.id] }),
+		onError: (error) => console.error('Не удалось записать прослушивание трека:', error),
 	})
 
 	useEffect(() => {

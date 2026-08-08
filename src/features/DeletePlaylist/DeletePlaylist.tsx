@@ -1,10 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import type { Playlist } from '@/entities/Playlist/model/types.ts'
 import { deletePlaylist } from '@/entities/Playlist/api/playlists.ts'
-import type { DeletePlaylistProps } from '@/shared/types/utils.ts'
 import CoverImage from '@/shared/ui/CoverImage'
 import './DeletePlaylist.scss'
 import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '@/features/Auth/model/authStore.ts'
+import { useAuthStore } from '@/shared/lib/authStore.ts'
+
+interface DeletePlaylistProps {
+	playlist: Playlist
+	onClose: () => void
+}
 
 const DeletePlaylist = (props: DeletePlaylistProps) => {
 	const { playlist, onClose } = props
@@ -14,6 +20,8 @@ const DeletePlaylist = (props: DeletePlaylistProps) => {
 	const { user } = useAuthStore()
 
 	const navigate = useNavigate()
+
+	const [serverError, setServerError] = useState<string | null>(null)
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: () => {
@@ -26,6 +34,7 @@ const DeletePlaylist = (props: DeletePlaylistProps) => {
 			onClose()
 			navigate('/')
 		},
+		onError: (error) => setServerError(error.message),
 	})
 
 	return (
@@ -36,7 +45,7 @@ const DeletePlaylist = (props: DeletePlaylistProps) => {
 					coverPath={playlist.cover_path}
 					alt={playlist.title}
 					className="delete-playlist__image"
-					kind="track"
+					kind="playlist"
 				/>
 				<div className="delete-playlist__info">
 					<span className="delete-playlist__title">{playlist.title}</span>
@@ -45,6 +54,7 @@ const DeletePlaylist = (props: DeletePlaylistProps) => {
 					)}
 				</div>
 			</div>
+			{serverError && <p className="modal-panel__error">{serverError}</p>}
 			<div className="modal-panel__actions">
 				<button
 					type="button"
