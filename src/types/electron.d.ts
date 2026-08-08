@@ -18,6 +18,11 @@ declare global {
 			persistTheme: (theme: 'light' | 'dark') => void
 			resizeWidget: (height: number) => void
 			onWidgetShown: (callback: () => void) => () => void
+			minimizeWindow: () => void
+			toggleMaximizeWindow: () => void
+			closeWindow: () => void
+			isWindowMaximized: () => Promise<boolean>
+			onWindowMaximizedChange: (callback: (isMaximized: boolean) => void) => () => void
 		}
 	}
 }

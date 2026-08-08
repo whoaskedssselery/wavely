@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import AppRouter from '@/app/router/AppRouter.tsx'
 import SplashOverlay from '@/app/SplashOverlay.tsx'
+import TitleBar from '@/app/TitleBar.tsx'
 import useAppReady from '@/app/useAppReady.ts'
 import usePrefetchPlaylists from '@/entities/Playlist/model/usePrefetchPlaylists.ts'
 import useProfile from '@/entities/Profile/model/useProfile.ts'
@@ -45,13 +46,29 @@ export default function App() {
 		hadTrackRef.current = !!currentTrack
 	}, [currentTrack, setExpanded])
 
-	if (!isAppReady) return <SplashOverlay />
-	if (!user) return <AppRouter />
+	if (!isAppReady) {
+		return (
+			<div className="app-window">
+				<TitleBar />
+				<SplashOverlay />
+			</div>
+		)
+	}
+	if (!user) {
+		return (
+			<div className="app-window">
+				<TitleBar />
+				<AppRouter />
+			</div>
+		)
+	}
 
 	return (
-		<div
-			className={`app ${!isExpanded ? 'app--no-sidebar' : ''} ${currentTrack ? 'app--playing' : ''}`}
-		>
+		<div className="app-window">
+			<TitleBar />
+			<div
+				className={`app ${!isExpanded ? 'app--no-sidebar' : ''} ${currentTrack ? 'app--playing' : ''}`}
+			>
 			<header className="app__mobile-topbar">
 				<Link to="/" className="app__logo" aria-label="Wavely">
 					<Logo />
@@ -267,6 +284,7 @@ export default function App() {
 				<AppRouter />
 			</main>
 			<MobilePlayer />
+			</div>
 		</div>
 	)
 }

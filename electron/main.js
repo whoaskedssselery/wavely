@@ -231,6 +231,25 @@ ipcMain.on('widget:resize', (event, height) => {
 	win.setResizable(false)
 })
 
+ipcMain.on('window:minimize', (event) => {
+	BrowserWindow.fromWebContents(event.sender)?.minimize()
+})
+
+ipcMain.on('window:toggle-maximize', (event) => {
+	const win = BrowserWindow.fromWebContents(event.sender)
+	if (!win) return
+	if (win.isMaximized()) win.unmaximize()
+	else win.maximize()
+})
+
+ipcMain.on('window:close', (event) => {
+	BrowserWindow.fromWebContents(event.sender)?.close()
+})
+
+ipcMain.handle('window:is-maximized', (event) => {
+	return BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false
+})
+
 const createWindow = () => {
 	const theme = readPersistedTheme()
 
@@ -266,6 +285,9 @@ const createWindow = () => {
 			pendingAuthCallbackCode = null
 		}
 	})
+
+	win.on('maximize', () => win.webContents.send('window:maximized-change', true))
+	win.on('unmaximize', () => win.webContents.send('window:maximized-change', false))
 
 	if (process.platform !== 'linux') win.maximize()
 	// Wait for first paint (the app's own full-window splash screen) instead

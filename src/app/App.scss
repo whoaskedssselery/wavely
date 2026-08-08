@@ -1,9 +1,16 @@
 @use '@/styles/helpers' as *;
 
+.app-window {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .app {
   display: flex;
   flex-direction: row;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   background-color: $color-bg;
   --content-max-width: #{$content-max-width};
 
