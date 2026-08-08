@@ -456,7 +456,10 @@ const registerGlobalShortcuts = () => {
 		['Control+Alt+P', () => sendPlayerCommand('playPrev')],
 		['Control+Alt+S', () => sendPlayerCommand('pause')],
 		['Control+Shift+M', toggleMiniPlayerWidget],
+		['Control+Alt+M', toggleMiniPlayerWidget],
 		['Control+Space', toggleSearchWidget],
+		['Super+W', showMainWindow],
+		['Control+Shift+W', showMainWindow],
 	]
 
 	for (const [accelerator, handler] of shortcuts) {
