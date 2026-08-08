@@ -1,9 +1,12 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
-const windowRole = new URLSearchParams(location.search).get('window')
+const params = new URLSearchParams(location.search)
+const windowRole = params.get('window')
+const initialTheme = params.get('theme') === 'dark' ? 'dark' : params.get('theme') === 'light' ? 'light' : null
 
 contextBridge.exposeInMainWorld('electronAPI', {
 	windowRole,
+	initialTheme,
 	onAuthCallback: (callback) => {
 		const listener = (_event, url) => callback(url)
 		ipcRenderer.on('auth-callback', listener)
@@ -25,6 +28,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	},
 	hideWidget: () => ipcRenderer.send('widget:hide'),
 	setWindowBackground: (color) => ipcRenderer.send('window:set-background', color),
+	persistTheme: (theme) => ipcRenderer.send('theme:persist', theme),
 	resizeWidget: (height) => ipcRenderer.send('widget:resize', height),
 	onWidgetShown: (callback) => {
 		const listener = () => callback()

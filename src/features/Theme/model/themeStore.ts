@@ -29,6 +29,7 @@ const applyTheme = (theme: Theme) => {
 	document.documentElement.dataset.theme = theme
 
 	window.electronAPI?.setWindowBackground(THEME_BG[theme])
+	window.electronAPI?.persistTheme(theme)
 }
 
 applyTheme(useThemeStore.getState().theme)

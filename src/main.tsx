@@ -26,6 +26,9 @@ const windowRole =
 	window.electronAPI?.windowRole ?? new URLSearchParams(location.search).get('window')
 
 document.documentElement.dataset.window = windowRole ?? 'main'
+if (window.electronAPI?.initialTheme) {
+	document.documentElement.dataset.theme = window.electronAPI.initialTheme
+}
 
 const root = createRoot(document.getElementById('root')!)
 

@@ -2,6 +2,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import AppRouter from '@/app/router/AppRouter.tsx'
+import SplashOverlay from '@/app/SplashOverlay.tsx'
+import useAppReady from '@/app/useAppReady.ts'
 import usePrefetchPlaylists from '@/entities/Playlist/model/usePrefetchPlaylists.ts'
 import useProfile from '@/entities/Profile/model/useProfile.ts'
 import { useAuthStore } from '@/shared/lib/authStore.ts'
@@ -18,6 +20,7 @@ import './App.scss'
 export default function App() {
 	useAuthListener()
 	usePrefetchPlaylists()
+	const isAppReady = useAppReady()
 
 	const user = useAuthStore((state) => state.user)
 	const currentTrack = usePlayerStore((state) => state.currentTrack)
@@ -42,6 +45,7 @@ export default function App() {
 		hadTrackRef.current = !!currentTrack
 	}, [currentTrack, setExpanded])
 
+	if (!isAppReady) return <SplashOverlay />
 	if (!user) return <AppRouter />
 
 	return (

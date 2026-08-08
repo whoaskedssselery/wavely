@@ -4,6 +4,7 @@ declare global {
 	interface Window {
 		electronAPI?: {
 			windowRole: WindowRole
+			initialTheme: 'light' | 'dark' | null
 			onAuthCallback: (callback: (code: string) => void) => () => void
 			openExternal: (url: string) => Promise<void>
 			playerCommand: (name: string, args: unknown[]) => void
@@ -14,6 +15,7 @@ declare global {
 			onPlayerState: (callback: (state: unknown) => void) => () => void
 			hideWidget: () => void
 			setWindowBackground: (color: string) => void
+			persistTheme: (theme: 'light' | 'dark') => void
 			resizeWidget: (height: number) => void
 			onWidgetShown: (callback: () => void) => () => void
 		}

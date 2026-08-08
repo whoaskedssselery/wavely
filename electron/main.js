@@ -54,15 +54,15 @@ let tray = null
 let pendingAuthCallbackCode = null
 app.isQuitting = false
 
-const loadRenderer = (win, role) => {
+const loadRenderer = (win, role, extraQuery = {}) => {
+	const query = { ...(role ? { window: role } : {}), ...extraQuery }
+	const hasQuery = Object.keys(query).length > 0
+
 	if (devServerUrl) {
-		const url = role ? `${devServerUrl}?window=${role}` : devServerUrl
+		const url = hasQuery ? `${devServerUrl}?${new URLSearchParams(query)}` : devServerUrl
 		win.loadURL(url)
 	} else {
-		win.loadFile(
-			path.join(__dirname, '../dist/index.html'),
-			role ? { query: { window: role } } : {},
-		)
+		win.loadFile(path.join(__dirname, '../dist/index.html'), hasQuery ? { query } : {})
 	}
 }
 
@@ -145,6 +145,25 @@ if (process.platform === 'linux') {
 
 const WINDOW_BG = { light: '#f5f6fb', dark: '#0f1015' }
 
+const themeFilePath = () => path.join(app.getPath('userData'), 'theme.json')
+
+const readPersistedTheme = () => {
+	try {
+		const { theme } = JSON.parse(readFileSync(themeFilePath(), 'utf8'))
+		return theme === 'dark' ? 'dark' : 'light'
+	} catch {
+		return 'light'
+	}
+}
+
+ipcMain.on('theme:persist', (_event, theme) => {
+	try {
+		writeFileSync(themeFilePath(), JSON.stringify({ theme: theme === 'dark' ? 'dark' : 'light' }))
+	} catch (error) {
+		debugLog('failed to persist theme', String(error))
+	}
+})
+
 Menu.setApplicationMenu(null)
 
 const isExternalUrlAllowed = (url) => {
@@ -213,13 +232,15 @@ ipcMain.on('widget:resize', (event, height) => {
 })
 
 const createWindow = () => {
+	const theme = readPersistedTheme()
+
 	const win = new BrowserWindow({
 		title: 'wavely',
 		width: 1280,
 		height: 800,
 		minWidth: MIN_WIDTH,
 		minHeight: MIN_HEIGHT,
-		backgroundColor: WINDOW_BG.light,
+		backgroundColor: WINDOW_BG[theme],
 		frame: false,
 		show: false,
 		webPreferences: {
@@ -247,9 +268,11 @@ const createWindow = () => {
 	})
 
 	if (process.platform !== 'linux') win.maximize()
-	win.show()
+	// Wait for first paint (the app's own full-window splash screen) instead
+	// of showing immediately, so there's no blank/unstyled flash.
+	win.once('ready-to-show', () => win.show())
 
-	loadRenderer(win, null)
+	loadRenderer(win, null, { theme })
 	if (devServerUrl) win.webContents.openDevTools({ mode: 'detach' })
 }
 
