@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/features/Auth/model/authStore.ts'
+import { useAuthStore } from '@/shared/lib/authStore.ts'
 
 const useAuthedUser = () => {
 	const { user } = useAuthStore()

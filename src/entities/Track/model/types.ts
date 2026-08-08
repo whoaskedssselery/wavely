@@ -1,5 +1,3 @@
-import type { TrackForm } from '@/features/UploadTrack/model/schema.ts'
-
 export interface Track {
 	id: string
 	user_id: string
@@ -22,7 +20,12 @@ export interface PlayableTrack {
 }
 
 export interface UploadTrackParams {
-	data: TrackForm
+	data: {
+		title: string
+		artist: string
+		audioFile: FileList
+		coverFile?: FileList
+	}
 	userId: string
 }
 

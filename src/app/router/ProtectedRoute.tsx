@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react'
 import { Navigate } from 'react-router-dom'
-import { useAuthStore } from '@/features/Auth/model/authStore.ts'
+import { useAuthStore } from '@/shared/lib/authStore.ts'
 
 const ProtectedRoute = ({ children }: PropsWithChildren) => {
 	const { user, isLoading } = useAuthStore()

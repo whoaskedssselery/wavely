@@ -8,11 +8,19 @@ import { usePlayerStore } from '@/features/PlayerControls/model/playerStore.ts'
 import useSyncPersistedQueue from '@/features/PlayerControls/model/useSyncPersistedQueue.ts'
 import useReorderTracks from '@/features/ReorderTracks/model/useReorderTracks.ts'
 import useScrollbarVisibility from '@/shared/lib/useScrollbarVisibility.ts'
-import type { TracksListProps } from '@/shared/types/utils.ts'
 import Modal from '@/shared/ui/Modal'
 import useTrackRowMenu from '@/widgets/TracksList/model.ts'
 import './TracksList.scss'
 import SortableTrackCard from './ui/SortableTrackCard'
+
+interface TracksListProps {
+	tracks: PlayableTrack[]
+	isLoading: boolean
+	error: Error | null
+	variant: 'collection' | 'playlist'
+	playlistId?: string
+	isPreview?: boolean
+}
 
 const TracksList = (props: TracksListProps) => {
 	const { tracks, isLoading, error, variant, playlistId, isPreview } = props
