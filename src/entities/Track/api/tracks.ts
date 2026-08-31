@@ -40,6 +40,7 @@ export const uploadTrack = async ({ data, userId }: UploadTrackParams): Promise<
 
 	try {
 		duration = Math.round(await getAudioDuration(audioFile))
+		if (!Number.isFinite(duration)) throw new Error('non-finite duration')
 	} catch {
 		await cleanupFiles({ audioPath, coverPath })
 		throw new Error('Не удалось прочитать длительность трека')

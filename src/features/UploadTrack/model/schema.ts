@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024
+const MAX_FILE_SIZE = 300 * 1024 * 1024
 export const AUDIO_MIME_TYPES = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/webm']
 export const IMAGE_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
 
@@ -11,7 +11,7 @@ export const trackSchema = z.object({
 		.instanceof(FileList)
 		.refine((files) => files.length > 0, 'Выберите файл!')
 		.refine((files) => AUDIO_MIME_TYPES.includes(files[0]?.type), 'Неверный формат файла!')
-		.refine((files) => files[0]?.size <= MAX_FILE_SIZE, 'Размер трека не должен превышать 100Мб!'),
+		.refine((files) => files[0]?.size <= MAX_FILE_SIZE, 'Размер трека не должен превышать 300Мб!'),
 	coverFile: z
 		.instanceof(FileList)
 		.refine(
@@ -20,7 +20,7 @@ export const trackSchema = z.object({
 		)
 		.refine(
 			(files) => files[0]?.size <= MAX_FILE_SIZE || files.length === 0,
-			'Размер обложки не должен превышать 100Мб!',
+			'Размер обложки не должен превышать 300Мб!',
 		)
 		.optional(),
 })

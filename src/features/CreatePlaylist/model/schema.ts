@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024
+const MAX_FILE_SIZE = 300 * 1024 * 1024
 export const IMAGE_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
 
 export const playlistSchema = z.object({
@@ -15,7 +15,7 @@ export const playlistSchema = z.object({
 		)
 		.refine(
 			(files) => files[0]?.size <= MAX_FILE_SIZE || files.length === 0,
-			'Размер обложки не должен превышать 100Мб!',
+			'Размер обложки не должен превышать 300Мб!',
 		)
 		.optional(),
 })

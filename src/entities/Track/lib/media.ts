@@ -3,9 +3,27 @@ export const getAudioDuration = (file: File): Promise<number> => {
 		const audio = new Audio()
 		const fileUrl = URL.createObjectURL(file)
 		audio.src = fileUrl
-		audio.addEventListener('loadedmetadata', () => {
+
+		const finish = (duration: number) => {
 			URL.revokeObjectURL(fileUrl)
-			resolve(audio.duration)
+			resolve(duration)
+		}
+
+		audio.addEventListener('loadedmetadata', () => {
+			if (Number.isFinite(audio.duration)) {
+				finish(audio.duration)
+				return
+			}
+
+			audio.addEventListener(
+				'durationchange',
+				() => {
+					audio.currentTime = 0
+					finish(audio.duration)
+				},
+				{ once: true },
+			)
+			audio.currentTime = Number.MAX_SAFE_INTEGER
 		})
 		audio.addEventListener('error', () => {
 			reject(new Error('Не удалось прочитать метаданные аудиофайла'))
